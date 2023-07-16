@@ -1,3 +1,3 @@
-# auth_test
+# postur
 
-A new Flutter project.
+A bulletin board in your pocket.
