@@ -3,6 +3,7 @@ import 'package:auth_test/src/widgets.dart';
 import 'package:flutter/material.dart';
 import '../src/colors.dart';
 import '../components/id_widget.dart';
+import 'qr_scan_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -32,7 +33,12 @@ class _ProfilePageState extends State<ProfilePage> {
           Container(
             padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const QRScanPage()));
+              },
               style: ElevatedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
