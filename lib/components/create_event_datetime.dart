@@ -20,18 +20,31 @@ class _CreateEventDateTimeState extends State<CreateEventDateTime> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: Colors.transparent,
-      child: CupertinoButton(
-        child: Text(
+    return CupertinoButton(
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Color.fromARGB(255, 227, 227, 227),
+          borderRadius: BorderRadiusDirectional.all(
+            Radius.circular(7),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 10,
+          ),
+          child: Text(
             //Need to add some kind of border around this to indicate that it is an interactable button.
-            '${monthList[defaultDateTime.month - 1]} ${defaultDateTime.day}, ${hourRectifier(defaultDateTime.hour)}:${defaultDateTime.minute} ${amPmString(defaultDateTime.hour)}',
-            style: TextStyle(color: Colors.grey.shade800)),
-        onPressed: () {
-          showCupertinoModalPopup(
-            context: context,
-            builder: (BuildContext context) => SizedBox(
-              height: 250,
+            '${monthList[defaultDateTime.month - 1]} ${defaultDateTime.day}, ${hourRectifier(defaultDateTime.hour)}:${(defaultDateTime.minute < 10) ? '0' + defaultDateTime.minute.toString() : defaultDateTime.minute.toString()} ${amPmString(defaultDateTime.hour)}',
+            style: const TextStyle(color: Color.fromARGB(255, 128, 128, 128)),
+          ),
+        ),
+      ),
+      onPressed: () {
+        showCupertinoModalPopup(
+          context: context,
+          builder: (BuildContext context) => Container(
+            height: 280,
+            child: SafeArea(
               child: CupertinoDatePicker(
                 backgroundColor: backgroundWhite,
                 initialDateTime:
@@ -43,9 +56,9 @@ class _CreateEventDateTimeState extends State<CreateEventDateTime> {
                 maximumDate: maximumDateTime,
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
