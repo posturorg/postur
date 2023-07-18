@@ -26,8 +26,9 @@ class _QRViewState extends State<QRView> {
         final List<Barcode> barcodes = capture.barcodes;
         showDialog(
           context: context,
-          builder: (_) => const ScanResult(),
-          barrierDismissible: true,
+          builder: (_) => const ScanResult(
+            fullName: 'Alvin', isMember: false),
+            barrierDismissible: true,
         );
       },
     );

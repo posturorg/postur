@@ -7,16 +7,23 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'qr_scan_widget.dart';
 
 class ScanResult extends StatelessWidget {
-  const ScanResult({super.key});
+  final String fullName;
+  final bool isMember;
+
+  const ScanResult({
+    super.key,
+    required this.fullName,
+    required this.isMember,
+  });
 
   @override
   Widget build(BuildContext context) {
     return CupertinoAlertDialog(
-              title: const Text(
-                  'Alvin is on the list'
+              title: Text(
+                  isMember ? '$fullName is on the list.' : '$fullName is NOT the list.'
                   ),
               content: IconButton(
-                icon: const Icon(Icons.check_circle, color: Colors.green),
+                icon: isMember ? const Icon(Icons.check_circle, color: Colors.green) : const Icon(Icons.cancel, color: absentRed),
                 onPressed: () {
                   Navigator.pop(context);
                 },
