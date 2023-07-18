@@ -12,7 +12,7 @@ class YourEventWidget extends StatelessWidget {
   //final bool isCreator;
   //final bool isMember;
 
-  const YourEventWidget({
+  const YourEventWidget({super.key, 
     required this.eventTitle,
     required this.eventCreator,
     required this.isCreator,
