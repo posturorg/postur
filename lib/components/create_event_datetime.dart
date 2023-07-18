@@ -21,7 +21,7 @@ class _CreateEventDateTimeState extends State<CreateEventDateTime> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       child: CupertinoButton(
         child: Text(
             //Need to add some kind of border around this to indicate that it is an interactable button.
