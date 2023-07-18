@@ -1,5 +1,5 @@
+import 'package:auth_test/components/create_event_datetime.dart';
 import 'package:auth_test/components/modal_bottom_button.dart';
-
 import '../components/event_box_decoration.dart';
 import '../src/colors.dart';
 import 'package:flutter/material.dart';
@@ -48,70 +48,38 @@ class EventCreateModal extends StatelessWidget {
             ),
             Container(
               margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('When:',
+                  Text('When:',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       )),
-                  const SizedBox(width: 8.0),
+                  SizedBox(width: 8.0),
                   Expanded(
                     child: SizedBox(
-                      width: 200.0,
-                      height: 50.0,
-                      child: TextFormField(
-                        decoration: const InputDecoration(
-                          hintText: 'This Wednesday, 7:30 p.m.',
-                          border:
-                              OutlineInputBorder(), // Customize the border style
-                        ),
-                        onChanged: (value) {
-                          // Handle the text input change
-                          // ...
-                        },
-                        validator: (value) {
-                          // Perform form validation and return an error message if necessary
-                          // ...
-                          return null; // Return null to indicate no validation errors
-                        },
-                      ),
-                    ),
+                        width: 200.0,
+                        height: 50.0,
+                        child: CreateEventDateTime()),
                   ),
                 ],
               ),
             ),
             Container(
               margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('Ends:',
+                  Text('Ends:',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       )),
-                  const SizedBox(width: 8.0),
+                  SizedBox(width: 8.0),
                   Expanded(
                     child: SizedBox(
-                      width: 200.0,
-                      height: 50.0,
-                      child: TextFormField(
-                        decoration: const InputDecoration(
-                          hintText: '10 p.m.',
-                          border:
-                              OutlineInputBorder(), // Customize the border style
-                        ),
-                        onChanged: (value) {
-                          // Handle the text input change
-                          // ...
-                        },
-                        validator: (value) {
-                          // Perform form validation and return an error message if necessary
-                          // ...
-                          return null; // Return null to indicate no validation errors
-                        },
-                      ),
-                    ),
+                        width: 200.0,
+                        height: 50.0,
+                        child: CreateEventDateTime()),
                   ),
                 ],
               ),
