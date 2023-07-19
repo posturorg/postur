@@ -1,10 +1,10 @@
-import '../src/colors.dart';
+//import '../src/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
+//import 'package:mobile_scanner/mobile_scanner.dart';
 // import 'package:flutter/services.dart';
 
-import 'qr_scan_widget.dart';
+//import 'qr_scan_widget.dart';
 
 class ScanResult extends StatelessWidget {
   const ScanResult({super.key});

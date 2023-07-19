@@ -1,4 +1,6 @@
-import '../src/colors.dart';
+//import '../src/colors.dart';
+import 'package:auth_test/src/colors.dart';
+
 import '../src/date_time_utilities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +25,7 @@ class _CreateEventDateTimeState extends State<CreateEventDateTime> {
     return CupertinoButton(
       child: Container(
         decoration: const BoxDecoration(
-          color: Color.fromARGB(255, 227, 227, 227),
+          color: backgroundWhite,
           borderRadius: BorderRadiusDirectional.all(
             Radius.circular(7),
           ),
@@ -40,13 +42,14 @@ class _CreateEventDateTimeState extends State<CreateEventDateTime> {
         ),
       ),
       onPressed: () {
-        showCupertinoModalPopup(
+        showModalBottomSheet(
+          showDragHandle: true,
           context: context,
           builder: (BuildContext context) => Container(
             height: 280,
             child: SafeArea(
               child: CupertinoDatePicker(
-                backgroundColor: backgroundWhite,
+                backgroundColor: Colors.transparent,
                 initialDateTime:
                     defaultDateTime, //Should be device time or current time (via internet)
                 onDateTimeChanged: (DateTime newTime) {
