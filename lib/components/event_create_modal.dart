@@ -1,4 +1,5 @@
 import 'package:auth_test/components/create_event_datetime.dart';
+import 'package:auth_test/components/event_address_form.dart';
 import 'package:auth_test/components/modal_bottom_button.dart';
 import '../components/event_box_decoration.dart';
 import '../src/colors.dart';
@@ -7,6 +8,10 @@ import 'package:flutter/material.dart';
 /*
 This widget is what appears inside the modal for event creation
  */
+
+TextEditingController addressController = TextEditingController(
+    //text: 'Massachusetts Hall, Cambridge, MA 02138',
+    );
 
 class EventCreateModal extends StatelessWidget {
   const EventCreateModal({super.key});
@@ -118,23 +123,9 @@ class EventCreateModal extends StatelessWidget {
                     child: SizedBox(
                       width: 200.0,
                       height: 50.0,
-                      child: TextFormField(
-                        decoration: const InputDecoration(
-                          hintText:
-                              '901 Fictitious Square, Unreal City, USA 67890',
-                          border:
-                              OutlineInputBorder(), // Customize the border style
-                        ),
-                        onChanged: (value) {
-                          // Handle the text input change
-                          // ...
-                        },
-                        validator: (value) {
-                          // Perform form validation and return an error message if necessary
-                          // ...
-                          return null; // Return null to indicate no validation errors
-                        },
-                      ),
+                      child: EventAddressForm(
+                          defaultText:
+                              'Massachusetts Hall, Cambridge, MA 02138'),
                     ),
                   ),
                 ],
