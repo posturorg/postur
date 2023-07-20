@@ -37,7 +37,9 @@ class _CreateEventDateTimeState extends State<CreateEventDateTime> {
           child: Text(
             //Need to add some kind of border around this to indicate that it is an interactable button.
             '${monthList[defaultDateTime.month - 1]} ${defaultDateTime.day}, ${hourRectifier(defaultDateTime.hour)}:${(defaultDateTime.minute < 10) ? '0' + defaultDateTime.minute.toString() : defaultDateTime.minute.toString()} ${amPmString(defaultDateTime.hour)}',
-            style: const TextStyle(color: Color.fromARGB(255, 128, 128, 128)),
+            style: const TextStyle(
+              color: Color.fromARGB(255, 128, 128, 128),
+            ),
           ),
         ),
       ),

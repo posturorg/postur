@@ -1,6 +1,6 @@
-import 'package:address_search_field/address_search_field.dart';
-import 'package:auth_test/src/colors.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../src/colors.dart';
 
 class EventAddressForm extends StatelessWidget {
   final String defaultText;
@@ -9,6 +9,7 @@ class EventAddressForm extends StatelessWidget {
     required this.defaultText,
   });
 
+/*
   final _geoMethods = GeoMethods(
     googleApiKey: 'AIzaSyCGJzUSDbjILqXm178DgHCGzMQTSb_RXTs',
     language: 'en',
@@ -16,29 +17,35 @@ class EventAddressForm extends StatelessWidget {
     country: 'United States',
     //city: 'Boston',
   );
-  final _controller = TextEditingController();
+  */
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      decoration: InputDecoration(
-        hintText:
-            defaultText, //This, of course, should be the address of our placed pin.
-        border: const OutlineInputBorder(), // Customize the border style
+    return CupertinoButton(
+      child: Container(
+        decoration: const BoxDecoration(
+          color: backgroundWhite,
+          borderRadius: BorderRadiusDirectional.all(
+            Radius.circular(7),
+          ),
+        ),
+        child: Padding(
+          // make this a reusable peice of code...
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+            defaultText,
+            style: const TextStyle(
+              color: Color.fromARGB(255, 128, 128, 128),
+            ),
+          ),
+        ),
       ),
-      controller: _controller,
-      onTap: () => showDialog(
+      onPressed: () => showDialog(
         context: context,
-        builder: (_) => AddressSearchDialog(
-          geoMethods: _geoMethods,
-          controller: _controller,
-          onDone: (Address address) {
-            //This is where we would have a function to change the map's center
-            //of view, but keep the zoom level the same (maybe).
-            print(address);
-          },
-          style: const AddressDialogStyle(
-            color: attendingOrange,
+        builder: (BuildContext context) => const AlertDialog(
+          content: DecoratedBox(
+            decoration: BoxDecoration(),
+            //child: Text('Hello!!'),
           ),
         ),
       ),

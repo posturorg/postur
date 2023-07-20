@@ -124,8 +124,7 @@ class EventCreateModal extends StatelessWidget {
                       width: 200.0,
                       height: 50.0,
                       child: EventAddressForm(
-                          defaultText:
-                              'Massachusetts Hall, Cambridge, MA 02138'),
+                          defaultText: 'Massachusetts Hall, Cambridg'),
                     ),
                   ),
                 ],
