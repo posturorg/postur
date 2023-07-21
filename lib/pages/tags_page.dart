@@ -30,13 +30,13 @@ class _TagsPageState extends State<TagsPage> {
           const Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Your Tags:',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: attendingOrange,
-                  )),
-            ]),
+                  Text('Your Tags:',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: attendingOrange,
+                      )),
+                ]),
           ),
           GestureDetector(
             onTap: () {
