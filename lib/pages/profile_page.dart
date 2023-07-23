@@ -1,4 +1,6 @@
 //import 'package:flutter/cupertino.dart';
+import 'package:auth_test/components/menu_event_widget.dart';
+import 'package:auth_test/components/your_event_widget.dart';
 import 'package:auth_test/src/widgets.dart';
 import 'package:flutter/material.dart';
 import '../src/colors.dart';
@@ -35,9 +37,9 @@ class _ProfilePageState extends State<ProfilePage> {
             child: ElevatedButton(
               onPressed: () {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const QRScanPage()));
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const QRScanPage()));
               },
               style: ElevatedButton.styleFrom(
                 padding:
@@ -328,7 +330,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return ListView(children: [
       Column(children: [
         //qrCode,
-        IDWidget(
+        const IDWidget(
           fullName: 'Alvin Adjei',
           userName: 'alldayadjei',
         ),
@@ -338,6 +340,11 @@ class _ProfilePageState extends State<ProfilePage> {
           eventTitle: 'Taco Tuesday',
           eventCreator: 'HUDS',
         ),
+        MenuEventWidget(
+            eventTitle: 'Welding Wednesda',
+            eventCreator: 'Huds',
+            isCreator: true,
+            isMember: true),
         AttendingEventsWidget(
           eventTitle: "Pete's Bday Party",
           eventCreator: '@petedagoat',

@@ -1,6 +1,5 @@
 //import '../src/colors.dart';
-import 'package:auth_test/src/colors.dart';
-
+import '../src/colors.dart';
 import '../src/date_time_utilities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

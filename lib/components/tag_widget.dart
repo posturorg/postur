@@ -1,5 +1,5 @@
 import '../components/tag_box_decoration.dart';
-import '../components/tag_modal.dart';
+import 'modals/tag_modal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter/services.dart';

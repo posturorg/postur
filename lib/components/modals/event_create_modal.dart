@@ -1,8 +1,8 @@
 import 'package:auth_test/components/create_event_datetime.dart';
 import 'package:auth_test/components/event_address_form.dart';
 import 'package:auth_test/components/modal_bottom_button.dart';
-import '../components/event_box_decoration.dart';
-import '../src/colors.dart';
+import '../event_box_decoration.dart';
+import '../../src/colors.dart';
 import 'package:flutter/material.dart';
 
 /*
@@ -14,7 +14,9 @@ TextEditingController addressController = TextEditingController(
     );
 
 class EventCreateModal extends StatelessWidget {
-  const EventCreateModal({super.key});
+  const EventCreateModal({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +126,8 @@ class EventCreateModal extends StatelessWidget {
                       width: 200.0,
                       height: 50.0,
                       child: EventAddressForm(
-                          defaultText: 'Massachusetts Hall, Cambridg'),
+                        defaultText: 'Massachusetts Hall, Cambridg',
+                      ),
                     ),
                   ),
                 ],

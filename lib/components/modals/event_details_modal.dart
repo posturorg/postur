@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../components/modal_bottom_button.dart';
-import '../components/event_box_decoration.dart';
-import '../src/colors.dart';
+import '../modal_bottom_button.dart';
+import '../event_box_decoration.dart';
+import '../../src/colors.dart';
 
 class EventDetailsModal extends StatelessWidget {
   final String eventTitle;

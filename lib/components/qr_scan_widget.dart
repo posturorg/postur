@@ -1,4 +1,4 @@
-import 'package:auth_test/components/scan_result_modal.dart';
+import 'package:auth_test/components/modals/scan_result_modal.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
