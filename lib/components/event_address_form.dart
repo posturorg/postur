@@ -1,5 +1,6 @@
 //import 'dart:async';
-import 'package:auth_test/src/location_services.dart';
+//import 'package:auth_test/src/location_services.dart';
+import 'package:auth_test/components/address_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -8,7 +9,7 @@ import '../src/colors.dart';
 
 class EventAddressForm extends StatefulWidget {
   final String defaultText;
-  EventAddressForm({
+  const EventAddressForm({
     super.key,
     required this.defaultText,
   });
@@ -19,7 +20,8 @@ class EventAddressForm extends StatefulWidget {
 
 class _EventAddressFormState extends State<EventAddressForm> {
   //This is specifically for mmodal to edit address
-  TextEditingController _addressSearchController = TextEditingController();
+  final TextEditingController _addressSearchController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -47,24 +49,30 @@ class _EventAddressFormState extends State<EventAddressForm> {
         builder: (BuildContext context) => AlertDialog(
           content: DecoratedBox(
             decoration: const BoxDecoration(),
-            child: Row(
+            child: Column(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _addressSearchController,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter new address...',
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _addressSearchController,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter new address...',
+                        ),
+                      ),
                     ),
-                  ),
+                    IconButton(
+                      onPressed: () {
+                        print(
+                            'Hi'); // This is where location services will go...
+                      },
+                      icon: const Icon(Icons.arrow_forward_ios_rounded),
+                      color: attendingOrange,
+                    )
+                  ],
                 ),
-                IconButton(
-                  onPressed: () {
-                    print(LocationService()
-                        .getPlace(_addressSearchController.text));
-                  },
-                  icon: const Icon(Icons.arrow_forward_ios_rounded),
-                  color: attendingOrange,
-                )
+                const AddressList() //Ultimately, this must be passed the proper
+                //argument
               ],
             ),
           ),

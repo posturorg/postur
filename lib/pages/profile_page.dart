@@ -1,10 +1,10 @@
 //import 'package:flutter/cupertino.dart';
-import 'package:auth_test/components/tag_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../src/colors.dart';
 import '../components/menu_event_widget.dart';
 import '../components/id_widget.dart';
+import '../components/tag_widget.dart';
 import 'qr_scan_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -37,9 +37,11 @@ class _ProfilePageState extends State<ProfilePage> {
             child: ElevatedButton(
               onPressed: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const QRScanPage()));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const QRScanPage(),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 padding:
@@ -111,8 +113,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         children: <Widget>[
                           Container(
                             decoration: tagBoxDecoration(),
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                            child: Row(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
@@ -123,7 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                            margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -239,8 +241,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     style: ElevatedButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 8, horizontal: 20),
-                                      backgroundColor:
-                                          const Color.fromARGB(255, 95, 95, 95),
+                                      backgroundColor: neutralGrey,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(13)),
@@ -294,23 +295,28 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     Widget yourEvents = Container(
-        decoration: sectionBoxDecoration(),
-        padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),
-        child: const Row(children: [
+      decoration: sectionBoxDecoration(),
+      padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),
+      child: const Row(
+        children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Attending:',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: attendingOrange,
-                    )),
+                Text(
+                  'Attending:',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: attendingOrange,
+                  ),
+                ),
               ],
             ),
           ),
-        ]));
+        ],
+      ),
+    );
 
     Widget inviteTitle = Container(
         decoration: sectionBoxDecoration(),

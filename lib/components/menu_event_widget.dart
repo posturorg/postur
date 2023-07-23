@@ -22,10 +22,11 @@ class MenuEventWidget extends StatelessWidget {
   BoxDecoration tagBoxDecoration() {
     return const BoxDecoration(
       border: Border(
-          bottom: BorderSide(
-        color: backgroundWhite,
-        width: 1.0,
-      )),
+        bottom: BorderSide(
+          color: backgroundWhite,
+          width: 1.0,
+        ),
+      ),
     );
   }
 
@@ -116,7 +117,9 @@ class MenuEventWidget extends StatelessWidget {
                             // we set up a container inside which
                             // we create center column and display text
 
-                            return const EventCreateModal(); //Need to make this a bit more general... with a leave button
+                            return const EventCreateModal(
+                                exists:
+                                    true); //Need to make this a bit more general... with a leave button
                           },
                         );
                       },

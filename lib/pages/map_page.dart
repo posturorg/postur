@@ -45,7 +45,7 @@ class _MapPageState extends State<MapPage> {
         // we create center column and display text
 
         // Returning SizedBox instead of a Container
-        return EventCreateModal(); //Need to fix this...
+        return const EventCreateModal(exists: false); //Need to fix this...
       },
     );
 

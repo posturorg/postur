@@ -1,3 +1,4 @@
+import 'package:auth_test/components/modals/event_create_modal.dart';
 import 'package:flutter/material.dart';
 import '../modal_bottom_button.dart';
 import '../event_box_decoration.dart';
@@ -238,7 +239,21 @@ class EventDetailsModal extends StatelessWidget {
                     Visibility(
                       visible: isCreator,
                       child: ModalBottomButton(
-                        onTap: () {}, //onEdit function would go here
+                        onTap: () => {
+                          //first close this existing modal.
+                          //then, open new one
+                          Navigator.pop(context),
+                          showModalBottomSheet<void>(
+                            context: context,
+                            isScrollControlled: true,
+                            elevation: 0.0,
+                            backgroundColor: Colors.white,
+                            clipBehavior: Clip.antiAlias,
+                            showDragHandle: true,
+                            builder: (BuildContext context) =>
+                                const EventCreateModal(exists: true),
+                          )
+                        },
                         text: 'Edit',
                         backgroundColor: neutralGrey,
                       ),
