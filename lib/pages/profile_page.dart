@@ -1,9 +1,9 @@
 //import 'package:flutter/cupertino.dart';
-import 'package:auth_test/components/menu_event_widget.dart';
-import 'package:auth_test/components/your_event_widget.dart';
-import 'package:auth_test/src/widgets.dart';
+import 'package:auth_test/components/tag_widget.dart';
 import 'package:flutter/material.dart';
+
 import '../src/colors.dart';
+import '../components/menu_event_widget.dart';
 import '../components/id_widget.dart';
 import 'qr_scan_page.dart';
 
@@ -158,21 +158,23 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                            margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                const Text('Username:',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    )),
+                                const Text(
+                                  'Username:',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 const SizedBox(width: 8.0),
                                 Expanded(
                                   child: SizedBox(
                                     width: 200.0,
                                     height: 50.0,
                                     child: TextFormField(
-                                      decoration: InputDecoration(
+                                      decoration: const InputDecoration(
                                         hintText: 'alldayadjei',
                                         border:
                                             OutlineInputBorder(), // Customize the border style
@@ -327,35 +329,44 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ]));
 
-    return ListView(children: [
-      Column(children: [
-        //qrCode,
-        const IDWidget(
-          fullName: 'Alvin Adjei',
-          userName: 'alldayadjei',
+    return ListView(
+      children: [
+        Column(
+          children: [
+            //qrCode,
+            const IDWidget(
+              fullName: 'Alvin Adjei',
+              userName: 'alldayadjei',
+            ),
+            profileButtons,
+            yourEvents,
+            MenuEventWidget(
+                eventTitle: 'Welding Club',
+                eventCreator: 'Huds',
+                isCreator: true,
+                isMember: true),
+            MenuEventWidget(
+              eventTitle: "Pete's Bday Party",
+              eventCreator: 'Me',
+              isCreator: true,
+              isMember: true,
+            ),
+            inviteTitle,
+            MenuEventWidget(
+              eventTitle: 'Booze Cruise',
+              eventCreator: 'Sigma Chi',
+              isCreator: false,
+              isMember: false,
+            ),
+            const TagWidget(
+              tagTitle: 'Yale2024',
+              tagCreator: '@YaleAdmins',
+              isMember: false,
+              isCreator: false,
+            ),
+          ],
         ),
-        profileButtons,
-        yourEvents,
-        YourEventWidget(
-          eventTitle: 'Taco Tuesday',
-          eventCreator: 'HUDS',
-        ),
-        MenuEventWidget(
-            eventTitle: 'Welding Wednesda',
-            eventCreator: 'Huds',
-            isCreator: true,
-            isMember: true),
-        AttendingEventsWidget(
-          eventTitle: "Pete's Bday Party",
-          eventCreator: '@petedagoat',
-        ),
-        inviteTitle,
-        InviteEventWidget(
-          inviteTitle: 'Booze Cruise',
-          inviteCreator: 'Sigma Chi',
-        ),
-        InviteTagWidget(inviteTitle: 'Yale2024', inviteCreator: '@YaleAdmins'),
-      ]),
-    ]);
+      ],
+    );
   }
 }

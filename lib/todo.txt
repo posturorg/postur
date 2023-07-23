@@ -1,0 +1,11 @@
+Additional Component & UI Needs:
+1.) Need to build address search autocomplete list below input address
+    field in dialog pop up/modal.
+
+Graphical Errors:
+1.) Error on iPhone SE (and potentially thinner screens). On messages
+    screen, message representation in menu seems to clip off screen,
+    creating a render error. On tags screen, requests is forced to
+    wrap to multiple lines. I would like to address this by forcing
+    an event title to shrink in size so that it fits properly, but
+    this will be addressed later.

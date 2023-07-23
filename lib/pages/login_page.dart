@@ -1,8 +1,11 @@
-import 'package:auth_test/components/my_textfield.dart';
+import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:auth_test/components/my_button.dart';
+
+import '../components/my_button.dart';
+import '../components/my_textfield.dart';
+import '../src/colors.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
@@ -26,8 +29,7 @@ class _LoginPageState extends State<LoginPage> {
       builder: (context) {
         return const Center(
           child: CircularProgressIndicator(
-            valueColor:
-                AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 255, 17, 0)),
+            valueColor: AlwaysStoppedAnimation<Color>(absentRed),
           ),
         );
       },
@@ -61,7 +63,14 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return CupertinoAlertDialog(
+        return DefaultOneOptionDialog(
+          title: message,
+          content: '', //want to find a way to make this null...
+          buttonText: 'Ok',
+          onPressed: () => Navigator.pop(context),
+        );
+
+        /*CupertinoAlertDialog(
           title: Text(message),
           actions: [
             CupertinoDialogAction(
@@ -72,6 +81,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ],
         );
+      */
       },
     );
   }
@@ -92,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 30,
-                      color: Color.fromARGB(255, 255, 17, 0),
+                      color: absentRed,
                     ),
                   ),
                   const SizedBox(height: 50),
@@ -132,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
                         Text(
                           'Forgot password?',
                           style: TextStyle(
-                            color: Color.fromARGB(255, 91, 91, 91),
+                            color: neutralGrey,
                             decoration: TextDecoration.underline,
                           ),
                         ),

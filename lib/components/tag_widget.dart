@@ -1,10 +1,11 @@
-import '../components/tag_box_decoration.dart';
-import 'modals/tag_modal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
+
+import './dialogs/default_two_option_dialog.dart';
+import '../components/tag_box_decoration.dart';
 import '.././src/colors.dart';
 import 'my_inline_button.dart';
+import 'modals/tag_modal.dart';
 
 /* isMember is a bool that toggles the COLOR of the widget between the orange
 typically used for attendance (if its true), and red used for inattendance (if
@@ -28,9 +29,6 @@ but are not the creator of.
 4.) isMember == true, isCreator == true -> Tag you created.
 */
 
-/* This is in progress! And is not complete. Doing so should be the next
-immediate task */
-
 class TagWidget extends StatelessWidget {
   final String tagTitle;
   final String tagCreator;
@@ -51,25 +49,14 @@ class TagWidget extends StatelessWidget {
     void onLeave() {
       showDialog(
         context: context,
-        builder: (_) => CupertinoAlertDialog(
-            title: const Text('Are you sure?'),
-            content: Text('Do you really want to leave #$tagTitle?'),
-            actions: [
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  "Yes, leave",
-                  style: TextStyle(color: Colors.blue),
-                ),
-              ),
-              TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("No, don't leave",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                      ))),
-            ]),
+        builder: (_) => DefaultTwoOptionDialog(
+          title: 'Are you Sure?',
+          content: 'Do you really want to leave #$tagTitle?',
+          optionOneText: 'Yes, leave',
+          optionTwoText: "No, don't leave",
+          onOptionOne: () {},
+          onOptionTwo: () => Navigator.pop(context),
+        ),
         barrierDismissible: true,
       );
     }
@@ -125,12 +112,14 @@ class TagWidget extends StatelessWidget {
                   Text('#$tagTitle',
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.bold)),
-                  Text(isCreator ? 'Me' : tagCreator,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: Color.fromARGB(255, 93, 93,
-                            93), //Maybe add this color to the colors file
-                      ))
+                  Text(
+                    isCreator ? 'Me' : tagCreator,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color:
+                          neutralGrey, //Maybe add this color to the colors file
+                    ),
+                  )
                 ],
               ),
             ),

@@ -1,7 +1,8 @@
-import '../components/my_searchbar.dart';
 import 'package:flutter/material.dart';
+
 import '../src/colors.dart';
 import '../components/tag_widget.dart';
+import '../components/my_searchbar.dart';
 
 class TagsPage extends StatefulWidget {
   const TagsPage({super.key});
@@ -16,10 +17,11 @@ class _TagsPageState extends State<TagsPage> {
     BoxDecoration sectionBoxDecoration() {
       return const BoxDecoration(
         border: Border(
-            top: BorderSide(
-          color: backgroundWhite,
-          width: 1.0,
-        )),
+          top: BorderSide(
+            color: backgroundWhite,
+            width: 1.0,
+          ),
+        ),
       );
     }
 
