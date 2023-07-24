@@ -18,6 +18,16 @@ class EventDetailsModal extends StatelessWidget {
     required this.isMember,
   });
 
+  final TextStyle defaultBold = const TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 15,
+  );
+
+  final TextStyle defaultBody = const TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 15,
+  );
+
   @override
   Widget build(BuildContext context) {
     String bottomButtonText;
@@ -71,16 +81,14 @@ class EventDetailsModal extends StatelessWidget {
                       text: TextSpan(
                         style: DefaultTextStyle.of(context)
                             .style, // Use the default text style from the context
-                        children: const [
+                        children: [
                           TextSpan(
                             text: 'When: ',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
+                            style: defaultBold,
                           ),
                           TextSpan(
                             text: 'This Wednesday, 7:30 p.m.',
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal, fontSize: 15),
+                            style: defaultBody,
                           ),
                         ],
                       ),
@@ -99,16 +107,14 @@ class EventDetailsModal extends StatelessWidget {
                       text: TextSpan(
                         style: DefaultTextStyle.of(context)
                             .style, // Use the default text style from the context
-                        children: const [
+                        children: [
                           TextSpan(
                             text: 'Ends: ',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
+                            style: defaultBold,
                           ),
                           TextSpan(
                             text: '10 p.m.',
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal, fontSize: 15),
+                            style: defaultBody,
                           ),
                         ],
                       ),
@@ -127,16 +133,14 @@ class EventDetailsModal extends StatelessWidget {
                       text: TextSpan(
                         style: DefaultTextStyle.of(context)
                             .style, // Use the default text style from the context
-                        children: const [
+                        children: [
                           TextSpan(
                             text: 'RSVP by: ',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
+                            style: defaultBold,
                           ),
                           TextSpan(
                             text: 'This Tuesday, 10 a.m.',
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal, fontSize: 15),
+                            style: defaultBody,
                           ),
                         ],
                       ),
@@ -155,17 +159,15 @@ class EventDetailsModal extends StatelessWidget {
                       text: TextSpan(
                         style: DefaultTextStyle.of(context)
                             .style, // Use the default text style from the context
-                        children: const [
+                        children: [
                           TextSpan(
                             text: 'Where: ',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
+                            style: defaultBold,
                           ),
                           TextSpan(
                             text:
                                 '901 Fictitious Square, Unreal City, USA 67890',
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal, fontSize: 15),
+                            style: defaultBody,
                           ),
                         ],
                       ),
@@ -184,16 +186,14 @@ class EventDetailsModal extends StatelessWidget {
                       text: TextSpan(
                         style: DefaultTextStyle.of(context)
                             .style, // Use the default text style from the context
-                        children: const [
+                        children: [
                           TextSpan(
                             text: 'Attending: ',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
+                            style: defaultBold,
                           ),
                           TextSpan(
                             text: 'Thomas Kowalski, William Gödeler',
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal, fontSize: 15),
+                            style: defaultBody,
                           ),
                         ],
                       ),
@@ -212,17 +212,15 @@ class EventDetailsModal extends StatelessWidget {
                       text: TextSpan(
                         style: DefaultTextStyle.of(context)
                             .style, // Use the default text style from the context
-                        children: const [
+                        children: [
                           TextSpan(
                             text: 'Description: ',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
+                            style: defaultBody,
                           ),
                           TextSpan(
                             text:
                                 'Never gonna give you up, never gonna let you down, never gonna run around and desert you!',
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal, fontSize: 15),
+                            style: defaultBody,
                           ),
                         ],
                       ),

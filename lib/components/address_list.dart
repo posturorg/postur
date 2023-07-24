@@ -11,6 +11,11 @@ class AddressList extends StatelessWidget {
       children: [
         AddressListEntry(text: 'text'),
         AddressListEntry(text: '7 Elm Meadow Grove, Grassland, DE 18342'),
+        AddressListEntry(
+            text:
+                '11 Royal Palm Way, Apt. 43, Goosbury Avenue, Goosebury, CE 18773'),
+        AddressListEntry(text: 'Sick'),
+        AddressListEntry(text: 'Oopsy Daisy, Hello!'),
       ],
     );
   }

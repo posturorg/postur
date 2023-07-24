@@ -19,6 +19,11 @@ class EventCreateModal extends StatelessWidget {
     required this.exists,
   });
 
+  final TextStyle defaultBold = const TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 15,
+  );
+
   @override
   Widget build(BuildContext context) {
     late Function()? onBottomButtonPress;
@@ -63,66 +68,10 @@ class EventCreateModal extends StatelessWidget {
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Creator: Me',
-                      style: TextStyle(
-                        fontSize: 17,
-                      )),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text('When:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
-                  SizedBox(width: 8.0),
-                  Expanded(
-                    child: SizedBox(
-                        width: 200.0,
-                        height: 50.0,
-                        child: CreateEventDateTime()),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text('Ends:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
-                  SizedBox(width: 8.0),
-                  Expanded(
-                    child: SizedBox(
-                        width: 200.0,
-                        height: 50.0,
-                        child: CreateEventDateTime()),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text('RSVP by:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
-                  SizedBox(width: 8.0),
-                  Expanded(
-                    child: SizedBox(
-                      width: 200.0,
-                      height: 50.0,
-                      child: CreateEventDateTime(),
+                  Text(
+                    'Creator: Me',
+                    style: TextStyle(
+                      fontSize: 17,
                     ),
                   ),
                 ],
@@ -130,15 +79,81 @@ class EventCreateModal extends StatelessWidget {
             ),
             Container(
               margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text('Where:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
-                  SizedBox(width: 8.0),
-                  Expanded(
+                  Text(
+                    'When:',
+                    style: defaultBold,
+                  ),
+                  const SizedBox(width: 8.0),
+                  const Expanded(
+                    child: SizedBox(
+                      width: 200.0,
+                      height: 50.0,
+                      child: CreateEventDateTime(
+                        upperText: 'When:',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Ends:',
+                    style: defaultBold,
+                  ),
+                  const SizedBox(width: 8.0),
+                  const Expanded(
+                    child: SizedBox(
+                      width: 200.0,
+                      height: 50.0,
+                      child: CreateEventDateTime(
+                        upperText: 'Ends:',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'RSVP by:',
+                    style: defaultBold,
+                  ),
+                  const SizedBox(width: 8.0),
+                  const Expanded(
+                    child: SizedBox(
+                      width: 200.0,
+                      height: 50.0,
+                      child: CreateEventDateTime(
+                        upperText: 'RSVP by:',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Where:',
+                    style: defaultBold,
+                  ),
+                  const SizedBox(width: 8.0),
+                  const Expanded(
                     child: SizedBox(
                       width: 200.0,
                       height: 50.0,
@@ -160,13 +175,12 @@ class EventCreateModal extends StatelessWidget {
                       text: TextSpan(
                         style: DefaultTextStyle.of(context)
                             .style, // Use the default text style from the context
-                        children: const [
+                        children: [
                           TextSpan(
                             text: 'Attending: ',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
+                            style: defaultBold,
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text: 'Thomas Kowalski, William Gödeler',
                             style: TextStyle(
                                 fontWeight: FontWeight.normal, fontSize: 15),
@@ -183,10 +197,10 @@ class EventCreateModal extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('Description:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
+                  Text(
+                    'Description:',
+                    style: defaultBold,
+                  ),
                   const SizedBox(width: 8.0),
                   Expanded(
                     child: SizedBox(

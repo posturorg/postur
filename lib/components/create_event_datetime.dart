@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 class CreateEventDateTime extends StatefulWidget {
   //Need to add a constructor for latest time allowed and
   //for default what the default time will be set to
-  const CreateEventDateTime({super.key});
+  final String upperText;
+  const CreateEventDateTime({super.key, this.upperText = ''});
 
   @override
   State<CreateEventDateTime> createState() => _CreateEventDateTimeState();
@@ -48,17 +49,34 @@ class _CreateEventDateTimeState extends State<CreateEventDateTime> {
           context: context,
           builder: (BuildContext context) => Container(
             height: 280,
-            child: SafeArea(
-              child: CupertinoDatePicker(
-                backgroundColor: Colors.transparent,
-                initialDateTime:
-                    defaultDateTime, //Should be device time or current time (via internet)
-                onDateTimeChanged: (DateTime newTime) {
-                  setState(() => defaultDateTime = newTime);
-                },
-                minimumDate: minimumDateTime,
-                maximumDate: maximumDateTime,
-              ),
+            child: Column(
+              children: [
+                Visibility(
+                  visible: (widget.upperText != ''),
+                  child: Text(
+                    widget.upperText,
+                    style: const TextStyle(
+                      //Centralize these
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SafeArea(
+                    child: CupertinoDatePicker(
+                      backgroundColor: Colors.transparent,
+                      initialDateTime:
+                          defaultDateTime, //Should be device time or current time (via internet)
+                      onDateTimeChanged: (DateTime newTime) {
+                        setState(() => defaultDateTime = newTime);
+                      },
+                      minimumDate: minimumDateTime,
+                      maximumDate: maximumDateTime,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         );

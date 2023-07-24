@@ -1,6 +1,6 @@
 //import 'dart:async';
 //import 'package:auth_test/src/location_services.dart';
-import 'package:auth_test/components/address_list.dart';
+import 'package:auth_test/components/modals/address_autocomplete_modal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -19,6 +19,8 @@ class EventAddressForm extends StatefulWidget {
 }
 
 class _EventAddressFormState extends State<EventAddressForm> {
+  //maybe make this
+  //stateless
   //This is specifically for mmodal to edit address
   final TextEditingController _addressSearchController =
       TextEditingController();
@@ -34,7 +36,6 @@ class _EventAddressFormState extends State<EventAddressForm> {
           ),
         ),
         child: Padding(
-          // make this a reusable peice of code...
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Text(
             widget.defaultText,
@@ -47,34 +48,8 @@ class _EventAddressFormState extends State<EventAddressForm> {
       onPressed: () => showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          content: DecoratedBox(
-            decoration: const BoxDecoration(),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _addressSearchController,
-                        decoration: const InputDecoration(
-                          hintText: 'Enter new address...',
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        print(
-                            'Hi'); // This is where location services will go...
-                      },
-                      icon: const Icon(Icons.arrow_forward_ios_rounded),
-                      color: attendingOrange,
-                    )
-                  ],
-                ),
-                const AddressList() //Ultimately, this must be passed the proper
-                //argument
-              ],
-            ),
+          content: AddressAutocompleteModal(
+            textController: _addressSearchController,
           ),
         ),
       ),
