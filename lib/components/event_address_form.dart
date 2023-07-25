@@ -37,10 +37,13 @@ class _EventAddressFormState extends State<EventAddressForm> {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Text(
-            widget.defaultText,
-            style: const TextStyle(
-              color: Color.fromARGB(255, 128, 128, 128),
+          child: Flexible(
+            child: Text(
+              widget.defaultText,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Color.fromARGB(255, 128, 128, 128),
+              ),
             ),
           ),
         ),

@@ -34,7 +34,7 @@ class EventCreateModal extends StatelessWidget {
               builder: (context) => DefaultTwoOptionDialog(
                 title: 'Confirm event changes?',
                 optionOneText: 'Yes, confirm',
-                onOptionOne: () {},
+                onOptionOne: () {}, //interface with backend to change event...
                 optionTwoText: 'No',
                 onOptionTwo: () => {Navigator.pop(context)},
               ),
@@ -158,7 +158,9 @@ class EventCreateModal extends StatelessWidget {
                       width: 200.0,
                       height: 50.0,
                       child: EventAddressForm(
-                        defaultText: 'Massachusetts Hall, Cambridg',
+                        defaultText: 'Massachusetts Hall, Cambridge', //Should
+                        //be the events address, as given by its coordinates,
+                        //by default.
                       ),
                     ),
                   ),

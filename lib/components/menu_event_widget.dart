@@ -1,4 +1,6 @@
+import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/modals/event_create_modal.dart';
+import 'package:auth_test/components/my_inline_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -32,13 +34,47 @@ class MenuEventWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String mainButtonText;
+    late String mainButtonText;
+    late Function()? onMainButtonPress;
     if (isCreator) {
       mainButtonText = 'Cancel';
+      onMainButtonPress = () => {
+            showDialog(
+              //Need to compress this
+              context: context,
+              builder: (_) => DefaultTwoOptionDialog(
+                title: 'Are you sure?',
+                content: 'Are you sure you want to cancel the event?',
+                optionOneText: 'Yes, poop the party.',
+                optionTwoText: 'No, party on!',
+                onOptionOne: () {},
+                onOptionTwo: () {
+                  Navigator.pop(context);
+                },
+              ),
+              barrierDismissible: true,
+            )
+          };
     } else if (isMember) {
       mainButtonText = 'Leave';
+      onMainButtonPress = () => {
+            showDialog(
+              context: context,
+              builder: (_) => DefaultTwoOptionDialog(
+                title: 'Are you sure?',
+                content: 'Are you sure you want to leave the event?',
+                optionOneText: 'Yes, leave.',
+                optionTwoText: 'No, stay.',
+                onOptionOne: () {},
+                onOptionTwo: () {
+                  Navigator.pop(context);
+                },
+              ),
+            )
+          };
     } else {
       mainButtonText = 'RSVP';
+      onMainButtonPress = () {};
     }
 
     return GestureDetector(
@@ -101,42 +137,10 @@ class MenuEventWidget extends StatelessWidget {
                 children: [
                   Visibility(
                     visible: isCreator,
-                    child: ElevatedButton(
-                      //Edit button... Should make this an instance of another widget...
-                      onPressed: () {
-                        showModalBottomSheet<void>(
-                          // context and builder are
-                          // required properties in this widget
-                          context: context,
-                          isScrollControlled: true,
-                          elevation: 0.0,
-                          backgroundColor: Colors.white,
-                          clipBehavior: Clip.antiAlias,
-                          showDragHandle: true,
-                          builder: (BuildContext context) {
-                            // we set up a container inside which
-                            // we create center column and display text
-
-                            return const EventCreateModal(
-                                exists:
-                                    true); //Need to make this a bit more general... with a leave button
-                          },
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 10),
-                        backgroundColor: neutralGrey,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        elevation: 0.0,
-                      ),
-                      child: const Text(
-                        'Edit',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
+                    child: MyInlineButton(
+                      color: neutralGrey,
+                      text: 'Edit',
+                      onTap: () {}, // This is where on edit function will go.
                     ),
                   ),
                 ],
@@ -147,49 +151,10 @@ class MenuEventWidget extends StatelessWidget {
               children: [
                 Container(
                   padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        //Need to compress this
-                        context: context,
-                        builder: (_) => CupertinoAlertDialog(
-                          title: const Text('Are you sure?'),
-                          content:
-                              Text('Do you really want to cancel $eventTitle?'),
-                          actions: [
-                            TextButton(
-                                onPressed: () {},
-                                child: const Text("Yes, poop the party.",
-                                    style: TextStyle(color: Colors.blue))),
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text(
-                                "No, party on!",
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        barrierDismissible: true,
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 10),
-                      backgroundColor: isMember ? attendingOrange : absentRed,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      elevation: 0.0,
-                    ),
-                    child: Text(
-                      mainButtonText,
-                      style: const TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
+                  child: MyInlineButton(
+                    color: isMember ? attendingOrange : absentRed,
+                    text: mainButtonText,
+                    onTap: onMainButtonPress,
                   ),
                 ),
               ],

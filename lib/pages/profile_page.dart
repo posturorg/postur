@@ -360,7 +360,7 @@ class _ProfilePageState extends State<ProfilePage> {
             inviteTitle,
             MenuEventWidget(
               eventTitle: 'Booze Cruise',
-              eventCreator: 'Sigma Chi',
+              eventCreator: '@SigmaChi',
               isCreator: false,
               isMember: false,
             ),

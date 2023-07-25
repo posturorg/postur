@@ -8,6 +8,7 @@ class AddressList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Column(
+      //This column doesnt seem to be causing the issue.
       children: [
         AddressListEntry(text: 'text'),
         AddressListEntry(text: '7 Elm Meadow Grove, Grassland, DE 18342'),
