@@ -1,23 +1,31 @@
-import 'package:auth_test/components/address_list_entry.dart';
 import 'package:flutter/material.dart';
-/* This is where the autocomplete list widget will go... */
+
+import '../components/address_list_entry.dart';
+/* likely will need to make this widget able to build asynchronously... */
 
 class AddressList extends StatelessWidget {
-  const AddressList({super.key});
+  //this probably needs to be made
+  //into an async widget.
+  final List<String> displayList;
+  const AddressList({
+    super.key,
+    required this.displayList,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    late List<String> internalSublist;
+    if (displayList.length < 6) {
+      internalSublist = displayList;
+    } else {
+      internalSublist = displayList.sublist(0, 6);
+    }
+    print(internalSublist);
+    return Column(
       //This column doesnt seem to be causing the issue.
-      children: [
-        AddressListEntry(text: 'text'),
-        AddressListEntry(text: '7 Elm Meadow Grove, Grassland, DE 18342'),
-        AddressListEntry(
-            text:
-                '11 Royal Palm Way, Apt. 43, Goosbury Avenue, Goosebury, CE 18773'),
-        AddressListEntry(text: 'Sick'),
-        AddressListEntry(text: 'Oopsy Daisy, Hello!'),
-      ],
+      children: internalSublist
+          .map((fullAddress) => AddressListEntry(text: fullAddress))
+          .toList(),
     );
   }
 }

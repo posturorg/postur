@@ -35,7 +35,11 @@ class AddressAutocompleteModal extends StatelessWidget {
               )
             ],
           ),
-          const AddressList(), //Ultimately, this must be passed the proper args.
+          const AddressList(
+            displayList: [
+              'Ben',
+            ],
+          ), //Ultimately, this must be passed the proper args.
           const SizedBox(
             height: 10.0,
           ),
