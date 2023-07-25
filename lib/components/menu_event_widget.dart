@@ -1,4 +1,5 @@
 import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
+import 'package:auth_test/components/modals/event_create_modal.dart';
 import 'package:auth_test/components/my_inline_button.dart';
 import 'package:flutter/material.dart';
 
@@ -138,7 +139,18 @@ class MenuEventWidget extends StatelessWidget {
                     child: MyInlineButton(
                       color: neutralGrey,
                       text: 'Edit',
-                      onTap: () {}, // This is where on edit function will go.
+                      onTap: () {
+                        showModalBottomSheet<void>(
+                          context: context,
+                          isScrollControlled: true,
+                          elevation: 0.0,
+                          backgroundColor: Colors.white,
+                          clipBehavior: Clip.antiAlias,
+                          showDragHandle: true,
+                          builder: (BuildContext context) =>
+                              const EventCreateModal(exists: true),
+                        );
+                      }, // This is where on edit function will go.
                     ),
                   ),
                 ],

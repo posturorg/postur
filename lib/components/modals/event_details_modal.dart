@@ -1,4 +1,6 @@
+import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/modals/event_create_modal.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../modal_bottom_button.dart';
 import '../event_box_decoration.dart';
@@ -30,13 +32,43 @@ class EventDetailsModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String bottomButtonText;
+    late String bottomButtonText;
+    late Function()? onMainBottomTap;
     if (isCreator) {
       bottomButtonText = 'Cancel';
+      onMainBottomTap = () => {
+            //print('hey!'),
+            showCupertinoDialog(
+              context: context,
+              builder: (context) => DefaultTwoOptionDialog(
+                title: 'Are you sure?',
+                content: 'Are you sure you want to cancel this event?',
+                optionOneText: 'Yes, poop the party.',
+                optionTwoText: 'No, party on!',
+                onOptionOne: () {}, //Should leave event, and pop both modals
+                onOptionTwo: () => {Navigator.pop(context)},
+              ),
+            )
+          };
     } else if (isMember) {
       bottomButtonText = 'Leave';
+      onMainBottomTap = () => {
+            //print('Hey!'),
+            showCupertinoDialog(
+              context: context,
+              builder: (context) => DefaultTwoOptionDialog(
+                title: 'Are you sure?',
+                content: 'Are you sure you want to leave this event?',
+                optionOneText: 'Yes',
+                optionTwoText: 'No',
+                onOptionOne: () {}, //Should leave event, and pop both modals
+                onOptionTwo: () => {Navigator.pop(context)},
+              ),
+            )
+          };
     } else {
       bottomButtonText = 'RSVP';
+      onMainBottomTap = () {};
     }
     return SizedBox(
       height: 750,
@@ -257,11 +289,7 @@ class EventDetailsModal extends StatelessWidget {
                       ),
                     ),
                     ModalBottomButton(
-                      onTap: () {},
-                      /* if isCreator, then make this be a notification asking
-                      user if they want to 
-                      
-                       */
+                      onTap: onMainBottomTap,
                       text: bottomButtonText,
                       backgroundColor: isMember ? attendingOrange : absentRed,
                     ),

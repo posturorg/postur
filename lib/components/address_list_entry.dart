@@ -38,12 +38,9 @@ class AddressListEntry extends StatelessWidget {
             Flexible(
               child: Container(
                 padding: const EdgeInsets.fromLTRB(7, 0, 20, 0),
-                child: Expanded(
-                  //This might be horizontal overflow culprit
-                  child: Text(
-                    text,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                child: Text(
+                  text,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             )
