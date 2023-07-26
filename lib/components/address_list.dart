@@ -15,12 +15,12 @@ class AddressList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     late List<String> internalSublist;
-    if (displayList.length < 6) {
+    if (displayList.length < 5) {
       internalSublist = displayList;
     } else {
-      internalSublist = displayList.sublist(0, 6);
+      internalSublist = displayList.sublist(0, 5);
     }
-    print(internalSublist);
+    //print(internalSublist);
     return Column(
       //This column doesnt seem to be causing the issue.
       children: internalSublist

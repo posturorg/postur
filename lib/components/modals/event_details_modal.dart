@@ -37,7 +37,6 @@ class EventDetailsModal extends StatelessWidget {
     if (isCreator) {
       bottomButtonText = 'Cancel';
       onMainBottomTap = () => {
-            //print('hey!'),
             showCupertinoDialog(
               context: context,
               builder: (context) => DefaultTwoOptionDialog(
@@ -53,7 +52,6 @@ class EventDetailsModal extends StatelessWidget {
     } else if (isMember) {
       bottomButtonText = 'Leave';
       onMainBottomTap = () => {
-            //print('Hey!'),
             showCupertinoDialog(
               context: context,
               builder: (context) => DefaultTwoOptionDialog(

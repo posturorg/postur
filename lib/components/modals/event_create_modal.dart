@@ -11,23 +11,39 @@ import 'package:flutter/material.dart';
 This widget is what appears inside the modal for event creation
  */
 
-class EventCreateModal extends StatelessWidget {
-  final bool exists;
+class EventCreateModal extends StatefulWidget {
+  final bool
+      exists; //essentially toggles whether or not this is an editing widget...
 
   const EventCreateModal({
     super.key,
     required this.exists,
   });
 
+  @override
+  State<EventCreateModal> createState() => _EventCreateModalState();
+}
+
+class _EventCreateModalState extends State<EventCreateModal> {
+  final TextEditingController addressSearchController = TextEditingController();
   final TextStyle defaultBold = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 15,
   );
 
   @override
+  void dispose() {
+    //might not really be necessary tbh
+    addressSearchController.dispose();
+    super.dispose(); //Might need to go back and check that this is implemented
+    //more broadly, that way we dont get errors with controllers being filled
+    //from prior instances when they shouldn't be.
+  }
+
+  @override
   Widget build(BuildContext context) {
     late Function()? onBottomButtonPress;
-    if (exists) {
+    if (widget.exists) {
       onBottomButtonPress = () => {
             showCupertinoDialog(
               context: context,
@@ -153,7 +169,7 @@ class EventCreateModal extends StatelessWidget {
                     style: defaultBold,
                   ),
                   const SizedBox(width: 8.0),
-                  const Expanded(
+                  Expanded(
                     child: SizedBox(
                       width: 200.0,
                       height: 50.0,
@@ -161,6 +177,9 @@ class EventCreateModal extends StatelessWidget {
                         defaultText: 'Massachusetts Hall, Cambridge', //Should
                         //be the events address, as given by its coordinates,
                         //by default.
+                        //controller: //This is a text editing controller to
+                        //help with editing the address in the inner modal.
+                        addressSearchController: addressSearchController,
                       ),
                     ),
                   ),
@@ -179,7 +198,7 @@ class EventCreateModal extends StatelessWidget {
                             .style, // Use the default text style from the context
                         children: [
                           TextSpan(
-                            text: 'Attending: ',
+                            text: 'Invite: ',
                             style: defaultBold,
                           ),
                           const TextSpan(
@@ -237,7 +256,7 @@ class EventCreateModal extends StatelessWidget {
                   children: [
                     ModalBottomButton(
                       onTap: onBottomButtonPress,
-                      text: exists ? 'Confirm Changes' : 'Create',
+                      text: widget.exists ? 'Confirm Changes' : 'Create',
                       backgroundColor: attendingOrange,
                     )
                   ],

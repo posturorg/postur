@@ -2,12 +2,19 @@ import 'package:auth_test/components/address_list.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:flutter/material.dart';
 
-class AddressAutocompleteModal extends StatelessWidget {
+class AddressAutocompleteModal extends StatefulWidget {
   // will likely need to
   // make this stateful, but no matter!
   final TextEditingController textController;
   const AddressAutocompleteModal({super.key, required this.textController});
 
+  @override
+  State<AddressAutocompleteModal> createState() =>
+      _AddressAutocompleteModalState();
+}
+
+class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
+  List<String> displayList = [];
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
@@ -20,25 +27,26 @@ class AddressAutocompleteModal extends StatelessWidget {
             children: [
               Expanded(
                 child: TextField(
-                  controller: textController,
+                  controller: widget.textController,
+                  onChanged: (textVal) async {
+                    print(textVal);
+                  },
                   decoration: const InputDecoration(
                     hintText: 'Enter new address...',
                   ),
                 ),
               ),
               IconButton(
-                onPressed: () {
-                  print('Hi'); // This is where location services will go...
+                onPressed: () async {
+                  Navigator.pop(context);
                 },
                 icon: const Icon(Icons.arrow_forward_ios_rounded),
                 color: attendingOrange,
               )
             ],
           ),
-          const AddressList(
-            displayList: [
-              'Ben',
-            ],
+          AddressList(
+            displayList: displayList,
           ), //Ultimately, this must be passed the proper args.
           const SizedBox(
             height: 10.0,

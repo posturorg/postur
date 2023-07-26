@@ -7,6 +7,10 @@ Additional Component & UI Needs:
 3.) Need to build function that generates map marker icons (properly)
 4.) Need to build functionality to cluster map icons together when you
     zoom out far enough
+5.) Need to Have a convenient way to Edit Event Title in Create Event
+    modal.
+6.) Need to have a convenient way to edit event description.
+7.) Center map, on start up, on users currentl location.
 
 Graphical Errors:
 1.) Error on iPhone SE (and potentially thinner screens). On messages

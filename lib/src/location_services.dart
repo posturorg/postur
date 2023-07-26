@@ -4,7 +4,20 @@ import 'dart:convert' as convert;
 class LocationService {
   final String key = 'AIzaSyDGT20OxGoAgAv-GuzqIdPN533xcl0dOOU';
 
-  Future<String> getPlaceId(String input) async {
+  Future<List<String>> getEventList(String input) async {
+    final String url =
+        "https://maps.googleapis.com/maps/api/place/autocomplete/json?" +
+            "input=$input" +
+            "&components=country:us" +
+            "&language=en" +
+            "&location=42.3732%2C-71.1202" + // Harvard Square
+            "&radius=50000" + // within 50km of the square
+            "&key=$key";
+
+    return [];
+  }
+
+  /*Future<String> getPlaceId(String input) async {
     final String url =
         'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=$input&inputtype=textquery&key=$key';
 
@@ -30,5 +43,5 @@ class LocationService {
 
     print(results);
     return results;
-  }
+  } */
 }

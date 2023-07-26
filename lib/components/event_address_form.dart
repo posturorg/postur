@@ -9,9 +9,11 @@ import '../src/colors.dart';
 
 class EventAddressForm extends StatefulWidget {
   final String defaultText;
+  final TextEditingController addressSearchController;
   const EventAddressForm({
     super.key,
     required this.defaultText,
+    required this.addressSearchController,
   });
 
   @override
@@ -19,11 +21,7 @@ class EventAddressForm extends StatefulWidget {
 }
 
 class _EventAddressFormState extends State<EventAddressForm> {
-  //maybe make this
-  //stateless
-  //This is specifically for mmodal to edit address
-  final TextEditingController _addressSearchController =
-      TextEditingController();
+  //This should still be stateful, I think...
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +50,7 @@ class _EventAddressFormState extends State<EventAddressForm> {
         context: context,
         builder: (BuildContext context) => AlertDialog(
           content: AddressAutocompleteModal(
-            textController: _addressSearchController,
+            textController: widget.addressSearchController,
           ),
         ),
       ),
