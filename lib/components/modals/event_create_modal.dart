@@ -2,6 +2,7 @@ import 'package:auth_test/components/create_event_datetime.dart';
 import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/event_address_form.dart';
 import 'package:auth_test/components/modal_bottom_button.dart';
+import 'package:auth_test/src/places/places_repository.dart';
 import 'package:flutter/cupertino.dart';
 import '../event_box_decoration.dart';
 import '../../src/colors.dart';
@@ -174,7 +175,10 @@ class _EventCreateModalState extends State<EventCreateModal> {
                       width: 200.0,
                       height: 50.0,
                       child: EventAddressForm(
-                        defaultText: 'Massachusetts Hall, Cambridge', //Should
+                        defaultPlace: PlaceAutoComplete(
+                          'Harvard Square, Boston, MA, USA',
+                          'EiNVbml2ZXJzaXR5IFN0cmVldCwgSGFydmFyZCwgSUwsIFVTQSIuKiwKFAoSCb-KkZX2Wg-IEeYK3owVcsfYEhQKEgmjZ7CqjloPiBHGYtyo8gUcrw',
+                        ), //Should
                         //be the events address, as given by its coordinates,
                         //by default.
                         //controller: //This is a text editing controller to
