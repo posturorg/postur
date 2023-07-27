@@ -1,7 +1,6 @@
 //import 'dart:async';
 //import 'package:auth_test/src/location_services.dart';
 import 'package:auth_test/components/modals/address_autocomplete_modal.dart';
-import 'package:auth_test/src/places/places_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -9,12 +8,12 @@ import 'package:flutter/material.dart';
 import '../src/colors.dart';
 
 class EventAddressForm extends StatefulWidget {
-  final PlaceAutoComplete defaultPlace;
+  final String defaultText;
   final TextEditingController addressSearchController;
   final void Function(PlaceAutoComplete) selectedPlaceSetter;
   const EventAddressForm({
     super.key,
-    required this.defaultPlace,
+    required this.defaultText,
     required this.addressSearchController,
     required this.selectedPlaceSetter,
   });
@@ -24,6 +23,8 @@ class EventAddressForm extends StatefulWidget {
 }
 
 class _EventAddressFormState extends State<EventAddressForm> {
+  //This should still be stateful, I think...
+
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(
@@ -38,7 +39,11 @@ class _EventAddressFormState extends State<EventAddressForm> {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Flexible(
             child: Text(
+<<<<<<< HEAD
               widget.defaultPlace.address,
+=======
+              widget.defaultText,
+>>>>>>> parent of a884ce8 (Updated Autocomplete)
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: Color.fromARGB(255, 128, 128, 128),

@@ -1,6 +1,5 @@
 import 'package:auth_test/components/address_list.dart';
 import 'package:auth_test/src/colors.dart';
-import 'package:auth_test/src/places/places_repository.dart';
 import 'package:flutter/material.dart';
 
 class AddressAutocompleteModal extends StatefulWidget {
@@ -20,6 +19,7 @@ class AddressAutocompleteModal extends StatefulWidget {
 }
 
 class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
+<<<<<<< HEAD
   List<PlaceAutoComplete>? displayList = [];
 
   void updateSearchResults(String? query) async {
@@ -38,6 +38,9 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
     }
   }
 
+=======
+  List<String> displayList = [];
+>>>>>>> parent of a884ce8 (Updated Autocomplete)
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
@@ -51,7 +54,9 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
               Expanded(
                 child: TextField(
                   controller: widget.textController,
-                  onChanged: updateSearchResults,
+                  onChanged: (textVal) async {
+                    print(textVal);
+                  },
                   decoration: const InputDecoration(
                     hintText: 'Enter new address...',
                   ),
@@ -59,6 +64,7 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
               ),
               IconButton(
                 onPressed: () async {
+<<<<<<< HEAD
                   //experiment with making this async or not.
                   //likely will need fixing.
                   if (widget.textController.text == '') {
@@ -76,6 +82,8 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
                     widget.textController.text = displayList![0].address;
                     widget.selectedPlaceSetter(displayList![0]);
                   }
+=======
+>>>>>>> parent of a884ce8 (Updated Autocomplete)
                   Navigator.pop(context);
                 },
                 icon: const Icon(Icons.arrow_forward_ios_rounded),
@@ -85,8 +93,11 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
           ),
           AddressList(
             displayList: displayList,
+<<<<<<< HEAD
             relevantController: widget.textController,
             updateSearchResult: updateSearchResults,
+=======
+>>>>>>> parent of a884ce8 (Updated Autocomplete)
           ), //Ultimately, this must be passed the proper args.
           const SizedBox(
             height: 10.0,

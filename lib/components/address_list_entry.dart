@@ -1,14 +1,11 @@
-import 'package:auth_test/src/places/places_repository.dart';
 import 'package:flutter/material.dart';
 //import '../src/colors.dart';
 
 class AddressListEntry extends StatelessWidget {
-  final PlaceAutoComplete place;
-  final void Function()? onTap;
+  final String text;
   const AddressListEntry({
     super.key,
-    required this.place,
-    required this.onTap,
+    required this.text,
   });
 
   BoxDecoration addressBoxDecoration() {
@@ -27,7 +24,9 @@ class AddressListEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap, // This is where our function will go to set text
+      onTap: () {
+        print(text);
+      }, // This is where our function will go to set text
       //controller's text to the selected entry's text.
       child: Container(
         //copy this into address autocomplete modal
@@ -40,7 +39,7 @@ class AddressListEntry extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.fromLTRB(7, 0, 20, 0),
                 child: Text(
-                  place.address,
+                  text,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
