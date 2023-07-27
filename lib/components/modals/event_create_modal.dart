@@ -44,6 +44,10 @@ class _EventCreateModalState extends State<EventCreateModal> {
   @override
   Widget build(BuildContext context) {
     late Function()? onBottomButtonPress;
+    PlaceAutoComplete selectedPlace = PlaceAutoComplete(
+      '945 Memorial Dr, Cambridge, MA 02138, USA',
+      'ChIJ-6iWRFx344kRuHaZREqdanQ',
+    );
     if (widget.exists) {
       onBottomButtonPress = () => {
             showCupertinoDialog(
@@ -61,6 +65,16 @@ class _EventCreateModalState extends State<EventCreateModal> {
       onBottomButtonPress = () => {}; //This should be where code for
       //event creation and pin placement go
     }
+
+    void setSelectedPlace(PlaceAutoComplete place) {
+      // This is part
+      //of function that executes upon hitting the arrow of the
+      //address autocomplete modal
+      setState(() {
+        selectedPlace = place;
+      });
+    }
+
     return SizedBox(
       height: 750,
       child: Center(
@@ -175,15 +189,9 @@ class _EventCreateModalState extends State<EventCreateModal> {
                       width: 200.0,
                       height: 50.0,
                       child: EventAddressForm(
-                        defaultPlace: PlaceAutoComplete(
-                          'Harvard Square, Boston, MA, USA',
-                          'EiNVbml2ZXJzaXR5IFN0cmVldCwgSGFydmFyZCwgSUwsIFVTQSIuKiwKFAoSCb-KkZX2Wg-IEeYK3owVcsfYEhQKEgmjZ7CqjloPiBHGYtyo8gUcrw',
-                        ), //Should
-                        //be the events address, as given by its coordinates,
-                        //by default.
-                        //controller: //This is a text editing controller to
-                        //help with editing the address in the inner modal.
+                        defaultPlace: selectedPlace,
                         addressSearchController: addressSearchController,
+                        selectedPlaceSetter: setSelectedPlace,
                       ),
                     ),
                   ),

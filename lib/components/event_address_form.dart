@@ -11,10 +11,12 @@ import '../src/colors.dart';
 class EventAddressForm extends StatefulWidget {
   final PlaceAutoComplete defaultPlace;
   final TextEditingController addressSearchController;
+  final void Function(PlaceAutoComplete) selectedPlaceSetter;
   const EventAddressForm({
     super.key,
     required this.defaultPlace,
     required this.addressSearchController,
+    required this.selectedPlaceSetter,
   });
 
   @override
@@ -24,7 +26,6 @@ class EventAddressForm extends StatefulWidget {
 class _EventAddressFormState extends State<EventAddressForm> {
   @override
   Widget build(BuildContext context) {
-    PlaceAutoComplete selectedPlace = widget.defaultPlace;
     return CupertinoButton(
       child: Container(
         decoration: const BoxDecoration(
@@ -37,7 +38,7 @@ class _EventAddressFormState extends State<EventAddressForm> {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Flexible(
             child: Text(
-              selectedPlace.address,
+              widget.defaultPlace.address,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: Color.fromARGB(255, 128, 128, 128),
@@ -51,6 +52,7 @@ class _EventAddressFormState extends State<EventAddressForm> {
         builder: (BuildContext context) => AlertDialog(
           content: AddressAutocompleteModal(
             textController: widget.addressSearchController,
+            selectedPlaceSetter: widget.selectedPlaceSetter,
           ),
         ),
       ),

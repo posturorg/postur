@@ -8,10 +8,12 @@ class AddressList extends StatelessWidget {
   //into an async widget.
   final List<PlaceAutoComplete>? displayList;
   final TextEditingController relevantController;
+  final dynamic updateSearchResult; //maybe make this non dynamic for speed.
   AddressList({
     super.key,
     required this.relevantController,
     this.displayList = const [],
+    required this.updateSearchResult,
   });
 
   @override
@@ -29,8 +31,12 @@ class AddressList extends StatelessWidget {
       //This column doesnt seem to be causing the issue.
       children: internalSublist
           .map((fullAddress) => AddressListEntry(
-              place: fullAddress,
-              onTap: () => {relevantController.text = fullAddress.address}))
+                place: fullAddress,
+                onTap: () => {
+                  relevantController.text = fullAddress.address,
+                  updateSearchResult(fullAddress.address),
+                },
+              ))
           .toList(),
     );
   }

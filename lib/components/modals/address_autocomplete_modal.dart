@@ -7,7 +7,12 @@ class AddressAutocompleteModal extends StatefulWidget {
   // will likely need to
   // make this stateful, but no matter!
   final TextEditingController textController;
-  const AddressAutocompleteModal({super.key, required this.textController});
+  final void Function(PlaceAutoComplete) selectedPlaceSetter;
+  const AddressAutocompleteModal({
+    super.key,
+    required this.textController,
+    required this.selectedPlaceSetter,
+  });
 
   @override
   State<AddressAutocompleteModal> createState() =>
@@ -17,13 +22,20 @@ class AddressAutocompleteModal extends StatefulWidget {
 class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
   List<PlaceAutoComplete>? displayList = [];
 
-  void updateSearchResults(String query) async {
+  void updateSearchResults(String? query) async {
     //experiment with this being async or not
-    PlacesRepository().getAutoComplete(query).then((results) {
-      setState(() {
-        displayList = results;
+    if (query == '') {
+      displayList = [];
+    } else if (query == null) {
+      //perhaps this is a bit verbose
+      displayList = [];
+    } else {
+      PlacesRepository().getAutoComplete(query).then((results) {
+        setState(() {
+          displayList = results;
+        });
       });
-    });
+    }
   }
 
   @override
@@ -47,7 +59,23 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
               ),
               IconButton(
                 onPressed: () async {
-                  //getAutoCompleteTest(widget.textController.text); //For testing
+                  //experiment with making this async or not.
+                  //likely will need fixing.
+                  if (widget.textController.text == '') {
+                  } else if (displayList == []) {
+                    updateSearchResults(widget.textController.text);
+                    if (displayList == []) {
+                      // Navigator.pop(context);
+                    } else {
+                      widget.textController.text = displayList![0].address;
+                      widget.selectedPlaceSetter(displayList![0]);
+                      // Navigator.pop(context);
+                    }
+                  } else {
+                    updateSearchResults(widget.textController.text);
+                    widget.textController.text = displayList![0].address;
+                    widget.selectedPlaceSetter(displayList![0]);
+                  }
                   Navigator.pop(context);
                 },
                 icon: const Icon(Icons.arrow_forward_ios_rounded),
@@ -58,6 +86,7 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
           AddressList(
             displayList: displayList,
             relevantController: widget.textController,
+            updateSearchResult: updateSearchResults,
           ), //Ultimately, this must be passed the proper args.
           const SizedBox(
             height: 10.0,
