@@ -18,7 +18,7 @@ class PlacesRepository {
   final String key = 'AIzaSyDGT20OxGoAgAv-GuzqIdPN533xcl0dOOU';
   final String types = 'address';
 
-  Future<List<PlaceAutoComplete>?> getAutoComplete(String input) async {
+  Future<List<PlaceAutoComplete>?> getAutoComplete(String? input) async {
     final String url =
         "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&components=country:us&language=en&location=42.3732%2C-71.1202&radius=50000&types=address&key=$key";
     try {

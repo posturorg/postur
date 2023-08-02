@@ -8,9 +8,11 @@ class AddressList extends StatelessWidget {
   //into an async widget.
   final List<PlaceAutoComplete>? displayList;
   final TextEditingController relevantController;
+  final dynamic updateSearchResults;
   AddressList({
     super.key,
     required this.relevantController,
+    required this.updateSearchResults,
     this.displayList = const [],
   });
 
@@ -30,7 +32,10 @@ class AddressList extends StatelessWidget {
       children: internalSublist
           .map((fullAddress) => AddressListEntry(
               place: fullAddress,
-              onTap: () => {relevantController.text = fullAddress.address}))
+              onTap: () => {
+                    relevantController.text = fullAddress.address,
+                    updateSearchResults(fullAddress.address)
+                  }))
           .toList(),
     );
   }

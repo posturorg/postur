@@ -17,7 +17,7 @@ class AddressAutocompleteModal extends StatefulWidget {
 class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
   List<PlaceAutoComplete>? displayList = [];
 
-  void updateSearchResults(String query) async {
+  void updateSearchResults(String? query) async {
     //experiment with this being async or not
     PlacesRepository().getAutoComplete(query).then((results) {
       setState(() {
@@ -58,6 +58,7 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
           AddressList(
             displayList: displayList,
             relevantController: widget.textController,
+            updateSearchResults: updateSearchResults,
           ), //Ultimately, this must be passed the proper args.
           const SizedBox(
             height: 10.0,
