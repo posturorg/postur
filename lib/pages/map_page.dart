@@ -1,7 +1,7 @@
 import 'package:auth_test/src/create_event_marker.dart';
 
-import '../components/event_create_modal.dart';
-import '../components/event_details_modal.dart';
+import '../components/modals/event_create_modal.dart';
+import '../components/modals/event_details_modal.dart';
 import '../src/map_style_string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -45,7 +45,7 @@ class _MapPageState extends State<MapPage> {
         // we create center column and display text
 
         // Returning SizedBox instead of a Container
-        return const EventCreateModal();
+        return const EventCreateModal(exists: false); //Need to fix this...
       },
     );
 

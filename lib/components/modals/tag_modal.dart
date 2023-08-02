@@ -1,7 +1,7 @@
 import 'package:auth_test/components/modal_bottom_button.dart';
 
-import '../src/colors.dart';
-import 'tag_box_decoration.dart';
+import '../../src/colors.dart';
+import '../tag_box_decoration.dart';
 import 'package:flutter/material.dart';
 
 class TagModal extends StatelessWidget {

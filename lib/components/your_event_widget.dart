@@ -1,22 +1,17 @@
-import 'package:auth_test/components/event_details_modal.dart';
+import 'package:auth_test/components/modals/event_details_modal.dart';
 import 'package:flutter/cupertino.dart';
-
-import '../src/colors.dart';
 import 'package:flutter/material.dart';
 
+import '../src/colors.dart';
+
 class YourEventWidget extends StatelessWidget {
+  //Still needs substantial cleaning up
   final String eventTitle;
   final String eventCreator;
-  final bool isCreator;
-  final bool isMember;
-  //final bool isCreator;
-  //final bool isMember;
 
-  const YourEventWidget({super.key, 
+  YourEventWidget({
     required this.eventTitle,
     required this.eventCreator,
-    required this.isCreator,
-    required this.isMember,
   });
 
   BoxDecoration tagBoxDecoration() {
@@ -33,7 +28,7 @@ class YourEventWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        //print("$eventTitle details");
+        print("$eventTitle details");
         showModalBottomSheet<void>(
           // context and builder are
           // required properties in this widget
@@ -49,20 +44,21 @@ class YourEventWidget extends StatelessWidget {
 
             // Returning SizedBox instead of a Container
             return EventDetailsModal(
-              eventTitle: eventTitle,
-              eventCreator: eventCreator,
-              isCreator: isCreator,
-              isMember: isMember,
-            );
+                //This is the meet of the modal
+                eventTitle: eventTitle,
+                eventCreator: eventCreator,
+                isCreator: true,
+                isMember: true);
           },
         );
       },
       child: Container(
+        //This is the actual text line
         decoration: tagBoxDecoration(),
         padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
         child: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.circle,
               size: 50,
             ),
@@ -72,12 +68,12 @@ class YourEventWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(eventTitle,
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.bold)),
                   Text(eventCreator,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
-                        color: Color.fromARGB(255, 93, 93, 93),
+                        color: neutralGrey,
                       ))
                 ],
               ),
@@ -108,49 +104,51 @@ class YourEventWidget extends StatelessWidget {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
-                                  Icon(
+                                  const Icon(
                                     Icons.circle,
                                     size: 85,
                                   ),
                                   Text(
                                     eventTitle,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
-                                      color: Color.fromARGB(255, 255, 157, 0),
+                                      color: attendingOrange,
                                     ),
                                   ),
                                   Container(
                                     decoration: tagBoxDecoration(),
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 0, 10),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
                                         Text('Creator: $eventCreator',
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 17,
                                             )),
                                       ],
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                    margin: const EdgeInsets.fromLTRB(
+                                        20, 10, 20, 10),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
-                                        Text('When:',
+                                        const Text('When:',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                             )),
-                                        SizedBox(width: 8.0),
+                                        const SizedBox(width: 8.0),
                                         Expanded(
                                           child: SizedBox(
                                             width: 200.0,
                                             height: 50.0,
                                             child: TextFormField(
-                                              decoration: InputDecoration(
+                                              decoration: const InputDecoration(
                                                 hintText:
                                                     'This Wednesday, 7:30 p.m.',
                                                 border:
@@ -172,22 +170,23 @@ class YourEventWidget extends StatelessWidget {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                    margin: const EdgeInsets.fromLTRB(
+                                        20, 10, 20, 10),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
-                                        Text('Ends:',
+                                        const Text('Ends:',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                             )),
-                                        SizedBox(width: 8.0),
+                                        const SizedBox(width: 8.0),
                                         Expanded(
                                           child: SizedBox(
                                             width: 200.0,
                                             height: 50.0,
                                             child: TextFormField(
-                                              decoration: InputDecoration(
+                                              decoration: const InputDecoration(
                                                 hintText: '10 p.m.',
                                                 border:
                                                     OutlineInputBorder(), // Customize the border style
@@ -208,22 +207,23 @@ class YourEventWidget extends StatelessWidget {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                    margin: const EdgeInsets.fromLTRB(
+                                        20, 10, 20, 10),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
-                                        Text('RSVP by:',
+                                        const Text('RSVP by:',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                             )),
-                                        SizedBox(width: 8.0),
+                                        const SizedBox(width: 8.0),
                                         Expanded(
                                           child: SizedBox(
                                             width: 200.0,
                                             height: 50.0,
                                             child: TextFormField(
-                                              decoration: InputDecoration(
+                                              decoration: const InputDecoration(
                                                 hintText:
                                                     'This Tuesday, 10 a.m.',
                                                 border:
@@ -245,12 +245,13 @@ class YourEventWidget extends StatelessWidget {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                    margin: const EdgeInsets.fromLTRB(
+                                        20, 10, 20, 10),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
-                                        Text('Where:',
+                                        const Text('Where:',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                             )),
@@ -260,7 +261,7 @@ class YourEventWidget extends StatelessWidget {
                                             width: 200.0,
                                             height: 50.0,
                                             child: TextFormField(
-                                              decoration: InputDecoration(
+                                              decoration: const InputDecoration(
                                                 hintText:
                                                     '901 Fictitious Square, Unreal City, USA 67890',
                                                 border:
@@ -282,7 +283,8 @@ class YourEventWidget extends StatelessWidget {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                    margin: const EdgeInsets.fromLTRB(
+                                        20, 10, 20, 10),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -293,7 +295,7 @@ class YourEventWidget extends StatelessWidget {
                                               style: DefaultTextStyle.of(
                                                       context)
                                                   .style, // Use the default text style from the context
-                                              children: [
+                                              children: const [
                                                 TextSpan(
                                                   text: 'Attending: ',
                                                   style: TextStyle(
@@ -317,22 +319,23 @@ class YourEventWidget extends StatelessWidget {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                    margin: const EdgeInsets.fromLTRB(
+                                        20, 10, 20, 10),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
-                                        Text('Description:',
+                                        const Text('Description:',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                             )),
-                                        SizedBox(width: 8.0),
+                                        const SizedBox(width: 8.0),
                                         Expanded(
                                           child: SizedBox(
                                             width: 200.0,
                                             height: 50.0,
                                             child: TextFormField(
-                                              decoration: InputDecoration(
+                                              decoration: const InputDecoration(
                                                 hintText:
                                                     'Never gonna give you up, never gonna let you down, never gonna run around and desert you.',
                                                 border:
@@ -395,10 +398,11 @@ class YourEventWidget extends StatelessWidget {
                                               );
                                             },
                                             style: ElevatedButton.styleFrom(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 8, horizontal: 14),
-                                              backgroundColor: Color.fromARGB(
-                                                  255, 255, 17, 0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8,
+                                                      horizontal: 14),
+                                              backgroundColor: absentRed,
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -406,7 +410,7 @@ class YourEventWidget extends StatelessWidget {
                                               elevation: 0.0,
                                             ),
                                             child: Text('Cancel $eventTitle',
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 17,
                                                 )),
@@ -423,14 +427,14 @@ class YourEventWidget extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 10),
                       backgroundColor: Color.fromARGB(255, 95, 95, 95),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
                       elevation: 0.0,
                     ),
-                    child: Text('Edit',
+                    child: const Text('Edit',
                         style: TextStyle(
                           color: Colors.white,
                         )),
@@ -454,11 +458,11 @@ class YourEventWidget extends StatelessWidget {
                             actions: [
                               TextButton(
                                   onPressed: () {},
-                                  child: Text("Yes, poop the party.",
+                                  child: const Text("Yes, poop the party.",
                                       style: TextStyle(color: Colors.blue))),
                               TextButton(
                                   onPressed: () => Navigator.pop(context),
-                                  child: Text("No, party on!",
+                                  child: const Text("No, party on!",
                                       style: TextStyle(
                                         color: Colors.blue,
                                         fontWeight: FontWeight.bold,
@@ -468,14 +472,14 @@ class YourEventWidget extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                      backgroundColor: Color.fromARGB(255, 255, 157, 0),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 10),
+                      backgroundColor: attendingOrange,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
                       elevation: 0.0,
                     ),
-                    child: Text('Cancel',
+                    child: const Text('Cancel',
                         style: TextStyle(
                           color: Colors.white,
                         )),

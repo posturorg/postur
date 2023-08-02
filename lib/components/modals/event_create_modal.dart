@@ -1,18 +1,66 @@
+import 'package:auth_test/components/create_event_datetime.dart';
+import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
+import 'package:auth_test/components/event_address_form.dart';
 import 'package:auth_test/components/modal_bottom_button.dart';
-
-import '../components/event_box_decoration.dart';
-import '../src/colors.dart';
+import 'package:auth_test/src/places/places_repository.dart';
+import 'package:flutter/cupertino.dart';
+import '../event_box_decoration.dart';
+import '../../src/colors.dart';
 import 'package:flutter/material.dart';
 
 /*
 This widget is what appears inside the modal for event creation
  */
 
-class EventCreateModal extends StatelessWidget {
-  const EventCreateModal({super.key});
+class EventCreateModal extends StatefulWidget {
+  final bool
+      exists; //essentially toggles whether or not this is an editing widget...
+
+  const EventCreateModal({
+    super.key,
+    required this.exists,
+  });
+
+  @override
+  State<EventCreateModal> createState() => _EventCreateModalState();
+}
+
+class _EventCreateModalState extends State<EventCreateModal> {
+  final TextEditingController addressSearchController = TextEditingController();
+  final TextStyle defaultBold = const TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 15,
+  );
+
+  @override
+  void dispose() {
+    //might not really be necessary tbh
+    addressSearchController.dispose();
+    super.dispose(); //Might need to go back and check that this is implemented
+    //more broadly, that way we dont get errors with controllers being filled
+    //from prior instances when they shouldn't be.
+  }
 
   @override
   Widget build(BuildContext context) {
+    late Function()? onBottomButtonPress;
+    if (widget.exists) {
+      onBottomButtonPress = () => {
+            showCupertinoDialog(
+              context: context,
+              builder: (context) => DefaultTwoOptionDialog(
+                title: 'Confirm event changes?',
+                optionOneText: 'Yes, confirm',
+                onOptionOne: () {}, //interface with backend to change event...
+                optionTwoText: 'No',
+                onOptionTwo: () => {Navigator.pop(context)},
+              ),
+            )
+          };
+    } else {
+      onBottomButtonPress = () => {}; //This should be where code for
+      //event creation and pin placement go
+    }
     return SizedBox(
       height: 750,
       child: Center(
@@ -23,10 +71,8 @@ class EventCreateModal extends StatelessWidget {
               Icons.circle,
               size: 85,
             ),
-            // Ultimately, this needs to be converted into a textbox for users
-            // To enter their event's title
             const Text(
-              'eventTitle',
+              'eventTitle', //Need to make this editable, as a text box...
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -39,10 +85,12 @@ class EventCreateModal extends StatelessWidget {
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Creator: Me',
-                      style: TextStyle(
-                        fontSize: 17,
-                      )),
+                  Text(
+                    'Creator: Me',
+                    style: TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -51,30 +99,17 @@ class EventCreateModal extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('When:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
+                  Text(
+                    'When:',
+                    style: defaultBold,
+                  ),
                   const SizedBox(width: 8.0),
-                  Expanded(
+                  const Expanded(
                     child: SizedBox(
                       width: 200.0,
                       height: 50.0,
-                      child: TextFormField(
-                        decoration: const InputDecoration(
-                          hintText: 'This Wednesday, 7:30 p.m.',
-                          border:
-                              OutlineInputBorder(), // Customize the border style
-                        ),
-                        onChanged: (value) {
-                          // Handle the text input change
-                          // ...
-                        },
-                        validator: (value) {
-                          // Perform form validation and return an error message if necessary
-                          // ...
-                          return null; // Return null to indicate no validation errors
-                        },
+                      child: CreateEventDateTime(
+                        upperText: 'When:',
                       ),
                     ),
                   ),
@@ -86,30 +121,17 @@ class EventCreateModal extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('Ends:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
+                  Text(
+                    'Ends:',
+                    style: defaultBold,
+                  ),
                   const SizedBox(width: 8.0),
-                  Expanded(
+                  const Expanded(
                     child: SizedBox(
                       width: 200.0,
                       height: 50.0,
-                      child: TextFormField(
-                        decoration: const InputDecoration(
-                          hintText: '10 p.m.',
-                          border:
-                              OutlineInputBorder(), // Customize the border style
-                        ),
-                        onChanged: (value) {
-                          // Handle the text input change
-                          // ...
-                        },
-                        validator: (value) {
-                          // Perform form validation and return an error message if necessary
-                          // ...
-                          return null; // Return null to indicate no validation errors
-                        },
+                      child: CreateEventDateTime(
+                        upperText: 'Ends:',
                       ),
                     ),
                   ),
@@ -121,30 +143,17 @@ class EventCreateModal extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('RSVP by:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
+                  Text(
+                    'RSVP by:',
+                    style: defaultBold,
+                  ),
                   const SizedBox(width: 8.0),
-                  Expanded(
+                  const Expanded(
                     child: SizedBox(
                       width: 200.0,
                       height: 50.0,
-                      child: TextFormField(
-                        decoration: const InputDecoration(
-                          hintText: 'This Tuesday, 10 a.m.',
-                          border:
-                              OutlineInputBorder(), // Customize the border style
-                        ),
-                        onChanged: (value) {
-                          // Handle the text input change
-                          // ...
-                        },
-                        validator: (value) {
-                          // Perform form validation and return an error message if necessary
-                          // ...
-                          return null; // Return null to indicate no validation errors
-                        },
+                      child: CreateEventDateTime(
+                        upperText: 'RSVP by:',
                       ),
                     ),
                   ),
@@ -156,31 +165,25 @@ class EventCreateModal extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('Where:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
+                  Text(
+                    'Where:',
+                    style: defaultBold,
+                  ),
                   const SizedBox(width: 8.0),
                   Expanded(
                     child: SizedBox(
                       width: 200.0,
                       height: 50.0,
-                      child: TextFormField(
-                        decoration: const InputDecoration(
-                          hintText:
-                              '901 Fictitious Square, Unreal City, USA 67890',
-                          border:
-                              OutlineInputBorder(), // Customize the border style
-                        ),
-                        onChanged: (value) {
-                          // Handle the text input change
-                          // ...
-                        },
-                        validator: (value) {
-                          // Perform form validation and return an error message if necessary
-                          // ...
-                          return null; // Return null to indicate no validation errors
-                        },
+                      child: EventAddressForm(
+                        defaultPlace: PlaceAutoComplete(
+                          'Harvard Square, Boston, MA, USA',
+                          'EiNVbml2ZXJzaXR5IFN0cmVldCwgSGFydmFyZCwgSUwsIFVTQSIuKiwKFAoSCb-KkZX2Wg-IEeYK3owVcsfYEhQKEgmjZ7CqjloPiBHGYtyo8gUcrw',
+                        ), //Should
+                        //be the events address, as given by its coordinates,
+                        //by default.
+                        //controller: //This is a text editing controller to
+                        //help with editing the address in the inner modal.
+                        addressSearchController: addressSearchController,
                       ),
                     ),
                   ),
@@ -197,13 +200,12 @@ class EventCreateModal extends StatelessWidget {
                       text: TextSpan(
                         style: DefaultTextStyle.of(context)
                             .style, // Use the default text style from the context
-                        children: const [
+                        children: [
                           TextSpan(
-                            text: 'Attending: ',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
+                            text: 'Invite: ',
+                            style: defaultBold,
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text: 'Thomas Kowalski, William Gödeler',
                             style: TextStyle(
                                 fontWeight: FontWeight.normal, fontSize: 15),
@@ -220,10 +222,10 @@ class EventCreateModal extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('Description:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
+                  Text(
+                    'Description:',
+                    style: defaultBold,
+                  ),
                   const SizedBox(width: 8.0),
                   Expanded(
                     child: SizedBox(
@@ -257,9 +259,10 @@ class EventCreateModal extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ModalBottomButton(
-                        onTap: () {}, //This should create the pin and event
-                        text: 'Create',
-                        backgroundColor: attendingOrange)
+                      onTap: onBottomButtonPress,
+                      text: widget.exists ? 'Confirm Changes' : 'Create',
+                      backgroundColor: attendingOrange,
+                    )
                   ],
                 ),
               ),

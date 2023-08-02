@@ -1,0 +1,21 @@
+Additional Component & UI Needs:
+1.) Need to build address search autocomplete list below input address
+    field in dialog pop up/modal.
+2.) Need to add profile picture to center of profile page QR code.
+    Perhaps this could be done with a Stack widget, but I am thus far
+    unsure...
+3.) Need to build function that generates map marker icons (properly)
+4.) Need to build functionality to cluster map icons together when you
+    zoom out far enough
+5.) Need to Have a convenient way to Edit Event Title in Create Event
+    modal.
+6.) Need to have a convenient way to edit event description.
+7.) Center map, on start up, on users currentl location.
+
+Graphical Errors:
+1.) Error on iPhone SE (and potentially thinner screens). On messages
+    screen, message representation in menu seems to clip off screen,
+    creating a render error. On tags screen, requests is forced to
+    wrap to multiple lines. I would like to address this by forcing
+    an event title to shrink in size so that it fits properly, but
+    this will be addressed later.

@@ -3,7 +3,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../src/colors.dart';
-import '../src/pin_svg_strings.dart';
+//import '../src/pin_svg_strings.dart';
 
 Future<BitmapDescriptor> createEventMarker(
   //Need to add "vibe" emoji argument.
@@ -11,8 +11,8 @@ Future<BitmapDescriptor> createEventMarker(
   String eventTitle,
   bool isMember,
 ) async {
-  final String svgMarkerString =
-      isMember ? orangePinStringSVG : redPinStringSVG;
+  //final String svgMarkerString =
+  //isMember ? orangePinStringSVG : redPinStringSVG;
 
   final Color colorPaint = isMember ? attendingOrange : absentRed;
 
