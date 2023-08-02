@@ -25,12 +25,14 @@ class _QRViewState extends State<QRView> {
       ),
       onDetect: (capture) {
         //final List<Barcode> barcodes = capture.barcodes;
-        showDialog(
+
+        /*showDialog(
           context: context,
-          builder: (_) => const ScanResult(
-            fullName: 'Alvin', isMember: false),
-            barrierDismissible: true,
+          builder: (_) => const ScanResult(fullName: 'Alvin', isMember: false),
+          barrierDismissible: true,
         );
+        */
+        print('hello! QR CODE DETECTED!');
       },
     );
   }
