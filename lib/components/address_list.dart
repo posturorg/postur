@@ -9,10 +9,12 @@ class AddressList extends StatelessWidget {
   final List<PlaceAutoComplete>? displayList;
   final TextEditingController relevantController;
   final dynamic updateSearchResults;
+  final dynamic updateSelectedPlace;
   AddressList({
     super.key,
     required this.relevantController,
     required this.updateSearchResults,
+    required this.updateSelectedPlace,
     this.displayList = const [],
   });
 
@@ -31,11 +33,13 @@ class AddressList extends StatelessWidget {
       //This column doesnt seem to be causing the issue.
       children: internalSublist
           .map((fullAddress) => AddressListEntry(
-              place: fullAddress,
-              onTap: () => {
-                    relevantController.text = fullAddress.address,
-                    updateSearchResults(fullAddress.address)
-                  }))
+                place: fullAddress,
+                onTap: () => {
+                  relevantController.text = fullAddress.address,
+                  updateSearchResults(relevantController.text),
+                  updateSelectedPlace(fullAddress),
+                },
+              ))
           .toList(),
     );
   }

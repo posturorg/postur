@@ -31,6 +31,12 @@ class _EventCreateModalState extends State<EventCreateModal> {
     fontWeight: FontWeight.bold,
     fontSize: 15,
   );
+  PlaceAutoComplete selectedPlace = PlaceAutoComplete(
+    //This should be obtained
+    // via map click or, if exists, from backend.
+    'Harvard Square, Boston, MA, USA',
+    'EiNVbml2ZXJzaXR5IFN0cmVldCwgSGFydmFyZCwgSUwsIFVTQSIuKiwKFAoSCb-KkZX2Wg-IEeYK3owVcsfYEhQKEgmjZ7CqjloPiBHGYtyo8gUcrw',
+  );
 
   @override
   void dispose() {
@@ -39,6 +45,12 @@ class _EventCreateModalState extends State<EventCreateModal> {
     super.dispose(); //Might need to go back and check that this is implemented
     //more broadly, that way we dont get errors with controllers being filled
     //from prior instances when they shouldn't be.
+  }
+
+  void setSelectedPlace(PlaceAutoComplete newSelectedPlace) {
+    setState(() {
+      selectedPlace = newSelectedPlace;
+    });
   }
 
   @override
@@ -175,15 +187,13 @@ class _EventCreateModalState extends State<EventCreateModal> {
                       width: 200.0,
                       height: 50.0,
                       child: EventAddressForm(
-                        defaultPlace: PlaceAutoComplete(
-                          'Harvard Square, Boston, MA, USA',
-                          'EiNVbml2ZXJzaXR5IFN0cmVldCwgSGFydmFyZCwgSUwsIFVTQSIuKiwKFAoSCb-KkZX2Wg-IEeYK3owVcsfYEhQKEgmjZ7CqjloPiBHGYtyo8gUcrw',
-                        ), //Should
+                        defaultPlace: selectedPlace, //Should
                         //be the events address, as given by its coordinates,
                         //by default.
                         //controller: //This is a text editing controller to
                         //help with editing the address in the inner modal.
                         addressSearchController: addressSearchController,
+                        setSelectedPlace: setSelectedPlace,
                       ),
                     ),
                   ),
