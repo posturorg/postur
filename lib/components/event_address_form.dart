@@ -4,6 +4,7 @@ import 'package:auth_test/components/modals/address_autocomplete_modal.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/utils.dart';
 //import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../src/colors.dart';
@@ -11,10 +12,12 @@ import '../src/colors.dart';
 class EventAddressForm extends StatefulWidget {
   final PlaceAutoComplete defaultPlace;
   final TextEditingController addressSearchController;
+  final void Function(PlaceAutoComplete) setExternalSelectedPlace;
   const EventAddressForm({
     super.key,
     required this.defaultPlace,
     required this.addressSearchController,
+    required this.setExternalSelectedPlace,
   });
 
   @override
@@ -51,6 +54,7 @@ class _EventAddressFormState extends State<EventAddressForm> {
         builder: (BuildContext context) => AlertDialog(
           content: AddressAutocompleteModal(
             textController: widget.addressSearchController,
+            setExternalSelectedPlace: widget.setExternalSelectedPlace,
           ),
         ),
       ),

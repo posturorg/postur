@@ -7,7 +7,12 @@ class AddressAutocompleteModal extends StatefulWidget {
   // will likely need to
   // make this stateful, but no matter!
   final TextEditingController textController;
-  const AddressAutocompleteModal({super.key, required this.textController});
+  final void Function(PlaceAutoComplete) setExternalSelectedPlace;
+  const AddressAutocompleteModal({
+    super.key,
+    required this.textController,
+    required this.setExternalSelectedPlace,
+  });
 
   @override
   State<AddressAutocompleteModal> createState() =>
@@ -23,6 +28,14 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
       setState(() {
         displayList = results;
       });
+    });
+  }
+
+  PlaceAutoComplete? selectedPlace;
+
+  void setInternalSelectedPlace(PlaceAutoComplete newPlace) {
+    setState(() {
+      selectedPlace = newPlace;
     });
   }
 
