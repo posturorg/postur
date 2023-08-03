@@ -36,8 +36,8 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
   void setInternalSelectedPlace(PlaceAutoComplete newPlace) {
     setState(() {
       selectedPlace = newPlace;
-      print('Goooooober');
-      print(selectedPlace!.address);
+      //print('Goooooober');
+      //print(selectedPlace!.address);
     });
   }
 
@@ -49,6 +49,14 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
         //This column is the issue
         mainAxisSize: MainAxisSize.min,
         children: [
+          const Text(
+            'Where:',
+            style: TextStyle(
+              //Centralize these
+              fontWeight: FontWeight.bold,
+              fontSize: 17,
+            ),
+          ),
           Row(
             children: [
               Expanded(
@@ -61,9 +69,13 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
                 ),
               ),
               IconButton(
-                onPressed: () async {
-                  //populate...
-                  Navigator.pop(context);
+                onPressed: () {
+                  if (selectedPlace == null) {
+                    Navigator.pop(context);
+                  } else {
+                    widget.setExternalSelectedPlace(selectedPlace!);
+                    Navigator.pop(context);
+                  }
                 },
                 icon: const Icon(Icons.arrow_forward_ios_rounded),
                 color: attendingOrange,
