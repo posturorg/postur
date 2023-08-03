@@ -36,6 +36,8 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
   void setInternalSelectedPlace(PlaceAutoComplete newPlace) {
     setState(() {
       selectedPlace = newPlace;
+      print('Goooooober');
+      print(selectedPlace!.address);
     });
   }
 
@@ -60,7 +62,7 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
               ),
               IconButton(
                 onPressed: () async {
-                  //getAutoCompleteTest(widget.textController.text); //For testing
+                  //populate...
                   Navigator.pop(context);
                 },
                 icon: const Icon(Icons.arrow_forward_ios_rounded),
@@ -72,6 +74,7 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
             displayList: displayList,
             relevantController: widget.textController,
             updateSearchResults: updateSearchResults,
+            setInternalSelectedPlace: setInternalSelectedPlace,
           ), //Ultimately, this must be passed the proper args.
           const SizedBox(
             height: 10.0,

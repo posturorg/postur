@@ -8,11 +8,13 @@ class AddressList extends StatelessWidget {
   //into an async widget.
   final List<PlaceAutoComplete>? displayList;
   final TextEditingController relevantController;
+  final void Function(PlaceAutoComplete) setInternalSelectedPlace;
   final dynamic updateSearchResults;
   AddressList({
     super.key,
     required this.relevantController,
     required this.updateSearchResults,
+    required this.setInternalSelectedPlace,
     this.displayList = const [],
   });
 
@@ -34,7 +36,8 @@ class AddressList extends StatelessWidget {
               place: fullAddress,
               onTap: () => {
                     relevantController.text = fullAddress.address,
-                    updateSearchResults(fullAddress.address)
+                    updateSearchResults(fullAddress.address),
+                    setInternalSelectedPlace(fullAddress),
                   }))
           .toList(),
     );
