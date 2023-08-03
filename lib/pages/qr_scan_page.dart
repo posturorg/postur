@@ -23,7 +23,13 @@ class QRScanPage extends StatelessWidget {
             color: absentRed,
           )
         ),
-        title: const Text('Scan QR Code'),
+        title: const Text(
+          'Scan QR Code',
+          style: TextStyle(
+            color: absentRed,
+            fontWeight: FontWeight.bold,
+          )
+        )
       ),
       body: const QRView()
     );

@@ -1,32 +1,103 @@
-//import '../src/colors.dart';
+import 'package:auth_test/src/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:mobile_scanner/mobile_scanner.dart';
-// import 'package:flutter/services.dart';
-
-//import 'qr_scan_widget.dart';
 
 class ScanResult extends StatelessWidget {
-  const ScanResult({super.key});
+  final String fullName;
+  final String userName;
+  final bool mutualEvents;
+
+  const ScanResult({
+    super.key,
+    required this.fullName,
+    required this.mutualEvents,
+    required this.userName,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoAlertDialog(
-        title: const Text('Alvin is on the list'),
-        content: IconButton(
-          icon: const Icon(Icons.check_circle, color: Colors.green),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          iconSize: 200,
+    Color alertColor;
+    mutualEvents ? alertColor = Colors.green : alertColor = absentRed;
+
+    return AlertDialog(
+      backgroundColor: alertColor,
+      title: Column(
+        children: [
+          // IconButton(
+          //   icon: mutualEvents ? const Icon(Icons.check_circle_outline, color: backgroundWhite) : const Icon(Icons.cancel_outlined, color: backgroundWhite),
+          //   onPressed: () => Navigator.pop(context),
+          //   iconSize: 100,
+          // ),
+          Icon(
+            mutualEvents ? Icons.check_circle_outline : Icons.cancel_outlined,
+            size: 100.0,
+            color: backgroundWhite,
+          ),
+          Text(
+            fullName,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: backgroundWhite,
+              fontSize: 20,
+            ),
+          ),
+          Text(
+            '@$userName',
+            style: const TextStyle(
+              color: backgroundWhite,
+              fontSize: 15,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+            child: Column(
+              children: [
+                Text(
+                  mutualEvents ? 'Attending:' : '',
+                  style: const TextStyle(
+                    color: backgroundWhite,
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  mutualEvents ? 'Mutual Events' : 'No Mutual Events',
+                  style: const TextStyle(
+                    color: backgroundWhite,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+      content: ElevatedButton(
+        onPressed: () => Navigator.pop(context),
+        style: ElevatedButton.styleFrom(
+          padding:
+              const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+          backgroundColor: backgroundWhite,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15)),
+          elevation: 0.0,
         ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK",
-                  style: TextStyle(
-                    color: Colors.blue,
-                  ))),
-        ]);
+        child: Text("Done",style: TextStyle(fontSize: 16, color: alertColor, fontWeight: FontWeight.bold)),
+      ),
+      
+       
+    //   actions: [
+    // TextButton(
+    //     onPressed: () =>
+    //         Navigator.pop(
+    //             context),
+    //     child: const Text(
+    //         "OK",
+    //         style: TextStyle(
+    //           color:
+    //               Colors.blue,
+    //         ))),
+    //   ]
+    );
   }
 }

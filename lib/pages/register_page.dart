@@ -1,4 +1,5 @@
 import 'package:auth_test/components/my_textfield.dart';
+import 'package:auth_test/firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +42,10 @@ class _RegisterPageState extends State<RegisterPage> {
           email: emailController.text,
           password: passwordController.text,
         );
+        User? updateUser = FirebaseAuth.instance.currentUser;
+        updateUser!.updateEmail(emailController.text);
+        userSetup(emailController.text);
+        // Navigator.of(context).pushNamed(AppRoutes.menu) <-- from adding users to backend tutorial
       } else {
         // show error message, passwords do not match
         showErrorMessage("Passwords don't match");

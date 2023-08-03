@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../src/colors.dart';
 import 'map_page.dart';
 import 'tags_page.dart';
 import 'chats_page.dart';
@@ -17,7 +18,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var colorScheme = Theme.of(context).colorScheme;
     var topTextString = 'Postur';
 
     Widget page;
@@ -47,8 +47,8 @@ class _HomePageState extends State<HomePage> {
     }
 
     var topText = Text(topTextString,
-        style: TextStyle(
-          color: colorScheme.primary,
+        style: const TextStyle(
+          color: absentRed,
           fontWeight: FontWeight.bold,
         ));
 
@@ -79,29 +79,48 @@ class _HomePageState extends State<HomePage> {
                     child: BottomNavigationBar(
                       elevation: 0,
                       type: BottomNavigationBarType.fixed,
-                      items: [
+                      items: const [
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.place_outlined,
-                              color: colorScheme.primary),
-                          activeIcon: const Icon(Icons.place),
+                          icon: Icon(
+                            Icons.place_outlined,
+                              color: absentRed),
+                          activeIcon: Icon(
+                            Icons.place,
+                            color: absentRed,
+                          ),
                           label: '',
                         ),
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.bookmark_outline,
-                              color: colorScheme.primary),
-                          activeIcon: const Icon(Icons.bookmark),
+                          icon: Icon(
+                            Icons.bookmark_outline,
+                            color: absentRed
+                          ),
+                          activeIcon: Icon(
+                            Icons.bookmark,
+                            color: absentRed,
+                          ),
                           label: '',
                         ),
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.chat_bubble_outline,
-                              color: colorScheme.primary),
-                          activeIcon: const Icon(Icons.chat_bubble),
+                          icon: Icon(
+                            Icons.chat_bubble_outline,
+                            color: absentRed,
+                          ),
+                          activeIcon: Icon(
+                            Icons.chat_bubble,
+                            color: absentRed,
+                          ),
                           label: '',
                         ),
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.person_outline,
-                              color: colorScheme.primary),
-                          activeIcon: const Icon(Icons.person),
+                          icon: Icon(
+                            Icons.person_outline,
+                            color: absentRed,
+                          ),
+                          activeIcon: Icon(
+                            Icons.person,
+                            color: absentRed,
+                          ),
                           label: '',
                         ),
                       ],
@@ -124,19 +143,19 @@ class _HomePageState extends State<HomePage> {
                       extended: constraints.maxWidth >= 600,
                       destinations: const [
                         NavigationRailDestination(
-                          icon: Icon(Icons.place),
+                          icon: Icon(Icons.place, color: absentRed),
                           label: Text('Map'),
                         ),
                         NavigationRailDestination(
-                          icon: Icon(Icons.bookmark_border),
+                          icon: Icon(Icons.bookmark_border, color: absentRed),
                           label: Text('Tags'),
                         ),
                         NavigationRailDestination(
-                          icon: Icon(Icons.chat),
+                          icon: Icon(Icons.chat, color: absentRed),
                           label: Text('Chats'),
                         ),
                         NavigationRailDestination(
-                          icon: Icon(Icons.person),
+                          icon: Icon(Icons.person, color: absentRed),
                           label: Text('Profile'),
                         ),
                       ],
