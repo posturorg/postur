@@ -4,7 +4,7 @@ import 'package:auth_test/components/modals/address_autocomplete_modal.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/utils.dart';
+//import 'package:get/utils.dart';
 //import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../src/colors.dart';
