@@ -1,5 +1,6 @@
 import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/modals/event_create_modal.dart';
+import 'package:auth_test/src/places/places_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../modal_bottom_button.dart';
@@ -278,8 +279,13 @@ class EventDetailsModal extends StatelessWidget {
                             backgroundColor: Colors.white,
                             clipBehavior: Clip.antiAlias,
                             showDragHandle: true,
-                            builder: (BuildContext context) =>
-                                const EventCreateModal(exists: true),
+                            builder: (BuildContext context) => EventCreateModal(
+                              exists: true, //also, toggles creator, Me
+                              initialSelectedPlace: PlaceAutoComplete(
+                                'Harvard Square, Brattle Street, Cambridge, MA, USA',
+                                'ChIJecplvEJ344kRdjumhjIYylk',
+                              ), //This info should be pulled from the backend
+                            ),
                           )
                         },
                         text: 'Edit',

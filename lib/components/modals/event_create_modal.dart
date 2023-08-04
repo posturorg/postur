@@ -15,10 +15,12 @@ This widget is what appears inside the modal for event creation
 class EventCreateModal extends StatefulWidget {
   final bool
       exists; //essentially toggles whether or not this is an editing widget...
+  final PlaceAutoComplete initialSelectedPlace;
 
-  const EventCreateModal({
+  EventCreateModal({
     super.key,
     required this.exists,
+    required this.initialSelectedPlace,
   });
 
   @override
@@ -27,19 +29,19 @@ class EventCreateModal extends StatefulWidget {
 
 class _EventCreateModalState extends State<EventCreateModal> {
   final TextEditingController addressSearchController = TextEditingController();
-  PlaceAutoComplete selectedPlace = PlaceAutoComplete(
-    'Harvard Square, Boston, MA, USA',
-    'EiNVbml2ZXJzaXR5IFN0cmVldCwgSGFydmFyZCwgSUwsIFVTQSIuKiwKFAoSCb-KkZX2Wg-IEeYK3owVcsfYEhQKEgmjZ7CqjloPiBHGYtyo8gUcrw',
-  );
-  final TextStyle defaultBold = const TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: 15,
-  );
+  late PlaceAutoComplete selectedPlace;
 
   void setSelectedPlace(PlaceAutoComplete newPlace) {
     setState(() {
       selectedPlace = newPlace;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    selectedPlace = widget
+        .initialSelectedPlace; // Initialize the variable from the parameter
   }
 
   @override
@@ -50,6 +52,11 @@ class _EventCreateModalState extends State<EventCreateModal> {
     //more broadly, that way we dont get errors with controllers being filled
     //from prior instances when they shouldn't be.
   }
+
+  final TextStyle defaultBold = const TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 15,
+  );
 
   @override
   Widget build(BuildContext context) {

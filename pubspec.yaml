@@ -7,6 +7,7 @@ environment:
   sdk: ">=3.0.5 <4.0.0"
 
 dependencies:
+  # remove any of these that are unused.
   flutter:
     sdk: flutter
   mobile_scanner: ^3.3.0
@@ -15,7 +16,7 @@ dependencies:
   qr_flutter: ^4.1.0
   firebase_auth: ^4.6.3
   firebase_core: ^2.14.0
-  flutter_svg: ^2.0.7
+  flutter_svg: ^2.0.7 #might be unused...
   cloud_firestore: ^4.8.3
 
   # All of the below might not be necessary, used in location auto complete modal

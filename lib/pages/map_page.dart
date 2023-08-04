@@ -1,4 +1,5 @@
 import 'package:auth_test/src/create_event_marker.dart';
+import 'package:auth_test/src/places/places_repository.dart';
 
 import '../components/modals/event_create_modal.dart';
 import '../components/modals/event_details_modal.dart';
@@ -45,7 +46,13 @@ class _MapPageState extends State<MapPage> {
         // we create center column and display text
 
         // Returning SizedBox instead of a Container
-        return const EventCreateModal(exists: false); //Need to fix this...
+        return EventCreateModal(
+          exists: false,
+          initialSelectedPlace: PlaceAutoComplete(
+            'Harvard Square, Brattle Street, Cambridge, MA, USA',
+            'ChIJecplvEJ344kRdjumhjIYylk',
+          ), //Should be obtained from the coordinates of the place clicked
+        ); //Need to fix this...
       },
     );
 
