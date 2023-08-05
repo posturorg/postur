@@ -1,11 +1,13 @@
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../src/colors.dart';
+import 'qr_scan_page.dart';
 import '../components/menu_event_widget.dart';
 import '../components/id_widget.dart';
 import '../components/tag_widget.dart';
-import 'qr_scan_page.dart';
+import '../components/profile_pic.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -15,6 +17,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
+  // Retrieve uid of current user
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+
   BoxDecoration tagBoxDecoration() {
     return const BoxDecoration(
       border: Border(
@@ -28,7 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     Widget profileButtons = Container(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -340,9 +346,22 @@ class _ProfilePageState extends State<ProfilePage> {
         Column(
           children: [
             //qrCode,
-            const IDWidget(
+            IDWidget(
               fullName: 'Alvin Adjei',
               userName: 'alldayadjei',
+              uid: uid,
+            ),
+            const ProfilePic(),
+            const Text(
+            'Alvin Adjei',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: absentRed,
+            )),
+            const Text(
+              'alldayadjei',
+              style: TextStyle(fontSize: 15),
             ),
             profileButtons,
             yourEvents,

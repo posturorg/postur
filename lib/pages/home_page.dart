@@ -5,6 +5,7 @@ import 'map_page.dart';
 import 'tags_page.dart';
 import 'chats_page.dart';
 import 'profile_page.dart';
+import '../components/logout_button.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var selectedIndex = 0;
+  bool isOnProfilePage = false;
 
   @override
   Widget build(BuildContext context) {
@@ -25,32 +27,34 @@ class _HomePageState extends State<HomePage> {
       case 0:
         page = const MapPage();
         topTextString = 'Postur';
+        isOnProfilePage = false;
         break;
       case 1:
         page = const TagsPage();
         topTextString = 'Tags';
+        isOnProfilePage = false;
         break;
       case 2:
         page = const ChatsPage();
         topTextString = 'Chats';
+        isOnProfilePage = false;
         break;
       case 3:
         page = const ProfilePage();
         topTextString = 'Profile';
-        break;
-      case 4:
-        page = const Placeholder();
-        //topTextString = 'Chat';
+        isOnProfilePage = true;
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
 
-    var topText = Text(topTextString,
-        style: const TextStyle(
-          color: absentRed,
-          fontWeight: FontWeight.bold,
-        ));
+    var topText = Text(
+      topTextString,
+      style: const TextStyle(
+        color: absentRed,
+        fontWeight: FontWeight.bold,
+      )
+    );
 
     // The container for the current page, with its background color
     // and subtle switching animation.
@@ -62,125 +66,122 @@ class _HomePageState extends State<HomePage> {
       ),
     );
 
-    if (selectedIndex <= 3) {
-      return Scaffold(
-        appBar: AppBar(
-          title: topText,
-        ),
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth < 450) {
-              // Use a more mobile-friendly layout with BottomNavigationBar
-              // on narrow screens.
-              return Column(
-                children: [
-                  Expanded(child: mainArea),
-                  SafeArea(
-                    child: BottomNavigationBar(
-                      elevation: 0,
-                      type: BottomNavigationBarType.fixed,
-                      items: const [
-                        BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.place_outlined,
-                              color: absentRed),
-                          activeIcon: Icon(
-                            Icons.place,
-                            color: absentRed,
-                          ),
-                          label: '',
+    return Scaffold(
+      appBar: AppBar(
+        title: topText,
+        actions: [
+          // Logout button on the profile page
+          LogOutButton(
+            isOnProfilePage: isOnProfilePage,
+          )
+        ]
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 450) {
+            // Use a more mobile-friendly layout with BottomNavigationBar
+            // on narrow screens.
+            return Column(
+              children: [
+                Expanded(child: mainArea),
+                SafeArea(
+                  child: BottomNavigationBar(
+                    elevation: 0,
+                    type: BottomNavigationBarType.fixed,
+                    items: const [
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.place_outlined,
+                            color: absentRed),
+                        activeIcon: Icon(
+                          Icons.place,
+                          color: absentRed,
                         ),
-                        BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.bookmark_outline,
-                            color: absentRed
-                          ),
-                          activeIcon: Icon(
-                            Icons.bookmark,
-                            color: absentRed,
-                          ),
-                          label: '',
+                        label: '',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.bookmark_outline,
+                          color: absentRed
                         ),
-                        BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.chat_bubble_outline,
-                            color: absentRed,
-                          ),
-                          activeIcon: Icon(
-                            Icons.chat_bubble,
-                            color: absentRed,
-                          ),
-                          label: '',
+                        activeIcon: Icon(
+                          Icons.bookmark,
+                          color: absentRed,
                         ),
-                        BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.person_outline,
-                            color: absentRed,
-                          ),
-                          activeIcon: Icon(
-                            Icons.person,
-                            color: absentRed,
-                          ),
-                          label: '',
+                        label: '',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.chat_bubble_outline,
+                          color: absentRed,
                         ),
-                      ],
-                      currentIndex: selectedIndex,
-                      onTap: (value) {
-                        setState(() {
-                          selectedIndex = value;
-                        });
-                      },
-                    ),
-                  )
-                ],
-              );
-            } else {
-              return Row(
-                children: [
-                  SafeArea(
-                    child: NavigationRail(
-                      //backgroundColor: Color.fromARGB(255, 255, 210, 207),
-                      extended: constraints.maxWidth >= 600,
-                      destinations: const [
-                        NavigationRailDestination(
-                          icon: Icon(Icons.place, color: absentRed),
-                          label: Text('Map'),
+                        activeIcon: Icon(
+                          Icons.chat_bubble,
+                          color: absentRed,
                         ),
-                        NavigationRailDestination(
-                          icon: Icon(Icons.bookmark_border, color: absentRed),
-                          label: Text('Tags'),
+                        label: '',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.person_outline,
+                          color: absentRed,
                         ),
-                        NavigationRailDestination(
-                          icon: Icon(Icons.chat, color: absentRed),
-                          label: Text('Chats'),
+                        activeIcon: Icon(
+                          Icons.person,
+                          color: absentRed,
                         ),
-                        NavigationRailDestination(
-                          icon: Icon(Icons.person, color: absentRed),
-                          label: Text('Profile'),
-                        ),
-                      ],
-                      selectedIndex: selectedIndex,
-                      onDestinationSelected: (value) {
-                        setState(() {
-                          selectedIndex = value;
-                        });
-                      },
-                    ),
+                        label: '',
+                      ),
+                    ],
+                    currentIndex: selectedIndex,
+                    onTap: (value) {
+                      setState(() {
+                        selectedIndex = value;
+                      });
+                    },
                   ),
-                  Expanded(child: mainArea),
-                ],
-              );
-            }
-          },
-        ),
-      );
-    } else {
-      return Scaffold(
-        appBar: AppBar(
-          title: topText,
-        ),
-        body: page,
-      );
-    }
+                )
+              ],
+            );
+          } else {
+            return Row(
+              children: [
+                SafeArea(
+                  child: NavigationRail(
+                    //backgroundColor: Color.fromARGB(255, 255, 210, 207),
+                    extended: constraints.maxWidth >= 600,
+                    destinations: const [
+                      NavigationRailDestination(
+                        icon: Icon(Icons.place, color: absentRed),
+                        label: Text('Map'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.bookmark_border, color: absentRed),
+                        label: Text('Tags'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.chat, color: absentRed),
+                        label: Text('Chats'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.person, color: absentRed),
+                        label: Text('Profile'),
+                      ),
+                    ],
+                    selectedIndex: selectedIndex,
+                    onDestinationSelected: (value) {
+                      setState(() {
+                        selectedIndex = value;
+                      });
+                    },
+                  ),
+                ),
+                Expanded(child: mainArea),
+              ],
+            );
+          }
+        },
+      ),
+    );
   }
 }
