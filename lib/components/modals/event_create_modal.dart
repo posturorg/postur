@@ -318,21 +318,13 @@ class _EventCreateModalState extends State<EventCreateModal> {
                       width: 200.0,
                       height: 50.0,
                       child: TextFormField(
+                        // Event Description
+                        controller: eventDescriptionController,
                         decoration: const InputDecoration(
-                          hintText:
-                              'Never gonna give you up, never gonna let you down, never gonna run around and desert you.',
+                          hintText: 'Event description...',
                           border:
                               OutlineInputBorder(), // Customize the border style
                         ),
-                        onChanged: (value) {
-                          // Handle the text input change
-                          // ...
-                        },
-                        validator: (value) {
-                          // Perform form validation and return an error message if necessary
-                          // ...
-                          return null; // Return null to indicate no validation errors
-                        },
                       ),
                     ),
                   ),
