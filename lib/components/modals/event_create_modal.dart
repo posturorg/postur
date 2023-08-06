@@ -26,7 +26,8 @@ class EventCreateModal extends StatefulWidget {
     super.key,
     required this.exists,
     required this.initialSelectedPlace,
-    required this.initialCoords, // will get this from where you click on the map
+    required this.initialCoords, // will get this from where you click
+    //on the map
     this.initialTitle,
     this.initialDescription,
   });
@@ -309,7 +310,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
             Container(
               margin: centralEdgeInset,
               child: Padding(
-                padding: EdgeInsets.fromLTRB(0, 9, 0, 0),
+                padding: const EdgeInsets.fromLTRB(0, 7, 0, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -317,25 +318,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
                       'Description:',
                       style: defaultBold,
                     ),
-
-                    /*
-                    const SizedBox(width: 8.0),
-                    Expanded(
-                      child: SizedBox(
-                        width: 200.0,
-                        height: 50.0,
-                        child: TextFormField(
-                          // Event Description
-                          controller: eventDescriptionController,
-                          decoration: const InputDecoration(
-                            hintText: 'Event description...',
-                            border:
-                                OutlineInputBorder(), // Customize the border style
-                          ),
-                        ),
-                      ),
-                    ),
-                  */
                   ],
                 ),
               ),
@@ -371,6 +353,24 @@ class _EventCreateModalState extends State<EventCreateModal> {
                       fontWeight: FontWeight.normal,
                     ),
                   ),
+                ),
+              ),
+            ),
+            Container(
+              margin: centralEdgeInset,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 13, 0, 0),
+                child: Row(
+                  //wont be constant, but whatever.
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Invite:',
+                      style: defaultBold,
+                    ),
+                    const SizedBox(width: 8.0),
+                    const Text('Function of Number of Peeps invited!'),
+                  ],
                 ),
               ),
             ),
