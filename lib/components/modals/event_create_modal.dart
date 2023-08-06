@@ -37,7 +37,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
   late LatLng currentCoords;
   late bool changedAddress;
   final EdgeInsets centralEdgeInset = const EdgeInsets.fromLTRB(
-      20, 10, 20, 0); // this controlls the spacing of the 'meat' the modal
+      20, 0, 20, 0); // this controlls the spacing of the 'meat' the modal
 
   void setSelectedPlace(PlaceAutoComplete newPlace) {
     setState(() {
@@ -130,10 +130,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            const Icon(
-              Icons.circle,
-              size: 85,
-            ),
             const Text(
               'eventTitle', //Need to make this editable, as a text box...
               style: TextStyle(
