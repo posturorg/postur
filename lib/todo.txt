@@ -1,4 +1,12 @@
 Additional Component & UI Needs:
+
+NEED TO MOVE INVITES BELOW DESCRIPTION IN CREATE EVENTS MODAL AND EVENT 
+DETAILS MODAL.
+
+NEED TO ADD UI TO ADD PEOPLE TO AN EVENT.
+
+
+
 1.) Need to build address search autocomplete list below input address
     field in dialog pop up/modal. [DONE]
 2.) Need to add profile picture to center of profile page QR code.
