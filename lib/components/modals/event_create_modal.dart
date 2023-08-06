@@ -19,12 +19,16 @@ class EventCreateModal extends StatefulWidget {
       exists; //essentially toggles whether or not this is an editing widget...
   final PlaceAutoComplete initialSelectedPlace;
   final LatLng initialCoords;
+  final String? initialTitle;
+  final String? initialDescription;
 
   const EventCreateModal({
     super.key,
     required this.exists,
     required this.initialSelectedPlace,
     required this.initialCoords, // will get this from where you click on the map
+    this.initialTitle,
+    this.initialDescription,
   });
 
   @override
@@ -33,9 +37,14 @@ class EventCreateModal extends StatefulWidget {
 
 class _EventCreateModalState extends State<EventCreateModal> {
   final TextEditingController addressSearchController = TextEditingController();
+  final TextEditingController eventTitleController = TextEditingController();
+  final TextEditingController eventDescriptionController =
+      TextEditingController();
+
   late PlaceAutoComplete selectedPlace;
   late LatLng currentCoords;
   late bool changedAddress;
+
   final EdgeInsets centralEdgeInset = const EdgeInsets.fromLTRB(
       20, 0, 20, 0); // this controlls the spacing of the 'meat' the modal
 
@@ -53,6 +62,12 @@ class _EventCreateModalState extends State<EventCreateModal> {
         .initialSelectedPlace; // Initialize the variable from the parameter
     currentCoords = widget.initialCoords;
     changedAddress = false;
+    if (widget.exists && widget.initialTitle != null) {
+      eventTitleController.text = widget.initialTitle!;
+    }
+    if (widget.exists && widget.initialDescription != null) {
+      eventDescriptionController.text = widget.initialDescription!;
+    }
   }
 
   @override
@@ -130,12 +145,26 @@ class _EventCreateModalState extends State<EventCreateModal> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            const Text(
-              'eventTitle', //Need to make this editable, as a text box...
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: attendingOrange,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+              child: TextField(
+                controller: eventTitleController,
+                buildCounter: (BuildContext context,
+                        {int? currentLength,
+                        int? maxLength,
+                        bool? isFocused}) =>
+                    null,
+                cursorColor: attendingOrange,
+                maxLength: 20,
+                maxLines: 1,
+                decoration: const InputDecoration.collapsed(
+                  hintText: 'Event title...',
+                ),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: attendingOrange),
               ),
             ),
             Container(
