@@ -1,9 +1,11 @@
 import 'package:auth_test/components/create_event_datetime.dart';
+import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/event_address_form.dart';
 import 'package:auth_test/components/modal_bottom_button.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../event_box_decoration.dart';
 import '../../src/colors.dart';
 import 'package:flutter/material.dart';
@@ -16,11 +18,13 @@ class EventCreateModal extends StatefulWidget {
   final bool
       exists; //essentially toggles whether or not this is an editing widget...
   final PlaceAutoComplete initialSelectedPlace;
+  final LatLng initialCoords;
 
-  EventCreateModal({
+  const EventCreateModal({
     super.key,
     required this.exists,
     required this.initialSelectedPlace,
+    required this.initialCoords, // will get this from where you click on the map
   });
 
   @override
@@ -30,10 +34,15 @@ class EventCreateModal extends StatefulWidget {
 class _EventCreateModalState extends State<EventCreateModal> {
   final TextEditingController addressSearchController = TextEditingController();
   late PlaceAutoComplete selectedPlace;
+  late LatLng currentCoords;
+  late bool changedAddress;
+  final EdgeInsets centralEdgeInset = const EdgeInsets.fromLTRB(
+      20, 10, 20, 0); // this controlls the spacing of the 'meat' the modal
 
   void setSelectedPlace(PlaceAutoComplete newPlace) {
     setState(() {
       selectedPlace = newPlace;
+      changedAddress = true;
     });
   }
 
@@ -42,6 +51,8 @@ class _EventCreateModalState extends State<EventCreateModal> {
     super.initState();
     selectedPlace = widget
         .initialSelectedPlace; // Initialize the variable from the parameter
+    currentCoords = widget.initialCoords;
+    changedAddress = false;
   }
 
   @override
@@ -68,7 +79,42 @@ class _EventCreateModalState extends State<EventCreateModal> {
               builder: (context) => DefaultTwoOptionDialog(
                 title: 'Confirm event changes?',
                 optionOneText: 'Yes, confirm',
-                onOptionOne: () {}, //interface with backend to change event...
+                onOptionOne: () async {
+                  //does this need to be async
+                  if (changedAddress) {
+                    dynamic newCoords = await PlacesRepository()
+                        .getCoordsFromPlaceId(selectedPlace.placeId);
+                    //print(selectedPlace.placeId);
+                    if (newCoords == null) {
+                      Navigator.pop(
+                          context); // this is a bad practice, apparently.
+                      showCupertinoDialog(
+                        context: context,
+                        builder: (context) => DefaultOneOptionDialog(
+                          title:
+                              'Something went wrong. Check your internet connection or restart the app.',
+                          buttonText: 'Ok',
+                          onPressed: () => {Navigator.pop(context)},
+                        ),
+                      );
+                    } else {
+                      setState(() {
+                        currentCoords = newCoords;
+                        //print('-------NEW COORDS ARE:-------');
+                        //print('${currentCoords.latitude}, ${currentCoords.longitude}');
+                      });
+                      Navigator.pop(context); //should close our popup
+                      // this is where normally we would submit changed to the backend
+                      Navigator.pop(context); //should close our modal
+
+                      //HERE IS WHERE WE SHALL ADD THE CODE TO CREATE AN EVENT IN THE BACKEND.
+                    }
+                  } else {
+                    //this is where we would normally submit changes to the backend
+                    Navigator.pop(context); //Closes popup
+                    Navigator.pop(context); //Closes modal
+                  }
+                }, //interface with backend to change event...
                 optionTwoText: 'No',
                 onOptionTwo: () => {Navigator.pop(context)},
               ),
@@ -112,7 +158,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
               ),
             ),
             Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              margin: centralEdgeInset,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -134,7 +180,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
               ),
             ),
             Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              margin: centralEdgeInset,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -156,7 +202,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
               ),
             ),
             Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              margin: centralEdgeInset,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -178,7 +224,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
               ),
             ),
             Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              margin: centralEdgeInset,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -206,7 +252,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
               ),
             ),
             Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              margin: centralEdgeInset,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -233,7 +279,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
               ),
             ),
             Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              margin: centralEdgeInset,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [

@@ -51,7 +51,9 @@ class _MapPageState extends State<MapPage> {
           initialSelectedPlace: PlaceAutoComplete(
             'Harvard Square, Brattle Street, Cambridge, MA, USA',
             'ChIJecplvEJ344kRdjumhjIYylk',
-          ), //Should be obtained from the coordinates of the place clicked
+          ),
+          initialCoords: const LatLng(42.3730,
+              71.1209), //Should be obtained from the coordinates of the place clicked
         ); //Need to fix this...
       },
     );

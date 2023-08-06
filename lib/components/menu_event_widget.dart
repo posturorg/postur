@@ -3,6 +3,7 @@ import 'package:auth_test/components/modals/event_create_modal.dart';
 import 'package:auth_test/components/my_inline_button.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'modals/event_details_modal.dart';
 import '../src/colors.dart';
@@ -149,12 +150,12 @@ class MenuEventWidget extends StatelessWidget {
                           clipBehavior: Clip.antiAlias,
                           showDragHandle: true,
                           builder: (BuildContext context) => EventCreateModal(
-                            exists: true,
-                            initialSelectedPlace: PlaceAutoComplete(
-                              'Harvard Square, Brattle Street, Cambridge, MA, USA',
-                              'ChIJecplvEJ344kRdjumhjIYylk',
-                            ), //pull this info from the backend...
-                          ),
+                              exists: true,
+                              initialSelectedPlace: PlaceAutoComplete(
+                                'Harvard Square, Brattle Street, Cambridge, MA, USA',
+                                'ChIJecplvEJ344kRdjumhjIYylk',
+                              ), //pull this info from the backend...
+                              initialCoords: const LatLng(42.3730, 71.1209)),
                         );
                       }, // This is where on edit function will go.
                     ),
