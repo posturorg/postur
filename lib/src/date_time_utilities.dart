@@ -33,11 +33,11 @@ int hourRectifier(int hour) {
 
 List dayList = <String>[
   '',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
+  'Mon',
+  'Tues',
+  'Wed',
+  'Thurs',
+  'Fri',
+  'Sat',
+  'Sun',
 ];

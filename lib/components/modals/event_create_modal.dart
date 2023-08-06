@@ -149,6 +149,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
               child: TextField(
                 controller: eventTitleController,
+                keyboardType: TextInputType.streetAddress,
                 buildCounter: (BuildContext context,
                         {int? currentLength,
                         int? maxLength,
@@ -276,6 +277,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
                 ],
               ),
             ),
+            /*
             Container(
               margin: centralEdgeInset,
               child: Row(
@@ -303,32 +305,73 @@ class _EventCreateModalState extends State<EventCreateModal> {
                 ],
               ),
             ),
+            */
             Container(
               margin: centralEdgeInset,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    'Description:',
-                    style: defaultBold,
-                  ),
-                  const SizedBox(width: 8.0),
-                  Expanded(
-                    child: SizedBox(
-                      width: 200.0,
-                      height: 50.0,
-                      child: TextFormField(
-                        // Event Description
-                        controller: eventDescriptionController,
-                        decoration: const InputDecoration(
-                          hintText: 'Event description...',
-                          border:
-                              OutlineInputBorder(), // Customize the border style
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(0, 9, 0, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Description:',
+                      style: defaultBold,
+                    ),
+
+                    /*
+                    const SizedBox(width: 8.0),
+                    Expanded(
+                      child: SizedBox(
+                        width: 200.0,
+                        height: 50.0,
+                        child: TextFormField(
+                          // Event Description
+                          controller: eventDescriptionController,
+                          decoration: const InputDecoration(
+                            hintText: 'Event description...',
+                            border:
+                                OutlineInputBorder(), // Customize the border style
+                          ),
                         ),
                       ),
                     ),
+                  */
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(20, 3, 20, 0),
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: backgroundWhite,
+                  borderRadius: BorderRadiusDirectional.all(
+                    Radius.circular(7),
                   ),
-                ],
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  child: TextField(
+                    keyboardType: TextInputType.streetAddress, // This might be
+                    // "fudging it." Check down the line to see it isn't causing
+                    // any weirdness
+                    minLines: 3,
+                    maxLines: 3,
+                    cursorColor: inputGrey,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Enter event details...',
+                      isCollapsed: true,
+                    ),
+                    maxLength: 130,
+                    controller: eventDescriptionController,
+                    style: const TextStyle(
+                      color: neutralGrey,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ),
               ),
             ),
             Expanded(
