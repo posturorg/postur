@@ -28,7 +28,6 @@ class DefaultTwoOptionDialog extends StatelessWidget {
           onPressed: onOptionOne, // This is the not bold option
           child: Text(
             optionOneText,
-            style: const TextStyle(color: Colors.blue),
           ),
         ),
         TextButton(
@@ -36,7 +35,6 @@ class DefaultTwoOptionDialog extends StatelessWidget {
           child: Text(
             optionTwoText,
             style: const TextStyle(
-              color: Colors.blue,
               fontWeight: FontWeight.bold,
             ),
           ),

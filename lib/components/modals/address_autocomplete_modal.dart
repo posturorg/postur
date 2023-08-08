@@ -69,13 +69,24 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
                 ),
               ),
               IconButton(
-                onPressed: () {
+                onPressed: () async {
                   if (selectedPlace == null) {
-                    Navigator.pop(context);
+                    if (widget.textController.text == '') {
+                      Navigator.pop(context);
+                    } else {
+                      List<PlaceAutoComplete>? internalList =
+                          await PlacesRepository()
+                              .getAutoComplete(widget.textController.text);
+                      //print(internalList);
+                      if (internalList!.isNotEmpty) {
+                        widget.setExternalSelectedPlace(internalList[0]);
+                      }
+                    }
                   } else {
                     widget.setExternalSelectedPlace(selectedPlace!);
-                    Navigator.pop(context);
                   }
+                  widget.textController.text = '';
+                  Navigator.pop(context);
                 },
                 icon: const Icon(Icons.arrow_forward_ios_rounded),
                 color: attendingOrange,

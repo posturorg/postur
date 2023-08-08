@@ -37,6 +37,31 @@ class EventCreateModal extends StatefulWidget {
 }
 
 class _EventCreateModalState extends State<EventCreateModal> {
+  late DateTime whenTime;
+  late DateTime endTime;
+  late DateTime rsvpTime;
+
+  void changeWhen(DateTime newTime) {
+    setState(() {
+      whenTime = newTime;
+    });
+    print('WHEN: $whenTime');
+  }
+
+  void changeEnd(DateTime newTime) {
+    setState(() {
+      endTime = newTime;
+    });
+    print('END: $endTime');
+  }
+
+  void changeRsvp(DateTime newTime) {
+    setState(() {
+      rsvpTime = newTime;
+    });
+    print('RSVP: $rsvpTime');
+  }
+
   final TextEditingController addressSearchController = TextEditingController();
   final TextEditingController eventTitleController = TextEditingController();
   final TextEditingController eventDescriptionController =
@@ -59,6 +84,9 @@ class _EventCreateModalState extends State<EventCreateModal> {
   @override
   void initState() {
     super.initState();
+    DateTime whenTime = DateTime.now();
+    DateTime endTime = DateTime.now();
+    DateTime rsvpTime = DateTime.now();
     selectedPlace = widget
         .initialSelectedPlace; // Initialize the variable from the parameter
     currentCoords = widget.initialCoords;
@@ -141,13 +169,15 @@ class _EventCreateModalState extends State<EventCreateModal> {
       //event creation and pin placement go
     }
     return SizedBox(
-      height: 750,
+      height: 775, // make this by default a function on whether or not you are
+      // "focused" on the description editing box. Should be 700 when not and 775
+      // when it is...
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 1),
               child: TextField(
                 controller: eventTitleController,
                 keyboardType: TextInputType.streetAddress,
@@ -194,13 +224,10 @@ class _EventCreateModalState extends State<EventCreateModal> {
                     style: defaultBold,
                   ),
                   const SizedBox(width: 8.0),
-                  const Expanded(
-                    child: SizedBox(
-                      width: 200.0,
-                      height: 50.0,
-                      child: CreateEventDateTime(
-                        upperText: 'When:',
-                      ),
+                  Expanded(
+                    child: CreateEventDateTime(
+                      upperText: 'When:',
+                      onChange: changeWhen,
                     ),
                   ),
                 ],
@@ -216,13 +243,10 @@ class _EventCreateModalState extends State<EventCreateModal> {
                     style: defaultBold,
                   ),
                   const SizedBox(width: 8.0),
-                  const Expanded(
-                    child: SizedBox(
-                      width: 200.0,
-                      height: 50.0,
-                      child: CreateEventDateTime(
-                        upperText: 'Ends:',
-                      ),
+                  Expanded(
+                    child: CreateEventDateTime(
+                      upperText: 'Ends:',
+                      onChange: changeEnd,
                     ),
                   ),
                 ],
@@ -238,13 +262,10 @@ class _EventCreateModalState extends State<EventCreateModal> {
                     style: defaultBold,
                   ),
                   const SizedBox(width: 8.0),
-                  const Expanded(
-                    child: SizedBox(
-                      width: 200.0,
-                      height: 50.0,
-                      child: CreateEventDateTime(
-                        upperText: 'RSVP by:',
-                      ),
+                  Expanded(
+                    child: CreateEventDateTime(
+                      upperText: 'RSVP by:',
+                      onChange: changeRsvp,
                     ),
                   ),
                 ],
@@ -261,56 +282,24 @@ class _EventCreateModalState extends State<EventCreateModal> {
                   ),
                   const SizedBox(width: 8.0),
                   Expanded(
-                    child: SizedBox(
-                      width: 200.0,
-                      height: 50.0,
-                      child: EventAddressForm(
-                        defaultPlace: selectedPlace, //Should
-                        //be the events address, as given by its coordinates,
-                        //by default.
-                        //controller: //This is a text editing controller to
-                        //help with editing the address in the inner modal.
-                        addressSearchController: addressSearchController,
-                        setExternalSelectedPlace: setSelectedPlace,
-                      ),
+                    child: EventAddressForm(
+                      defaultPlace: selectedPlace, //Should
+                      //be the events address, as given by its coordinates,
+                      //by default.
+                      //controller: //This is a text editing controller to
+                      //help with editing the address in the inner modal.
+                      addressSearchController: addressSearchController,
+                      setExternalSelectedPlace: setSelectedPlace,
                     ),
                   ),
                 ],
               ),
             ),
-            /*
-            Container(
-              margin: centralEdgeInset,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        style: DefaultTextStyle.of(context)
-                            .style, // Use the default text style from the context
-                        children: [
-                          TextSpan(
-                            text: 'Invite: ',
-                            style: defaultBold,
-                          ),
-                          const TextSpan(
-                            text: 'Thomas Kowalski, William Gödeler',
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal, fontSize: 15),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            */
             Container(
               margin: centralEdgeInset,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 7, 0, 0),
+                padding: const EdgeInsets.fromLTRB(
+                    0, 0, 0, 0), // Padding is here in case you need to use it
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -338,8 +327,8 @@ class _EventCreateModalState extends State<EventCreateModal> {
                     keyboardType: TextInputType.streetAddress, // This might be
                     // "fudging it." Check down the line to see it isn't causing
                     // any weirdness
-                    minLines: 3,
-                    maxLines: 3,
+                    minLines: 2,
+                    maxLines: 2,
                     cursorColor: inputGrey,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
@@ -359,7 +348,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
             Container(
               margin: centralEdgeInset,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 13, 0, 0),
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                 child: Row(
                   //wont be constant, but whatever.
                   mainAxisAlignment: MainAxisAlignment.start,

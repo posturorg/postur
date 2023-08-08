@@ -1,4 +1,3 @@
-//import '../src/colors.dart';
 import '../src/colors.dart';
 import '../src/date_time_utilities.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,17 +7,23 @@ class CreateEventDateTime extends StatefulWidget {
   //Need to add a constructor for latest time allowed and
   //for default what the default time will be set to
   final String upperText;
-  const CreateEventDateTime({super.key, this.upperText = ''});
+  final void Function(DateTime) onChange;
+  const CreateEventDateTime({
+    super.key,
+    required this.onChange,
+    this.upperText = '',
+  });
 
   @override
   State<CreateEventDateTime> createState() => _CreateEventDateTimeState();
 }
 
 class _CreateEventDateTimeState extends State<CreateEventDateTime> {
-  final DateTime minimumDateTime = DateTime.now();
-  DateTime defaultDateTime =
-      DateTime.now(); // This should be present time, or null (sort of)
-  DateTime maximumDateTime = DateTime.now().add(const Duration(days: 14));
+  final DateTime minimumDateTime = DateTime.now(); //maybe make this an argument
+  DateTime defaultDateTime = DateTime
+      .now(); // This should be present time, or null (sort of) // also maybe make this an argument
+  DateTime maximumDateTime = DateTime.now()
+      .add(const Duration(days: 14)); // maybe make this an argument?
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +74,7 @@ class _CreateEventDateTimeState extends State<CreateEventDateTime> {
                       initialDateTime:
                           defaultDateTime, //Should be device time or current time (via internet)
                       onDateTimeChanged: (DateTime newTime) {
+                        widget.onChange(newTime);
                         setState(() => defaultDateTime = newTime);
                       },
                       minimumDate: minimumDateTime,

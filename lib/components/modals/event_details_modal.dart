@@ -71,7 +71,7 @@ class EventDetailsModal extends StatelessWidget {
       onMainBottomTap = () {};
     }
     return SizedBox(
-      height: 750,
+      height: 670,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -247,7 +247,7 @@ class EventDetailsModal extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: 'Description: ',
-                            style: defaultBody,
+                            style: defaultBold,
                           ),
                           TextSpan(
                             text:
