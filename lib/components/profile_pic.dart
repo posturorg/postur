@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,20 +9,24 @@ import 'modals/profile_pic_confirm.dart';
 
 // Widget controlling the profile picture on the profile page
 class ProfilePic extends StatefulWidget {
-  const ProfilePic({super.key});
+  final String reference;
+
+  const ProfilePic({
+    super.key,
+    required this.reference,
+  });
 
   @override
   State<ProfilePic> createState() => _ProfilePicState();
 }
 
 class _ProfilePicState extends State<ProfilePic> {
-  // Initialize imageURL
-  String imageURL = '';
 
   // Retrieve user ID
   String uid = FirebaseAuth.instance.currentUser!.uid;
-  // Retrieve user data in order to update it later
-  CollectionReference? users = FirebaseFirestore.instance.collection('Users');
+  
+  // Initialize imageURL
+  String imageURL = '';
 
   // This function allows the user to choose a profile pic to upload to Firebase Storage
   Future uploadProfilePic(context) async {
@@ -74,12 +77,6 @@ class _ProfilePicState extends State<ProfilePic> {
     }
   }
   
-  // This function updates the imageURL in Firestore
-  Future updateProfilePic(String imageURL)  {
-    return users!.doc(uid).update({
-      'profile picture': imageURL,
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
