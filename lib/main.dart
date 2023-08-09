@@ -1,3 +1,5 @@
+import 'package:flutter/services.dart';
+
 import '/pages/auth_page.dart';
 import '/src/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -17,6 +19,13 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
+    // Keep app from flipping with phone orientation
+    SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: const AuthPage(),

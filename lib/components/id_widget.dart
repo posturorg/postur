@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../src/colors.dart';
 import './qr_code.dart';
-import './profile_pic.dart';
+import 'update_profile_pic.dart';
 
 class IDWidget extends StatefulWidget {
   final QueryDocumentSnapshot<Object?> currentUser;
@@ -31,7 +31,7 @@ class _IDWidgetState extends State<IDWidget> {
           uid: widget.currentUser['uid'],
         ),
         // Profile Picture
-        ProfilePic(reference: widget.currentUser['profile_pic']),
+        UpdateProfilePic(reference: widget.currentUser['profile_pic'], radius: 53, borderRadius: 137),
         // Full Name
         Text(
           "${widget.currentUser['first_name']} ${widget.currentUser['last_name']}",

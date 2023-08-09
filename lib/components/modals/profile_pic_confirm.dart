@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 // This modal appears to confirm the change of a user's profile picture
 class ProfilePicConfirm extends StatefulWidget {
+  final String oldReference;
   final String imageURL;
 
   const ProfilePicConfirm({
     super.key,
+    required this.oldReference,
     required this.imageURL,
   });
 
@@ -30,7 +33,7 @@ class _ProfilePicConfirmState extends State<ProfilePicConfirm> {
     return users.doc(uid).update({
       'profile_pic': imageURL,
     })
-    .then((value) => print("user updated"))
+    .then((value) => print("user updated profile picture"))
     .catchError((error) => print("failed to update profile picture: $error"));
   }
 
@@ -40,7 +43,10 @@ class _ProfilePicConfirmState extends State<ProfilePicConfirm> {
     return AlertDialog(
       title: Column(
         children: [
-          Image.network(widget.imageURL),
+          CircleAvatar(
+            radius: 75,
+            backgroundImage: NetworkImage(widget.imageURL),
+          ),
           const Text(
             "Make this your new profile picture?",
             style: TextStyle(
@@ -56,8 +62,11 @@ class _ProfilePicConfirmState extends State<ProfilePicConfirm> {
           // Yes button
           ElevatedButton(
             onPressed: () {
-
-              /* TODO: If there is a current reference in Firestore, delete its image from Storage */
+              
+              // Delete the old profile image from Firebase storage
+              if (widget.oldReference != '') {
+                FirebaseStorage.instance.refFromURL(widget.oldReference).delete();
+              }
               
               // Add image reference to current user's Firestore data
               updateProfilePic(widget.imageURL);
@@ -74,14 +83,19 @@ class _ProfilePicConfirmState extends State<ProfilePicConfirm> {
                   borderRadius: BorderRadius.circular(15)),
               elevation: 0.0,
             ),
-            child: const Text("Yes",style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            child: const Text("Yes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ),
           const SizedBox(
             width: 10.0,
           ),
           // No Button
           ElevatedButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              // Delete selected image from Firebase Storage
+              FirebaseStorage.instance.refFromURL(widget.imageURL).delete();
+              // Close modal
+              Navigator.pop(context);
+              },
             style: ElevatedButton.styleFrom(
               padding:
                 const EdgeInsets.symmetric(vertical: 8, horizontal: 40),
@@ -90,7 +104,7 @@ class _ProfilePicConfirmState extends State<ProfilePicConfirm> {
                   borderRadius: BorderRadius.circular(15)),
               elevation: 0.0,
             ),
-            child: const Text("No",style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            child: const Text("No", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
