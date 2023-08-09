@@ -3,8 +3,10 @@ import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/event_address_form.dart';
 import 'package:auth_test/components/modal_bottom_button.dart';
+import 'package:auth_test/pages/attending_event_list.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/route_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../event_box_decoration.dart';
 import '../../src/colors.dart';
@@ -362,6 +364,16 @@ class _EventCreateModalState extends State<EventCreateModal> {
                   ],
                 ),
               ),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AttendingEventList()),
+                );
+              },
+              icon: const Icon(Icons.plus_one),
             ),
             Expanded(
               child: SafeArea(

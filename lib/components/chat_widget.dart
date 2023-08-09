@@ -27,6 +27,7 @@ class ChatWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         print("Open $chatTitle");
+        // open relevant chat here.
       },
       child: Container(
         decoration: chatBoxDecoration(),
