@@ -76,7 +76,6 @@ class _ProfilePicState extends State<ProfilePic> {
         return;
     }
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -86,11 +85,7 @@ class _ProfilePicState extends State<ProfilePic> {
       },
       /* TODO: Make circular profile picture widget */
       // If the picture has been downloaded, display profile picture
-      icon: imageURL == '' ? const Icon(
-        Icons.circle_outlined,
-        color: Colors.black,
-        size: 80,
-      ) : Image.network(imageURL),
+      icon: Image.network(widget.reference),
     );
   }
 }

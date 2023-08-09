@@ -20,8 +20,8 @@ class _ProfilePageState extends State<ProfilePage> {
   // Retrieve uid of current user
   String uid = FirebaseAuth.instance.currentUser!.uid;
   
-  // Retrieve user data in order to update it in Firestore
-  final currentUser = FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid);
+  // Retrieve current user data from Firestore
+  final currentUser = FirebaseFirestore.instance.collection('Users').where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
 
   @override
   Widget build(BuildContext context) {
@@ -85,22 +85,30 @@ class _ProfilePageState extends State<ProfilePage> {
         Column(
           children: [
             // Stream of user data for ID Widget (QR Code, profile pic, name, username)
-            StreamBuilder<Object>(
+            StreamBuilder<QuerySnapshot>(
               stream: currentUser.snapshots(),
               builder: (context, snapshot) {
-                if (snapshot.hasData) {  
-                  /* TODO: access necessary data from streams */
-                  // Map<String, dynamic> data = snapshot.data as Map<String, dynamic>;
-                  return IDWidget(
-                    firstName: 'Alvin',
-                    lastName: 'Adjei',
-                    userName: 'alldayadjei',
-                    reference: 'hey',
-                    uid: uid,
-                  );
-                } else {
-                  return const Text('Loading...');
+                // What to show if waiting for data
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Show Waiting Indicator
+                  return const Center(child: CircularProgressIndicator());
+
+                // What to show if data has been received
+                } else if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.done) {
+                  // Potenital error message
+                  if (snapshot.hasError) {
+                    return const Center(child: Text("Error Occured"));
+                  // Success
+                  } else if (snapshot.hasData) {  
+                    /* Access current user's data from streams */
+                    final currentUserData = snapshot.data!.docs[0];
+                    return IDWidget(
+                      currentUser: currentUserData,
+                    );
+                  }
+                  return const Center(child: Text("No Data Received"));
                 }
+                return Center(child: Text(snapshot.connectionState.toString()));
               }
             ),
             const ProfileButtons(),

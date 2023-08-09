@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../src/colors.dart';
@@ -5,19 +6,11 @@ import './qr_code.dart';
 import './profile_pic.dart';
 
 class IDWidget extends StatefulWidget {
-  final String firstName;
-  final String lastName;
-  final String userName;
-  final String reference;
-  final String uid;
+  final QueryDocumentSnapshot<Object?> currentUser;
 
   const IDWidget ({
     super.key,
-    required this.firstName,
-    required this.lastName,
-    required this.userName,
-    required this.reference,
-    required this.uid,
+    required this.currentUser,
   });
 
   @override
@@ -25,28 +18,32 @@ class IDWidget extends StatefulWidget {
 }
 
 class _IDWidgetState extends State<IDWidget> {
+
+  // Retrieve user data from Firestore
+  CollectionReference users = FirebaseFirestore.instance.collection('Users');
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         // QR Code with value of uid
         QRCodeWidget(
-          uid: widget.uid,
+          uid: widget.currentUser['uid'],
         ),
         // Profile Picture
-        ProfilePic(reference: widget.reference),
+        ProfilePic(reference: widget.currentUser['profile_pic']),
         // Full Name
         Text(
-          '${widget.firstName} ${widget.lastName}',
+          "${widget.currentUser['first_name']} ${widget.currentUser['last_name']}",
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
             color: absentRed,
           )
         ),
-        // Username
+            // Username
         Text(
-          widget.userName,
+          widget.currentUser['email'],
           style: const TextStyle(fontSize: 15),
         ),
       ],

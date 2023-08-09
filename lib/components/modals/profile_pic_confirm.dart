@@ -57,7 +57,7 @@ class _ProfilePicConfirmState extends State<ProfilePicConfirm> {
           ElevatedButton(
             onPressed: () {
 
-              /* TODO: If there is a current reference in Firestore, delete it's image from Storage */
+              /* TODO: If there is a current reference in Firestore, delete its image from Storage */
               
               // Add image reference to current user's Firestore data
               updateProfilePic(widget.imageURL);
