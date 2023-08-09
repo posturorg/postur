@@ -209,7 +209,7 @@ class EventDetailsModal extends StatelessWidget {
               ),
             ),
             Container(
-              margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -224,7 +224,8 @@ class EventDetailsModal extends StatelessWidget {
                             style: defaultBold,
                           ),
                           TextSpan(
-                            text: 'Thomas Kowalski, William Gödeler',
+                            text:
+                                'Thomas Kowalski, William Gödeler, & 24 others...',
                             style: defaultBody,
                           ),
                         ],
