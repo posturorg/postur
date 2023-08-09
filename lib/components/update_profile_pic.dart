@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:auth_test/src/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,19 +9,23 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'modals/profile_pic_confirm.dart';
 
 // Widget controlling the profile picture on the profile page
-class ProfilePic extends StatefulWidget {
+class UpdateProfilePic extends StatefulWidget {
   final String reference;
+  final double radius;
+  final double borderRadius;
 
-  const ProfilePic({
+  const UpdateProfilePic({
     super.key,
     required this.reference,
+    required this.radius,
+    required this.borderRadius,
   });
 
   @override
-  State<ProfilePic> createState() => _ProfilePicState();
+  State<UpdateProfilePic> createState() => _UpdateProfilePicState();
 }
 
-class _ProfilePicState extends State<ProfilePic> {
+class _UpdateProfilePicState extends State<UpdateProfilePic> {
 
   // Retrieve user ID
   String uid = FirebaseAuth.instance.currentUser!.uid;
@@ -33,8 +38,8 @@ class _ProfilePicState extends State<ProfilePic> {
     ImagePicker imagePicker = ImagePicker();
     XFile? file = await imagePicker.pickImage(
       source: ImageSource.gallery,
-      maxWidth: 256,
-      maxHeight: 256,
+      maxWidth: 200,
+      maxHeight: 200,
       imageQuality: 75
     );
     
@@ -66,26 +71,44 @@ class _ProfilePicState extends State<ProfilePic> {
       showDialog(
         context: context,
         builder: (_) => ProfilePicConfirm(
+          oldReference: widget.reference,
           imageURL: imageURL,
         ),
         barrierDismissible: false,
       );
 
     } catch(error) {
-        // An error occurs
+        // If an error occurs
         return;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () async {
-        uploadProfilePic(context);
-      },
-      /* TODO: Make circular profile picture widget */
-      // If the picture has been downloaded, display profile picture
-      icon: Image.network(widget.reference),
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: [
+        Icon(
+          Icons.circle_outlined,
+          color: absentRed,
+          size: widget.borderRadius,
+        ),
+        IconButton(
+          onPressed: () async {
+            uploadProfilePic(context);
+          },
+          // If no profile image is set, display stock image
+          icon: widget.reference == '' ? 
+            CircleAvatar(
+              backgroundImage: const AssetImage('lib/assets/thumbtack.png'),
+              radius: widget.radius,
+              // Else, show profile picture
+            ) : CircleAvatar(
+              radius: widget.radius,
+              backgroundImage: NetworkImage(widget.reference)
+            ),
+        ),
+      ]
     );
   }
 }
