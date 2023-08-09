@@ -1,53 +1,52 @@
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
 import '../src/colors.dart';
+import './qr_code.dart';
+import './profile_pic.dart';
 
-class IDWidget extends StatelessWidget {
-  final String fullName;
-  final String userName;
+class IDWidget extends StatefulWidget {
+  final QueryDocumentSnapshot<Object?> currentUser;
 
-  const IDWidget({
+  const IDWidget ({
     super.key,
-    required this.fullName,
-    required this.userName,
+    required this.currentUser,
   });
 
   @override
+  State<IDWidget> createState() => _IDWidgetState();
+}
+
+class _IDWidgetState extends State<IDWidget> {
+
+  // Retrieve user data from Firestore
+  CollectionReference users = FirebaseFirestore.instance.collection('Users');
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
-      child: Column(
-        children: [
-          QrImageView(
-            data: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-            size: 200,
-            eyeStyle: const QrEyeStyle(
-              eyeShape: QrEyeShape.square,
-              color: absentRed,
-            ),
-            dataModuleStyle: const QrDataModuleStyle(
-              dataModuleShape: QrDataModuleShape.square,
-              color: absentRed,
-            ),
-          ),
-          //Below was a test for rendering of custom marker widget
-          //Feel free to delete if need be
-          /* const MyMarkerWidget(
-            isMember: true,
-            eventTitle: 'Taco Tuesday',
-          ), */
-          Text(fullName,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: absentRed,
-              )),
-          Text(
-            '@$userName',
-            style: const TextStyle(fontSize: 15),
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        // QR Code with value of uid
+        QRCodeWidget(
+          uid: widget.currentUser['uid'],
+        ),
+        // Profile Picture
+        ProfilePic(reference: widget.currentUser['profile_pic']),
+        // Full Name
+        Text(
+          "${widget.currentUser['first_name']} ${widget.currentUser['last_name']}",
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: absentRed,
+          )
+        ),
+            // Username
+        Text(
+          widget.currentUser['email'],
+          style: const TextStyle(fontSize: 15),
+        ),
+      ],
     );
   }
 }
