@@ -67,7 +67,6 @@ class _AttendingEventListState extends State<AttendingEventList> {
               itemCount: internalDisplayList.length,
               itemBuilder: (context, index) {
                 return AttendingEventUserEntry(
-                  isEditing: false,
                   user: internalDisplayList[index],
                 );
               },
