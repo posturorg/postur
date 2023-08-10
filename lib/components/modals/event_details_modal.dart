@@ -235,7 +235,26 @@ class EventDetailsModal extends StatelessWidget {
                                   MaterialPageRoute(
                                       builder: (context) => AttendingEventList(
                                             isAttending: isMember,
-                                            namesAttending: [],
+                                            namesAttending: const [
+                                              {
+                                                'name': 'Ben duPont',
+                                                'userID': 'bjb8ou91bkj',
+                                                'imageUrl':
+                                                    'https://www.gradeinflation.com',
+                                              },
+                                              {
+                                                'name': 'Alvin Adjei',
+                                                'userID': 'iwhefujbc98392',
+                                                'imageUrl':
+                                                    'https://www.gradeinflation.com',
+                                              },
+                                              {
+                                                'name': 'I go to yale12345',
+                                                'userID': 'iwhefujbc98392',
+                                                'imageUrl':
+                                                    'https://www.gradeinflation.com',
+                                              },
+                                            ], //Get this from the backend!
                                           ))),
                           ),
                         ],
