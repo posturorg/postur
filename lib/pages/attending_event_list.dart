@@ -16,11 +16,34 @@ class AttendingEventList extends StatefulWidget {
   State<AttendingEventList> createState() => _AttendingEventListState();
 }
 
-//need to include searchbar logic...
-
 TextEditingController searchController = TextEditingController();
 
+List<String> reorderAndSortList(List<String> inputList) {
+  // Create a list of Map entries where each entry contains the string and its index
+  List<MapEntry<int, String>> indexedEntries =
+      inputList.asMap().entries.toList();
+
+  // Sort the entries alphabetically based on the string values
+  indexedEntries.sort((a, b) => a.value.compareTo(b.value));
+
+  // Extract the strings from the sorted entries
+  List<String> sortedStrings =
+      indexedEntries.map((entry) => entry.value).toList();
+
+  return sortedStrings;
+}
+
+late List<String> namesAttendingAlphabetized;
+late List<String> internalDisplayList;
+
 class _AttendingEventListState extends State<AttendingEventList> {
+  @override
+  void initState() {
+    super.initState();
+    namesAttendingAlphabetized = reorderAndSortList(widget.namesAttending);
+    internalDisplayList = namesAttendingAlphabetized;
+  }
+
   @override
   Widget build(BuildContext context) {
     Color detailsColor = widget.isAttending ? attendingOrange : absentRed;
@@ -53,11 +76,11 @@ class _AttendingEventListState extends State<AttendingEventList> {
           const Divider(color: Color.fromARGB(255, 230, 230, 229)),
           Expanded(
             child: ListView.builder(
-              itemCount: widget.namesAttending.length,
+              itemCount: internalDisplayList.length,
               itemBuilder: (context, index) {
                 return AttendingEventUserEntry(
                   isEditing: false,
-                  displayName: widget.namesAttending[index],
+                  displayName: internalDisplayList[index],
                 );
               },
             ),

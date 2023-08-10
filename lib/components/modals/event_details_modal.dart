@@ -235,7 +235,12 @@ class EventDetailsModal extends StatelessWidget {
                                   MaterialPageRoute(
                                       builder: (context) => AttendingEventList(
                                             isAttending: isMember,
-                                            namesAttending: [],
+                                            namesAttending: [
+                                              'Ben duPont',
+                                              'Alvin Adjei',
+                                              'Zeta Eta',
+                                              'Nice Guy',
+                                            ],
                                           ))),
                           ),
                         ],
