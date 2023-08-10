@@ -2,19 +2,20 @@ import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/modals/event_create_modal.dart';
 import 'package:auth_test/components/my_inline_button.dart';
 import 'package:auth_test/src/places/places_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'modals/event_details_modal.dart';
 import '../src/colors.dart';
 
-class MenuEventWidget extends StatelessWidget {
+class MenuEventWidget extends StatefulWidget {
   final String eventTitle;
   final String eventCreator;
   final bool isCreator;
   final bool isMember;
 
-  MenuEventWidget({
+  const MenuEventWidget({
     super.key,
     required this.eventTitle,
     required this.eventCreator,
@@ -22,6 +23,13 @@ class MenuEventWidget extends StatelessWidget {
     required this.isMember,
   });
 
+  @override
+  State<MenuEventWidget> createState() => _MenuEventWidgetState();
+}
+
+class _MenuEventWidgetState extends State<MenuEventWidget> {
+  String fullName = '';
+  
   BoxDecoration tagBoxDecoration() {
     return const BoxDecoration(
       border: Border(
@@ -33,11 +41,41 @@ class MenuEventWidget extends StatelessWidget {
     );
   }
 
+  Future<void> getCreatorName() async {
+    late DocumentSnapshot documentSnapshot;
+    
+    await FirebaseFirestore
+      .instance
+      .collection('Users')
+      .doc(widget.eventCreator)
+      .get()
+      .then((value) {
+        documentSnapshot = value;
+      });
+    
+    if (documentSnapshot.exists) {
+      Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+      setState(() {
+        fullName = '${data['first_name']} ${data['last_name']}';
+      });
+    } else {
+      setState(() {
+        fullName = 'User not found';
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCreatorName();
+  }
+
   @override
   Widget build(BuildContext context) {
     late String mainButtonText;
     late Function()? onMainButtonPress;
-    if (isCreator) {
+    if (widget.isCreator) {
       mainButtonText = 'Cancel';
       onMainButtonPress = () => {
             showDialog(
@@ -56,7 +94,7 @@ class MenuEventWidget extends StatelessWidget {
               barrierDismissible: true,
             )
           };
-    } else if (isMember) {
+    } else if (widget.isMember) {
       mainButtonText = 'Leave';
       onMainButtonPress = () => {
             showDialog(
@@ -96,10 +134,10 @@ class MenuEventWidget extends StatelessWidget {
 
             // Returning SizedBox instead of a Container
             return EventDetailsModal(
-              eventTitle: eventTitle,
-              eventCreator: eventCreator,
-              isCreator: isCreator,
-              isMember: isMember,
+              eventTitle: widget.eventTitle,
+              eventCreator: widget.eventCreator,
+              isCreator: widget.isCreator,
+              isMember: widget.isMember,
             );
           },
         );
@@ -119,16 +157,16 @@ class MenuEventWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(eventTitle,
+                  Text(widget.eventTitle,
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.bold)),
                   Text(
-                    isCreator ? 'Me' : eventCreator,
+                    widget.isCreator ? 'Me' : fullName,
                     style: const TextStyle(
                       fontSize: 15,
                       color: neutralGrey,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -137,7 +175,7 @@ class MenuEventWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Visibility(
-                    visible: isCreator,
+                    visible: widget.isCreator,
                     child: MyInlineButton(
                       color: neutralGrey,
                       text: 'Edit',
@@ -169,7 +207,7 @@ class MenuEventWidget extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                   child: MyInlineButton(
-                    color: isMember ? attendingOrange : absentRed,
+                    color: widget.isMember ? attendingOrange : absentRed,
                     text: mainButtonText,
                     onTap: onMainButtonPress,
                   ),

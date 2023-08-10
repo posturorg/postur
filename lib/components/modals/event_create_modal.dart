@@ -118,8 +118,11 @@ class _EventCreateModalState extends State<EventCreateModal> {
     fontSize: 15,
   );
 
-  // Retrieve user ID
+  // Retrieve current user ID
   String uid = FirebaseAuth.instance.currentUser!.uid;
+
+  // Retrieve current user document
+  DocumentReference<Map<String, dynamic>> currentUser = FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid);
 
   // Retrieve events data in order to update it in Firestore
   CollectionReference events = FirebaseFirestore.instance.collection('Events');
@@ -135,6 +138,8 @@ class _EventCreateModalState extends State<EventCreateModal> {
     // Convert currentCoords to geopoint
     GeoPoint geoPoint = GeoPoint(currentCoords.latitude, currentCoords.longitude);
 
+    // Add event ID to current user's "attending" array
+    currentUser.update({'attending': FieldValue.arrayUnion([eventId]),});
 
     Map<String, dynamic> eventData = {
       'creator': uid,
@@ -145,6 +150,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
       'rsvpTime': rsvpTime,
       'where': geoPoint,
       'description': eventDescriptionController.text,
+      'isPrivate': true,
     };
     
     // Update profile pic using "update" function
