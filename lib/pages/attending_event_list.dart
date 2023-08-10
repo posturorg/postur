@@ -3,12 +3,25 @@ import 'package:auth_test/pages/attending_event_user_entry.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:flutter/material.dart';
 
-class AttendingEventList extends StatelessWidget {
-  const AttendingEventList({super.key});
+class AttendingEventList extends StatefulWidget {
+  final bool isAttending;
+  final List<String> namesAttending;
+  const AttendingEventList({
+    super.key,
+    required this.isAttending,
+    required this.namesAttending,
+  });
 
   @override
+  State<AttendingEventList> createState() => _AttendingEventListState();
+}
+
+TextEditingController searchController = TextEditingController();
+
+class _AttendingEventListState extends State<AttendingEventList> {
+  @override
   Widget build(BuildContext context) {
-    Color detailsColor = absentRed;
+    Color detailsColor = widget.isAttending ? attendingOrange : absentRed;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -30,20 +43,23 @@ class AttendingEventList extends StatelessWidget {
           ),
         ),
       ),
-      body: const Column(
+      body: Column(
         children: [
-          const MySearchBar(),
-          const Divider(color: Color.fromARGB(255, 230, 230, 229)),
-          AttendingEventUserEntry(
-            isEditing: false,
-            displayName: 'Ben duPont',
+          MySearchBar(
+            searchController: TextEditingController(),
           ),
-          /*
-          ListView.builder(
-            itemBuilder: (context, index) {
-              []; //this will be a variable contained in the state
-            },
-          )*/
+          const Divider(color: Color.fromARGB(255, 230, 230, 229)),
+          Expanded(
+            child: ListView.builder(
+              itemCount: widget.namesAttending.length,
+              itemBuilder: (context, index) {
+                return AttendingEventUserEntry(
+                  isEditing: false,
+                  displayName: widget.namesAttending[index],
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

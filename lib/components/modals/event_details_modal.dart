@@ -1,7 +1,9 @@
 import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/modals/event_create_modal.dart';
+import 'package:auth_test/pages/attending_event_list.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../modal_bottom_button.dart';
@@ -225,8 +227,16 @@ class EventDetailsModal extends StatelessWidget {
                           ),
                           TextSpan(
                             text:
-                                'Thomas Kowalski, William Gödeler, & 24 others...',
+                                'Thomas Kowalski, William Gödeler, & 24 others...', //This shall be a function of who is actually attending.
                             style: defaultBody,
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AttendingEventList(
+                                            isAttending: isMember,
+                                            namesAttending: [],
+                                          ))),
                           ),
                         ],
                       ),

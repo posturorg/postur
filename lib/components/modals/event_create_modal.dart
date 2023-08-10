@@ -3,7 +3,6 @@ import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/event_address_form.dart';
 import 'package:auth_test/components/modal_bottom_button.dart';
-import 'package:auth_test/pages/attending_event_list.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -170,9 +169,9 @@ class _EventCreateModalState extends State<EventCreateModal> {
       //event creation and pin placement go
     }
     return SizedBox(
-      height: 775, // make this by default a function on whether or not you are
-      // "focused" on the description editing box. Should be 700 when not and 775
-      // when it is...
+      height: 745, //Make this some fraction of the size of the safe area
+      // also make this by default a function on whether or not you are
+      // "focused" on the description editing box. Should be shorter when not
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
