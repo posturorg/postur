@@ -27,10 +27,14 @@ class _ChatsPageState extends State<ChatsPage> {
       Column(children: [
         Container(
           decoration: searchBarDecoration(),
-          child: const Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              MySearchBar(),
+              MySearchBar(
+                searchController: TextEditingController(), //should be
+                //instantiated in the widget itself so it can be accessed
+                //later
+              ),
             ],
           ),
         ),

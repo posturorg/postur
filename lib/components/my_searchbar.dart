@@ -2,7 +2,11 @@ import 'package:auth_test/src/colors.dart';
 import 'package:flutter/material.dart';
 
 class MySearchBar extends StatelessWidget {
-  const MySearchBar({super.key});
+  final TextEditingController searchController;
+  const MySearchBar({
+    super.key,
+    required this.searchController,
+  });
 
   @override
   Widget build(BuildContext context) => Container(
