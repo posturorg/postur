@@ -204,9 +204,9 @@ class _EventCreateModalState extends State<EventCreateModal> {
       //event creation and pin placement go
     }
     return SizedBox(
-      height: 745, // make this by default a function on whether or not you are
-      // "focused" on the description editing box. Should be 700 when not and 745
-      // when it is...
+      height: 745, //Make this some fraction of the size of the safe area
+      // also make this by default a function on whether or not you are
+      // "focused" on the description editing box. Should be shorter when not
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

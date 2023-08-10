@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../src/colors.dart';
 import '../components/tag_widget.dart';
 import '../components/my_searchbar.dart';
@@ -32,13 +31,13 @@ class _TagsPageState extends State<TagsPage> {
           const Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('Your Tags:',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: attendingOrange,
-                      )),
-                ]),
+              Text('Your Tags:',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: attendingOrange,
+                  )),
+            ]),
           ),
           GestureDetector(
             onTap: () {
@@ -70,7 +69,10 @@ class _TagsPageState extends State<TagsPage> {
       children: [
         Column(
           children: [
-            const MySearchBar(),
+            MySearchBar(
+              searchController: TextEditingController(), //should make this an
+              //object initialized in the widget instead.
+            ),
             Column(
               children: [
                 yourTags,
