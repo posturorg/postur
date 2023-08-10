@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:auth_test/components/create_event_datetime.dart';
 import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
@@ -83,12 +85,13 @@ class _EventCreateModalState extends State<EventCreateModal> {
     });
   }
 
+
   @override
   void initState() {
     super.initState();
-    DateTime whenTime = DateTime.now();
-    DateTime endTime = DateTime.now();
-    DateTime rsvpTime = DateTime.now();
+    whenTime = DateTime.now();
+    endTime = DateTime.now();
+    rsvpTime = DateTime.now();
     selectedPlace = widget
         .initialSelectedPlace; // Initialize the variable from the parameter
     currentCoords = widget.initialCoords;
@@ -129,6 +132,10 @@ class _EventCreateModalState extends State<EventCreateModal> {
     // Get the auto-generated ID as a string
     String eventId = newEventRef.id;
 
+    // Convert currentCoords to geopoint
+    GeoPoint geoPoint = GeoPoint(currentCoords.latitude, currentCoords.longitude);
+
+
     Map<String, dynamic> eventData = {
       'creator': uid,
       'eventId': eventId,
@@ -136,7 +143,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
       'whenTime': whenTime,
       'endTime': endTime,
       'rsvpTime': rsvpTime,
-      'where': currentCoords,
+      'where': geoPoint,
       'description': eventDescriptionController.text,
     };
     
@@ -190,9 +197,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
                 Navigator.pop(context); //Closes popup
                 Navigator.pop(context); //Closes modal
               }
-              // Create event in the backend
-              createEvent();
-              print('User created an event');
             }, //interface with backend to change event...
             optionTwoText: 'No',
             onOptionTwo: () => {Navigator.pop(context)},
@@ -200,7 +204,12 @@ class _EventCreateModalState extends State<EventCreateModal> {
         )
       };
     } else {
-      onBottomButtonPress = () => {}; //This should be where code for
+      onBottomButtonPress = () => {
+        // Create event in the backend
+        print('User created an event'),
+        createEvent(),
+        Navigator.pop(context), //Closes modal
+      }; //This should be where code for
       //event creation and pin placement go
     }
     return SizedBox(
