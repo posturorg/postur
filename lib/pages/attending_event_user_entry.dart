@@ -1,7 +1,7 @@
 import 'package:auth_test/src/colors.dart';
 import 'package:flutter/material.dart';
 
-BoxDecoration AttendingBoxDecoration() {
+BoxDecoration attendingBoxDecoration() {
   return const BoxDecoration(
     border: Border(
         /*top: BorderSide(
@@ -16,14 +16,15 @@ BoxDecoration AttendingBoxDecoration() {
 }
 
 class AttendingEventUserEntry extends StatefulWidget {
-  final String displayName; // will ultimately be obtained from the User ID
+  final Map<String, String>
+      user; // will ultimately be obtained from the User ID
   final bool isEditing;
   final void Function()? externalOnTap; // for whatever, from the outside, you
   // want to run on tapping the given entry. Only runs if isEditing.
   const AttendingEventUserEntry({
     super.key,
     required this.isEditing,
-    required this.displayName,
+    required this.user,
     this.externalOnTap,
   });
 
@@ -57,7 +58,7 @@ class _AttendingEventUserEntryState extends State<AttendingEventUserEntry> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        decoration: AttendingBoxDecoration(),
+        decoration: attendingBoxDecoration(),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         child: Row(
           children: [
@@ -68,7 +69,7 @@ class _AttendingEventUserEntryState extends State<AttendingEventUserEntry> {
             Padding(
               padding: const EdgeInsets.fromLTRB(6, 0, 0, 0),
               child: Text(
-                widget.displayName,
+                widget.user["name"]!,
                 style:
                     const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),

@@ -1,11 +1,12 @@
 import 'package:auth_test/components/my_searchbar.dart';
 import 'package:auth_test/pages/attending_event_user_entry.dart';
 import 'package:auth_test/src/colors.dart';
+import 'package:auth_test/src/search_services.dart';
 import 'package:flutter/material.dart';
 
 class AttendingEventList extends StatefulWidget {
   final bool isAttending;
-  final List<String> namesAttending;
+  final List<Map<String, String>> namesAttending;
   const AttendingEventList({
     super.key,
     required this.isAttending,
@@ -16,32 +17,19 @@ class AttendingEventList extends StatefulWidget {
   State<AttendingEventList> createState() => _AttendingEventListState();
 }
 
-TextEditingController searchController = TextEditingController();
-
-List<String> reorderAndSortList(List<String> inputList) {
-  // Create a list of Map entries where each entry contains the string and its index
-  List<MapEntry<int, String>> indexedEntries =
-      inputList.asMap().entries.toList();
-
-  // Sort the entries alphabetically based on the string values
-  indexedEntries.sort((a, b) => a.value.compareTo(b.value));
-
-  // Extract the strings from the sorted entries
-  List<String> sortedStrings =
-      indexedEntries.map((entry) => entry.value).toList();
-
-  return sortedStrings;
-}
+final TextEditingController searchController =
+    TextEditingController(); //controller of search bar...
 
 late List<String> namesAttendingAlphabetized;
-late List<String> internalDisplayList;
+late List<Map<String, String>> internalDisplayList;
+late List<Map<String, String>> alphabetizedDisplayList;
 
 class _AttendingEventListState extends State<AttendingEventList> {
   @override
   void initState() {
     super.initState();
-    namesAttendingAlphabetized = reorderAndSortList(widget.namesAttending);
-    internalDisplayList = namesAttendingAlphabetized;
+    alphabetizedDisplayList = sortUsersByName(widget.namesAttending);
+    internalDisplayList = alphabetizedDisplayList;
   }
 
   @override
@@ -71,7 +59,7 @@ class _AttendingEventListState extends State<AttendingEventList> {
       body: Column(
         children: [
           MySearchBar(
-            searchController: TextEditingController(),
+            searchController: searchController,
           ),
           const Divider(color: Color.fromARGB(255, 230, 230, 229)),
           Expanded(
@@ -80,7 +68,7 @@ class _AttendingEventListState extends State<AttendingEventList> {
               itemBuilder: (context, index) {
                 return AttendingEventUserEntry(
                   isEditing: false,
-                  displayName: internalDisplayList[index],
+                  user: internalDisplayList[index],
                 );
               },
             ),
