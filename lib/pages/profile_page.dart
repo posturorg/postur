@@ -1,5 +1,7 @@
 import 'package:auth_test/components/id_widget.dart';
+import 'package:auth_test/components/invited_events_profile.dart';
 import 'package:auth_test/components/profile_buttons.dart';
+import 'package:auth_test/components/attending_events_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,6 +24,9 @@ class _ProfilePageState extends State<ProfilePage> {
   
   // Retrieve current user data from Firestore
   final currentUser = FirebaseFirestore.instance.collection('Users').where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
+
+  // Retrieve all public events from Firestore
+  final publicEvents = FirebaseFirestore.instance.collection('Events').where('isPrivate', isEqualTo: false);
 
   @override
   Widget build(BuildContext context) {
@@ -85,46 +90,23 @@ class _ProfilePageState extends State<ProfilePage> {
         Column(
           children: [
             // Stream of user data for ID Widget (QR Code, profile pic, name, username)
-            StreamBuilder<QuerySnapshot>(
-              stream: currentUser.snapshots(),
-              builder: (context, snapshot) {
-                // What to show if waiting for data
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  // Show Waiting Indicator
-                  return const Center(child: CircularProgressIndicator());
-
-                // What to show if data has been received
-                } else if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.done) {
-                  // Potenital error message
-                  if (snapshot.hasError) {
-                    return const Center(child: Text("Error Occured"));
-                  // Success
-                  } else if (snapshot.hasData) {  
-                    /* Access current user's data from streams */
-                    final currentUserData = snapshot.data!.docs[0];
-                    return IDWidget(
-                      currentUser: currentUserData,
-                    );
-                  }
-                  return const Center(child: Text("No Data Received"));
-                }
-                return Center(child: Text(snapshot.connectionState.toString()));
-              }
-            ),
+            IDStream(currentUser: currentUser),
             const ProfileButtons(),
             attendingTitle,
+            const AttendingEventsProfile(),
+            inviteTitle,
+            const InvitedEventsProfile(),
             MenuEventWidget(
                 eventTitle: 'Welding Club',
                 eventCreator: 'Huds',
-                isCreator: true,
-                isMember: true),
+                isCreator: false,
+                isMember: false),
             MenuEventWidget(
               eventTitle: "Pete's Bday Party",
               eventCreator: 'Me',
-              isCreator: true,
-              isMember: true,
+              isCreator: false,
+              isMember: false,
             ),
-            inviteTitle,
             MenuEventWidget(
               eventTitle: 'Booze Cruise',
               eventCreator: '@SigmaChi',

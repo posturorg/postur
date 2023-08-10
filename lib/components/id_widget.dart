@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../src/colors.dart';
@@ -18,6 +19,9 @@ class IDWidget extends StatefulWidget {
 }
 
 class _IDWidgetState extends State<IDWidget> {
+
+  // Retrieve uid of current user
+  String uid = FirebaseAuth.instance.currentUser!.uid;
 
   // Retrieve user data from Firestore
   CollectionReference users = FirebaseFirestore.instance.collection('Users');
@@ -47,6 +51,50 @@ class _IDWidgetState extends State<IDWidget> {
           style: const TextStyle(fontSize: 15),
         ),
       ],
+    );
+  }
+}
+ 
+// Widget that streams current user data to ID widget
+class IDStream extends StatefulWidget {
+  final Query<Map<String, dynamic>> currentUser;
+
+  const IDStream ({
+    super.key,
+    required this.currentUser,
+  });
+
+  @override
+  State<IDStream> createState() => _IDStreamState();
+}
+
+class _IDStreamState extends State<IDStream> {
+  
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: widget.currentUser.snapshots(),
+      builder: (context, snapshot) {
+        // What to show if waiting for data
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show Waiting Indicator
+          return const Center(child: CircularProgressIndicator(color: absentRed));
+
+        // What to show if data has been received
+        } else if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.done) {
+          // Potenital error message
+          if (snapshot.hasError) {
+            return const Center(child: Text("Error Occured"));
+          // Success
+          } else if (snapshot.hasData) {  
+            /* Access current user's data from streams */
+            final currentUserData = snapshot.data!.docs[0];
+            return IDWidget(currentUser: currentUserData,);
+          }
+          return const Center(child: Text("No Data Received"));
+        }
+        return Center(child: Text(snapshot.connectionState.toString()));
+      }
     );
   }
 }
