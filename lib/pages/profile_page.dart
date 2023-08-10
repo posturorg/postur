@@ -23,6 +23,9 @@ class _ProfilePageState extends State<ProfilePage> {
   // Retrieve current user data from Firestore
   final currentUser = FirebaseFirestore.instance.collection('Users').where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
 
+  // Retrieve all public events from Firestore
+  final publicEvents = FirebaseFirestore.instance.collection('Events').where('isPrivate', isEqualTo: true);
+
   @override
   Widget build(BuildContext context) {
     
@@ -85,34 +88,44 @@ class _ProfilePageState extends State<ProfilePage> {
         Column(
           children: [
             // Stream of user data for ID Widget (QR Code, profile pic, name, username)
-            StreamBuilder<QuerySnapshot>(
-              stream: currentUser.snapshots(),
-              builder: (context, snapshot) {
-                // What to show if waiting for data
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  // Show Waiting Indicator
-                  return const Center(child: CircularProgressIndicator());
-
-                // What to show if data has been received
-                } else if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.done) {
-                  // Potenital error message
-                  if (snapshot.hasError) {
-                    return const Center(child: Text("Error Occured"));
-                  // Success
-                  } else if (snapshot.hasData) {  
-                    /* Access current user's data from streams */
-                    final currentUserData = snapshot.data!.docs[0];
-                    return IDWidget(
-                      currentUser: currentUserData,
-                    );
-                  }
-                  return const Center(child: Text("No Data Received"));
-                }
-                return Center(child: Text(snapshot.connectionState.toString()));
-              }
-            ),
+            IDStream(currentUser: currentUser),
             const ProfileButtons(),
             attendingTitle,
+            // StreamBuilder<QuerySnapshot>(
+            //   stream: publicEvents.snapshots(),
+            //   builder: (context, snapshot) {
+            //     // What to show if waiting for data
+            //     if (snapshot.connectionState == ConnectionState.waiting) {
+            //       // Show Waiting Indicator
+            //       return const Center(child: CircularProgressIndicator(color: absentRed,));
+
+            //     // What to show if data has been received
+            //     } else if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.done) {
+            //       // Potenital error message
+            //       if (snapshot.hasError) {
+            //         return const Center(child: Text("Error Occured"));
+            //       // Success
+            //       } else if (snapshot.hasData) {
+            //         int numEvents = snapshot.data!.docs.length;
+            //         return ListView.builder(
+            //           itemCount: numEvents,
+            //           itemBuilder: (context, index) {
+            //             final DocumentSnapshot documentSnapshot = snapshot.data!.docs[index];
+            //             return Text(documentSnapshot['description']);
+            //             // MenuEventWidget(
+            //             //   eventTitle: documentSnapshot['eventTitle'],
+            //             //   eventCreator: documentSnapshot['creator'],
+            //             //   isCreator: documentSnapshot['creator'] == uid ? true : false,
+            //             //   isMember: true
+            //             // );
+            //           },
+            //         );
+            //       }
+            //       return const Center(child: Text("No Data Received"));
+            //     }
+            //     return Center(child: Text(snapshot.connectionState.toString()));
+            //   }
+            //   ),
             MenuEventWidget(
                 eventTitle: 'Welding Club',
                 eventCreator: 'Huds',
