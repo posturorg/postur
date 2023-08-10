@@ -10,7 +10,7 @@ class AddressList extends StatelessWidget {
   final TextEditingController relevantController;
   final void Function(PlaceAutoComplete) setInternalSelectedPlace;
   final dynamic updateSearchResults;
-  AddressList({
+  const AddressList({
     super.key,
     required this.relevantController,
     required this.updateSearchResults,
