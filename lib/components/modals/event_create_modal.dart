@@ -3,8 +3,9 @@ import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/event_address_form.dart';
 import 'package:auth_test/components/modal_bottom_button.dart';
-import 'package:auth_test/pages/attending_event_list.dart';
 import 'package:auth_test/src/places/places_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../event_box_decoration.dart';
@@ -114,64 +115,97 @@ class _EventCreateModalState extends State<EventCreateModal> {
     fontSize: 15,
   );
 
+  // Retrieve user ID
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+
+  // Retrieve events data in order to update it in Firestore
+  CollectionReference events = FirebaseFirestore.instance.collection('Events');
+
+  Future<void> createEvent() async {
+
+    // Create a new document reference with an auto-generated ID
+    DocumentReference newEventRef = events.doc();
+
+    // Get the auto-generated ID as a string
+    String eventId = newEventRef.id;
+
+    Map<String, dynamic> eventData = {
+      'creator': uid,
+      'eventId': eventId,
+      'eventTitle': eventTitleController.text,
+      'whenTime': whenTime,
+      'endTime': endTime,
+      'rsvpTime': rsvpTime,
+      'where': currentCoords,
+      'description': eventDescriptionController.text,
+    };
+    
+    // Update profile pic using "update" function
+    await newEventRef.set(eventData);
+    print('Event added with ID: ${newEventRef.id}');
+  }
+
   @override
   Widget build(BuildContext context) {
     late Function()? onBottomButtonPress;
     if (widget.exists) {
       onBottomButtonPress = () => {
-            showCupertinoDialog(
-              context: context,
-              builder: (context) => DefaultTwoOptionDialog(
-                title: 'Confirm event changes?',
-                optionOneText: 'Yes, confirm',
-                onOptionOne: () async {
-                  //does this need to be async
-                  if (changedAddress) {
-                    dynamic newCoords = await PlacesRepository()
-                        .getCoordsFromPlaceId(selectedPlace.placeId);
-                    //print(selectedPlace.placeId);
-                    if (newCoords == null) {
-                      Navigator.pop(
-                          context); // this is a bad practice, apparently.
-                      showCupertinoDialog(
-                        context: context,
-                        builder: (context) => DefaultOneOptionDialog(
-                          title:
-                              'Something went wrong. Check your internet connection or restart the app.',
-                          buttonText: 'Ok',
-                          onPressed: () => {Navigator.pop(context)},
-                        ),
-                      );
-                    } else {
-                      setState(() {
-                        currentCoords = newCoords;
-                        //print('-------NEW COORDS ARE:-------');
-                        //print('${currentCoords.latitude}, ${currentCoords.longitude}');
-                      });
-                      Navigator.pop(context); //should close our popup
-                      // this is where normally we would submit changed to the backend
-                      Navigator.pop(context); //should close our modal
+        showCupertinoDialog(
+          context: context,
+          builder: (context) => DefaultTwoOptionDialog(
+            title: 'Confirm event changes?',
+            optionOneText: 'Yes, confirm',
+            onOptionOne: () async {
+              //does this need to be async
+              if (changedAddress) {
+                dynamic newCoords = await PlacesRepository()
+                    .getCoordsFromPlaceId(selectedPlace.placeId);
+                //print(selectedPlace.placeId);
+                if (newCoords == null) {
+                  Navigator.pop(
+                      context); // this is a bad practice, apparently.
+                  showCupertinoDialog(
+                    context: context,
+                    builder: (context) => DefaultOneOptionDialog(
+                      title:
+                          'Something went wrong. Check your internet connection or restart the app.',
+                      buttonText: 'Ok',
+                      onPressed: () => {Navigator.pop(context)},
+                    ),
+                  );
+                } else {
+                  setState(() {
+                    currentCoords = newCoords;
+                    //print('-------NEW COORDS ARE:-------');
+                    //print('${currentCoords.latitude}, ${currentCoords.longitude}');
+                  });
+                  Navigator.pop(context); //should close our popup
+                  // this is where normally we would submit changed to the backend
+                  Navigator.pop(context); //should close our modal
 
-                      //HERE IS WHERE WE SHALL ADD THE CODE TO CREATE AN EVENT IN THE BACKEND.
-                    }
-                  } else {
-                    //this is where we would normally submit changes to the backend
-                    Navigator.pop(context); //Closes popup
-                    Navigator.pop(context); //Closes modal
-                  }
-                }, //interface with backend to change event...
-                optionTwoText: 'No',
-                onOptionTwo: () => {Navigator.pop(context)},
-              ),
-            )
-          };
+                  //HERE IS WHERE WE SHALL ADD THE CODE TO CREATE AN EVENT IN THE BACKEND.
+                }
+              } else {
+                //this is where we would normally submit changes to the backend
+                Navigator.pop(context); //Closes popup
+                Navigator.pop(context); //Closes modal
+              }
+              // Create event in the backend
+              createEvent();
+              print('User created an event');
+            }, //interface with backend to change event...
+            optionTwoText: 'No',
+            onOptionTwo: () => {Navigator.pop(context)},
+          ),
+        )
+      };
     } else {
       onBottomButtonPress = () => {}; //This should be where code for
       //event creation and pin placement go
     }
     return SizedBox(
-      height: 775, // make this by default a function on whether or not you are
-      // "focused" on the description editing box. Should be 700 when not and 775
+      height: 745, // make this by default a function on whether or not you are
+      // "focused" on the description editing box. Should be 700 when not and 745
       // when it is...
       child: Center(
         child: Column(
