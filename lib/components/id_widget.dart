@@ -31,7 +31,7 @@ class _IDWidgetState extends State<IDWidget> {
           uid: widget.currentUser['uid'],
         ),
         // Profile Picture
-        UpdateProfilePic(reference: widget.currentUser['profile_pic'], radius: 53, borderRadius: 137),
+        UpdateProfilePic(reference: widget.currentUser['profile_pic'], radius: 45, borderRadius: 115),
         // Full Name
         Text(
           "${widget.currentUser['first_name']} ${widget.currentUser['last_name']}",
