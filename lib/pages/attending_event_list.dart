@@ -16,6 +16,8 @@ class AttendingEventList extends StatefulWidget {
   State<AttendingEventList> createState() => _AttendingEventListState();
 }
 
+//need to include searchbar logic...
+
 TextEditingController searchController = TextEditingController();
 
 class _AttendingEventListState extends State<AttendingEventList> {
