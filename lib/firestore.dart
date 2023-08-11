@@ -12,9 +12,11 @@ Future<void> userSetup(String email) async {
     'email': email,
     'uid': uid,
     'profile_pic': "",
-    'your_events': [],
+    'invited': [],
     'attending': [],
     'contacts': {},
+    'tags': [],
+    'accountType': 'private',
   };
 
   await docUser.set(userMap);

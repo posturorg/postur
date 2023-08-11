@@ -142,6 +142,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
 
     // Add event ID to current user's "attending" array
     currentUser.update({
+      'invited': FieldValue.arrayUnion([eventId]),
       'attending': FieldValue.arrayUnion([eventId]),
     });
 

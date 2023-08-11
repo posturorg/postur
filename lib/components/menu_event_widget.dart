@@ -58,10 +58,6 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
       setState(() {
         fullName = '${data['first_name']} ${data['last_name']}';
       });
-    } else {
-      setState(() {
-        fullName = 'User not found';
-      });
     }
   }
 
@@ -78,39 +74,39 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
     if (widget.isCreator) {
       mainButtonText = 'Cancel';
       onMainButtonPress = () => {
-            showDialog(
-              //Need to compress this
-              context: context,
-              builder: (_) => DefaultTwoOptionDialog(
-                title: 'Are you sure?',
-                content: 'Are you sure you want to cancel the event?',
-                optionOneText: 'Yes, poop the party.',
-                optionTwoText: 'No, party on!',
-                onOptionOne: () {},
-                onOptionTwo: () {
-                  Navigator.pop(context);
-                },
-              ),
-              barrierDismissible: true,
-            )
-          };
+        showDialog(
+          //Need to compress this
+          context: context,
+          builder: (_) => DefaultTwoOptionDialog(
+            title: 'Are you sure?',
+            content: 'Are you sure you want to cancel the event?',
+            optionOneText: 'Yes, poop the party.',
+            optionTwoText: 'No, party on!',
+            onOptionOne: () {},
+            onOptionTwo: () {
+              Navigator.pop(context);
+            },
+          ),
+          barrierDismissible: true,
+        )
+      };
     } else if (widget.isMember) {
       mainButtonText = 'Leave';
       onMainButtonPress = () => {
-            showDialog(
-              context: context,
-              builder: (_) => DefaultTwoOptionDialog(
-                title: 'Are you sure?',
-                content: 'Are you sure you want to leave the event?',
-                optionOneText: 'Yes, leave.',
-                optionTwoText: 'No, stay.',
-                onOptionOne: () {},
-                onOptionTwo: () {
-                  Navigator.pop(context);
-                },
-              ),
-            )
-          };
+        showDialog(
+          context: context,
+          builder: (_) => DefaultTwoOptionDialog(
+            title: 'Are you sure?',
+            content: 'Are you sure you want to leave the event?',
+            optionOneText: 'Yes, leave.',
+            optionTwoText: 'No, stay.',
+            onOptionOne: () {},
+            onOptionTwo: () {
+              Navigator.pop(context);
+            },
+          ),
+        )
+      };
     } else {
       mainButtonText = 'RSVP';
       onMainButtonPress = () {};
@@ -135,7 +131,7 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
             // Returning SizedBox instead of a Container
             return EventDetailsModal(
               eventTitle: widget.eventTitle,
-              eventCreator: widget.eventCreator,
+              creator: widget.eventCreator,
               isCreator: widget.isCreator,
               isMember: widget.isMember,
             );
