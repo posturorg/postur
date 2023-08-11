@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   mobile_scanner: ^3.3.0
-  google_maps_flutter: ^2.3.1
+  google_maps_flutter: ^2.4.0
   google_maps_flutter_web: ^0.5.1
   qr_flutter: ^4.1.0
   firebase_auth: ^4.6.3
