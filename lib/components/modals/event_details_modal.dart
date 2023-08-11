@@ -2,6 +2,7 @@ import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/modals/event_create_modal.dart';
 import 'package:auth_test/pages/attending_event_list.dart';
 import 'package:auth_test/src/places/places_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -10,20 +11,25 @@ import '../modal_bottom_button.dart';
 import '../event_box_decoration.dart';
 import '../../src/colors.dart';
 
-class EventDetailsModal extends StatelessWidget {
+class EventDetailsModal extends StatefulWidget {
   final String eventTitle;
-  final String eventCreator;
+  final String creator;
   final bool isCreator;
   final bool isMember;
 
   const EventDetailsModal({
     super.key,
     required this.eventTitle,
-    required this.eventCreator,
+    required this.creator,
     required this.isCreator,
     required this.isMember,
   });
 
+  @override
+  State<EventDetailsModal> createState() => _EventDetailsModalState();
+}
+
+class _EventDetailsModalState extends State<EventDetailsModal> {
   final TextStyle defaultBold = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 15,
@@ -34,26 +40,48 @@ class EventDetailsModal extends StatelessWidget {
     fontSize: 15,
   );
 
+  // Initialize creator full name variable
+  String creatorName = '';
+
+  Future<void> _fetchCreatorName() async {
+    try {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('Users').doc(widget.creator).get();
+      if (snapshot.exists) {
+        setState(() {
+          creatorName = '${snapshot['first_name']} ${snapshot['first_name']}';
+        });
+      }
+    } catch (e) {
+      print("Error fetching event creator's name: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCreatorName();
+  }
+
   @override
   Widget build(BuildContext context) {
     late String bottomButtonText;
     late Function()? onMainBottomTap;
-    if (isCreator) {
+    if (widget.isCreator) {
       bottomButtonText = 'Cancel';
       onMainBottomTap = () => {
-            showCupertinoDialog(
-              context: context,
-              builder: (context) => DefaultTwoOptionDialog(
-                title: 'Are you sure?',
-                content: 'Are you sure you want to cancel this event?',
-                optionOneText: 'Yes, poop the party.',
-                optionTwoText: 'No, party on!',
-                onOptionOne: () {}, //Should leave event, and pop both modals
-                onOptionTwo: () => {Navigator.pop(context)},
-              ),
-            )
-          };
-    } else if (isMember) {
+        showCupertinoDialog(
+          context: context,
+          builder: (context) => DefaultTwoOptionDialog(
+            title: 'Are you sure?',
+            content: 'Are you sure you want to cancel this event?',
+            optionOneText: 'Yes, poop the party.',
+            optionTwoText: 'No, party on!',
+            onOptionOne: () {}, //Should leave event, and pop both modals
+            onOptionTwo: () => {Navigator.pop(context)},
+          ),
+        )
+      };
+    } else if (widget.isMember) {
       bottomButtonText = 'Leave';
       onMainBottomTap = () => {
             showCupertinoDialog(
@@ -83,11 +111,11 @@ class EventDetailsModal extends StatelessWidget {
               size: 85,
             ),
             Text(
-              eventTitle,
+              widget.eventTitle,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: isMember ? attendingOrange : absentRed,
+                color: widget.isMember ? attendingOrange : absentRed,
               ),
             ),
             Container(
@@ -97,7 +125,7 @@ class EventDetailsModal extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Creator: ${isCreator ? 'Me' : eventCreator}',
+                    'Creator: ${widget.isCreator ? 'Me' : creatorName}',
                     style: const TextStyle(
                       fontSize: 17,
                     ),
@@ -234,7 +262,7 @@ class EventDetailsModal extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => AttendingEventList(
-                                            isAttending: isMember,
+                                            isAttending: widget.isMember,
                                             namesAttending: const [
                                               {
                                                 'name': 'Ben duPont',
@@ -297,7 +325,7 @@ class EventDetailsModal extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Visibility(
-                      visible: isCreator,
+                      visible: widget.isCreator,
                       child: ModalBottomButton(
                         onTap: () => {
                           //first close this existing modal.
@@ -328,7 +356,7 @@ class EventDetailsModal extends StatelessWidget {
                     ModalBottomButton(
                       onTap: onMainBottomTap,
                       text: bottomButtonText,
-                      backgroundColor: isMember ? attendingOrange : absentRed,
+                      backgroundColor: widget.isMember ? attendingOrange : absentRed,
                     ),
                   ],
                 ),

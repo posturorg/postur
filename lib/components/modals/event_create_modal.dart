@@ -139,7 +139,10 @@ class _EventCreateModalState extends State<EventCreateModal> {
     GeoPoint geoPoint = GeoPoint(currentCoords.latitude, currentCoords.longitude);
 
     // Add event ID to current user's "attending" array
-    currentUser.update({'attending': FieldValue.arrayUnion([eventId]),});
+    currentUser.update({
+      'invited': FieldValue.arrayUnion([eventId]),
+      'attending': FieldValue.arrayUnion([eventId]),
+    });
 
     Map<String, dynamic> eventData = {
       'creator': uid,
