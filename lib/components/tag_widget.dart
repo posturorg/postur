@@ -1,3 +1,4 @@
+import 'package:auth_test/pages/requests_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -132,7 +133,15 @@ class TagWidget extends StatelessWidget {
                     child: MyInlineButton(
                       color: neutralGrey,
                       text: 'Requests',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                RequestsPage(tagName: tagTitle),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],

@@ -231,31 +231,33 @@ class EventDetailsModal extends StatelessWidget {
                             style: defaultBody,
                             recognizer: TapGestureRecognizer()
                               ..onTap = () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
+                                    context,
+                                    MaterialPageRoute(
                                       builder: (context) => AttendingEventList(
-                                            isAttending: isMember,
-                                            namesAttending: const [
-                                              {
-                                                'name': 'Ben duPont',
-                                                'userID': 'bjb8ou91bkj',
-                                                'imageUrl':
-                                                    'https://www.gradeinflation.com',
-                                              },
-                                              {
-                                                'name': 'Alvin Adjei',
-                                                'userID': 'iwhefujbc98392',
-                                                'imageUrl':
-                                                    'https://www.gradeinflation.com',
-                                              },
-                                              {
-                                                'name': 'I go to yale12345',
-                                                'userID': 'iwhefujbc98392',
-                                                'imageUrl':
-                                                    'https://www.gradeinflation.com',
-                                              },
-                                            ], //Get this from the backend!
-                                          ))),
+                                        isAttending: isMember,
+                                        namesAttending: const [
+                                          {
+                                            'name': 'Ben duPont',
+                                            'userID': 'bjb8ou91bkj',
+                                            'imageUrl':
+                                                'https://www.gradeinflation.com',
+                                          },
+                                          {
+                                            'name': 'Alvin Adjei',
+                                            'userID': 'iwhefujbc98392',
+                                            'imageUrl':
+                                                'https://www.gradeinflation.com',
+                                          },
+                                          {
+                                            'name': 'I go to yale12345',
+                                            'userID': 'iwhefujbc98392',
+                                            'imageUrl':
+                                                'https://www.gradeinflation.com',
+                                          },
+                                        ], //Get this from the backend!
+                                      ),
+                                    ),
+                                  ),
                           ),
                         ],
                       ),
