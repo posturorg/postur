@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../src/colors.dart';
+import 'colors.dart';
 
 BoxDecoration eventBoxDecoration() {
   return const BoxDecoration(

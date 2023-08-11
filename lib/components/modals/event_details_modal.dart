@@ -8,7 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../modal_bottom_button.dart';
-import '../event_box_decoration.dart';
+import '../../src/event_box_decoration.dart';
 import '../../src/colors.dart';
 
 class EventDetailsModal extends StatefulWidget {
@@ -259,8 +259,8 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                             style: defaultBody,
                             recognizer: TapGestureRecognizer()
                               ..onTap = () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
+                                    context,
+                                    MaterialPageRoute(
                                       builder: (context) => AttendingEventList(
                                             isAttending: widget.isMember,
                                             namesAttending: const [
@@ -283,7 +283,9 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                                                     'https://www.gradeinflation.com',
                                               },
                                             ], //Get this from the backend!
-                                          ))),
+                                          )
+                                    )
+                              ),
                           ),
                         ],
                       ),
