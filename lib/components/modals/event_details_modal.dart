@@ -7,7 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../modal_bottom_button.dart';
-import '../event_box_decoration.dart';
+import '../../src/event_box_decoration.dart';
 import '../../src/colors.dart';
 
 class EventDetailsModal extends StatelessWidget {

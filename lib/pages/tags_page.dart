@@ -1,3 +1,4 @@
+import 'package:auth_test/components/modals/create_tag_modal.dart';
 import 'package:flutter/material.dart';
 import '../src/colors.dart';
 import '../components/tag_widget.dart';
@@ -43,10 +44,30 @@ class _TagsPageState extends State<TagsPage> {
             onTap: () {
               print("Create Tag");
             },
-            child: const Icon(
-              Icons.add,
-              color: attendingOrange,
-              size: 35,
+            child: IconButton(
+              onPressed: () {
+                showModalBottomSheet<void>(
+                  // context and builder are
+                  // required properties in this widget
+                  context: context,
+                  isScrollControlled: true,
+                  elevation: 0.0,
+                  backgroundColor: Colors.white,
+                  clipBehavior: Clip.antiAlias,
+                  showDragHandle: true,
+                  builder: (BuildContext context) {
+                    //Marker details MODAL START (IT IS THE SIZED BOX)
+                    return CreateTagModal(
+                      exists: false,
+                    );
+                  },
+                );
+              },
+              icon: const Icon(
+                Icons.add,
+                color: attendingOrange,
+                size: 35,
+              ),
             ),
           ),
         ]));
