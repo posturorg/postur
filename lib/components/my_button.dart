@@ -1,5 +1,6 @@
 /* at present used exclusively as part of user authentication */
 
+import 'package:auth_test/src/colors.dart';
 import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
@@ -20,7 +21,7 @@ class MyButton extends StatelessWidget {
         padding: const EdgeInsets.all(18),
         margin: const EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 255, 17, 0),
+          color: absentRed,
           borderRadius: BorderRadius.circular(20.0),
         ),
         child: Center(

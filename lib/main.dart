@@ -1,3 +1,4 @@
+import 'package:auth_test/pages/verify_email_page.dart';
 import 'package:flutter/services.dart';
 
 import '/pages/auth_page.dart';
