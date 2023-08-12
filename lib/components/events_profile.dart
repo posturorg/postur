@@ -23,30 +23,27 @@ class _EventsProfileState extends State<EventsProfile> {
   // Retrieve uid of current user
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
-  // Retrieve all of current user's events data
-  CollectionReference<Map<String, dynamic>> currentUserEvents = FirebaseFirestore.instance
-    .collection('Users')
-    .doc(FirebaseAuth.instance.currentUser!.uid)
-    .collection('MyEvents');
-
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: currentUserEvents
-        .where('isAttending', isEqualTo: widget.isAttending)
-        .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show Waiting Indicator
-          return const Center(child: CircularProgressIndicator(color: absentRed,));
-        // What to show if data has been received
-        } else if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.done) {
-          // Potenital error message
-          if (snapshot.hasError) {
-            return const Center(child: Text("Error Occured"));
-          // Success
-          } else if (snapshot.hasData) {
-            try {
+    try {
+      return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('MyEvents')
+          .where('isAttending', isEqualTo: widget.isAttending)
+          .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Show Waiting Indicator
+            return const Center(child: CircularProgressIndicator(color: absentRed,));
+          // What to show if data has been received
+          } else if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.done) {
+            // Potenital error message
+            if (snapshot.hasError) {
+              return const Center(child: Text("Error Occured"));
+            // Success
+            } else if (snapshot.hasData) {
               // Save set of MyEvents user is attending
               List<Widget> attendingEventWidgets = snapshot.data!.docs.map((event) {
                 return MenuEventWidget(
@@ -70,25 +67,23 @@ class _EventsProfileState extends State<EventsProfile> {
 
               // Return 
               return Column(children: attendingEventWidgets,);
-
-            } catch (e) {
-              print('$e');
-              return const Padding(
-                padding: EdgeInsets.fromLTRB(0,10,0,15),
-                child: Text(
-                  "When you are invited to events or tags, they'll appear here :)",
-                  style: TextStyle(
-                    color: absentRed,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
-              );
             }
           }
+          return Center(child: Text(snapshot.connectionState.toString()));
         }
-        return Center(child: Text(snapshot.connectionState.toString()));
-      }
-    );
+      );
+    } catch (e) {
+      return const Padding(
+        padding: EdgeInsets.fromLTRB(0,10,0,15),
+        child: Text(
+          "When you are invited to events or tags, they'll appear here :)",
+          style: TextStyle(
+            color: absentRed,
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+          ),
+        ),
+      );
+    }
   }
 }
