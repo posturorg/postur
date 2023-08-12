@@ -39,8 +39,10 @@ class _AttendingEventsProfileState extends State<AttendingEventsProfile> {
             return const Center(child: Text("Error Occured"));
           // Success
           } else if (snapshot.hasData) {
-            try {// Save set of eventId's user is attending
+            try {
+              // Save set of eventId's user is attending
               Set attendingEventIds = snapshot.data!['attending'].toSet() ?? {};
+              print(attendingEventIds.length);
               return StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance.collection('Events')
                   .where('eventId', whereIn: attendingEventIds)
@@ -74,7 +76,8 @@ class _AttendingEventsProfileState extends State<AttendingEventsProfile> {
                             eventTitle: event['eventTitle'],
                             eventCreator: event['creator'],
                             isCreator: event['creator'] == uid ? true : false,
-                            isMember: true);
+                            isMember: true
+                          );
                         }).toList();
 
                         return Column(children: attendingEventWidgets,);
