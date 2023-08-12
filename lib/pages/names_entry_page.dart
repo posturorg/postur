@@ -38,58 +38,60 @@ class _NamesEntryPageState extends State<NamesEntryPage> {
                 ),
               ),
             ),
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                MyTextField(
-                  controller: firstNameController,
-                  hintText: 'First name',
-                  obscureText: false,
-                  maxCharacters: 30,
-                ),
-                const SizedBox(height: 15),
-                MyTextField(
-                  controller: lastNameController,
-                  hintText: 'Last name (recommended)',
-                  obscureText: false,
-                  maxCharacters: 30,
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
-                  child: Text(
-                    'Your last name will only ever be shown to people in your contacts or friends.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+            body: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  MyTextField(
+                    controller: firstNameController,
+                    hintText: 'First name',
+                    obscureText: false,
+                    maxCharacters: 30,
+                  ),
+                  const SizedBox(height: 15),
+                  MyTextField(
+                    controller: lastNameController,
+                    hintText: 'Last name (recommended)',
+                    obscureText: false,
+                    maxCharacters: 30,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                    child: Text(
+                      'Your last name will only ever be shown to people in your contacts or friends.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    if (firstNameController.text.trim() != '') {
-                      setName();
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (context) => DefaultOneOptionDialog(
-                          title: 'Please enter a valid first name',
-                          buttonText: 'Ok',
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      );
-                    }
-                  },
-                  icon: const Icon(Icons.arrow_upward_rounded),
-                  label: const Text('Confirm'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: absentRed,
-                    foregroundColor: Colors.white,
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      if (firstNameController.text.trim() != '') {
+                        setName();
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) => DefaultOneOptionDialog(
+                            title: 'Please enter a valid first name',
+                            buttonText: 'Ok',
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.arrow_upward_rounded),
+                    label: const Text('Confirm'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: absentRed,
+                      foregroundColor: Colors.white,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 100),
-              ],
+                  const SizedBox(height: 100),
+                ],
+              ),
             ),
           );
   }

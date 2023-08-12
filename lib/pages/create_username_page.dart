@@ -40,62 +40,64 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                 ),
               ),
             ),
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Create your username:',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                  child: Text(
-                    "This won't be used for sign in, only to help people invite you to events.",
+            body: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Create your username:',
                     textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: MyTextField(
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(
-                          r'[a-zA-Z0-9]')), //allow only letters and numbers
-                    ],
-                    controller: usernameController,
-                    hintText: '@YourUsername',
-                    obscureText: false,
-                    maxCharacters: 25,
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                    child: Text(
+                      "This won't be used for sign in, only to help people invite you to events.",
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    if (usernameController.text.trim() != '') {
-                      //ALSO NEED TO MAKE SURE NO OTHER USER HAS SAME USERNAME!
-                      //ALSO NEED TO ADD CONDITION TO CHECK FOR OTHER SPECIAL CHARACTERS AND FORBID THEM!
-                      setUsername();
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (context) => DefaultOneOptionDialog(
-                          title: 'title',
-                          buttonText: 'Poop',
-                          onPressed: () {},
-                        ),
-                      );
-                    }
-                  },
-                  icon: const Icon(Icons.arrow_upward_rounded),
-                  label: const Text('Confirm'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: absentRed,
-                    foregroundColor: Colors.white,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: MyTextField(
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(
+                            r'[a-zA-Z0-9]')), //allow only letters and numbers
+                      ],
+                      controller: usernameController,
+                      hintText: '@YourUsername',
+                      obscureText: false,
+                      maxCharacters: 25,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 150),
-              ],
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      if (usernameController.text.trim() != '') {
+                        //ALSO NEED TO MAKE SURE NO OTHER USER HAS SAME USERNAME!
+                        //ALSO NEED TO ADD CONDITION TO CHECK FOR OTHER SPECIAL CHARACTERS AND FORBID THEM!
+                        setUsername();
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) => DefaultOneOptionDialog(
+                            title: 'title',
+                            buttonText: 'Poop',
+                            onPressed: () {},
+                          ),
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.arrow_upward_rounded),
+                    label: const Text('Confirm'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: absentRed,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 150),
+                ],
+              ),
             ),
           );
   }
