@@ -28,7 +28,13 @@ Future<void> userSetup(String email) async {
     'hasUsername': false,
   };
 
+  // Create document reference for initializing "MyEvents" subcollection
+  DocumentReference initMyEvent = users.doc(uid).collection('MyEvents').doc('InitMyEvent');
+
   await docUser.set(userMap);
-  
+
+  /* TODO: If anything goes wrong with queries, check empty document first! */
+  await initMyEvent.set('');
+
   return;
 }
