@@ -25,7 +25,7 @@ class _MapPageState extends State<MapPage> {
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
   // Retrieve current user document
-  DocumentReference<Map<String, dynamic>> currentUser = FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid);
+  DocumentReference currentUser = FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid);
 
   // Retrieve events to be shown on the map
   final Query events = FirebaseFirestore.instance.collection('Events');
@@ -76,14 +76,6 @@ class _MapPageState extends State<MapPage> {
     setState(() {
       _showCreateModal(location);
     });
-  }
-
-  String getCreatorName(String creator, List<QueryDocumentSnapshot<Object?>> allUsers) {
-    String eventCreator = allUsers
-      .where((user) => user.id == creator)
-      .map((user) {return '${user['first_name']}${user['last_name']}';})
-      .toList()[0][0];
-    return eventCreator;
   }
   
   @override
