@@ -2,6 +2,8 @@ import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/my_textfield.dart';
 import 'package:auth_test/pages/home_page.dart';
 import 'package:auth_test/src/colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -16,14 +18,47 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
   bool hasUsername = false; // on initState, get this from the backend.
   TextEditingController usernameController = TextEditingController();
 
-  Future setUsername() async {
-    //set this on backend
-    setState(() {
-      //this shouldn't be done on the frontend AT ALL.
-      //Should be listening perpetually to the backend.
-      usernameController.text.toLowerCase();
-      hasUsername = true;
-    });
+  Future<void> fetchHasUsername() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(currentUser.uid)
+          .get();
+
+      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
+      final hasNameFirebase = userData['hasUsername'];
+      setState(() {
+        hasUsername = hasNameFirebase;
+      });
+    }
+  }
+
+  Future<void> setUsername() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final userDocRef =
+          FirebaseFirestore.instance.collection('Users').doc(currentUser.uid);
+
+      //print('clicked!');
+      await userDocRef.update({
+        'hasUsername': true,
+      });
+      setState(() {
+        //Why did you crash...
+        hasUsername = true;
+      });
+    } else {
+      //should sign user out if user doesnt exist...
+      FirebaseAuth.instance.signOut();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchHasUsername();
   }
 
   @override
@@ -81,8 +116,8 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                         showDialog(
                           context: context,
                           builder: (context) => DefaultOneOptionDialog(
-                            title: 'title',
-                            buttonText: 'Poop',
+                            title: 'Please enter a valid username',
+                            buttonText: 'Ok',
                             onPressed: () {
                               Navigator.pop(context);
                             },

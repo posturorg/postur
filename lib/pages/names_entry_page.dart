@@ -31,8 +31,8 @@ class _NamesEntryPageState extends State<NamesEntryPage> {
       await userDocRef.update({
         'hasName': true,
         'name': {
-          'first': firstNameController.text,
-          'last': lastNameController.text,
+          'first': firstNameController.text.trim(),
+          'last': lastNameController.text.trim(),
         },
       });
       setState(() {
