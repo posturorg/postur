@@ -13,14 +13,14 @@ class MenuEventWidget extends StatefulWidget {
   final String eventTitle;
   final String eventCreator;
   final bool isCreator;
-  final bool isMember;
+  final bool isAttending;
 
   const MenuEventWidget({
     super.key,
     required this.eventTitle,
     required this.eventCreator,
     required this.isCreator,
-    required this.isMember,
+    required this.isAttending,
   });
 
   @override
@@ -90,7 +90,7 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
           barrierDismissible: true,
         )
       };
-    } else if (widget.isMember) {
+    } else if (widget.isAttending) {
       mainButtonText = 'Leave';
       onMainButtonPress = () => {
         showDialog(
@@ -133,7 +133,7 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
               eventTitle: widget.eventTitle,
               creator: widget.eventCreator,
               isCreator: widget.isCreator,
-              isMember: widget.isMember,
+              isMember: widget.isAttending,
             );
           },
         );
@@ -203,7 +203,7 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
                 Container(
                   padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                   child: MyInlineButton(
-                    color: widget.isMember ? attendingOrange : absentRed,
+                    color: widget.isAttending ? attendingOrange : absentRed,
                     text: mainButtonText,
                     onTap: onMainButtonPress,
                   ),

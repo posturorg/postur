@@ -1,7 +1,6 @@
 import 'package:auth_test/components/id_widget.dart';
-import 'package:auth_test/components/invited_events_profile.dart';
+import 'package:auth_test/components/events_profile.dart';
 import 'package:auth_test/components/profile_buttons.dart';
-import 'package:auth_test/components/attending_events_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -94,9 +93,9 @@ class _ProfilePageState extends State<ProfilePage> {
             IDStream(currentUser: currentUser),
             const ProfileButtons(),
             attendingTitle,
-            const AttendingEventsProfile(),
+            const EventsProfile(isAttending: true),
             inviteTitle,
-            const InvitedEventsProfile(),
+            const EventsProfile(isAttending: false),
             const TagWidget(
               tagTitle: 'Yale2024',
               tagCreator: '@YaleAdmins',
