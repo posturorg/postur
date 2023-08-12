@@ -64,17 +64,21 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         canResendEmail = true;
       });
     } catch (e) {
-      print(e.toString());
-      /*showDialog(
-        context: context,
-        builder: (context) => DefaultOneOptionDialog(
-          title: e.toString(),
-          buttonText: 'Ok',
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      );*/
+      try {
+        //NOT GOOD PRACTICE. FIND BETTER SOLUTION LONG-TERM
+        showDialog(
+          context: context,
+          builder: (context) => DefaultOneOptionDialog(
+            title: e.toString(),
+            buttonText: 'Ok',
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        );
+      } catch (e) {
+        print(e.toString());
+      }
     }
   }
 
