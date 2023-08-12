@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({super.key});
 
-//MaDE A CHANGE!!
   @override
   State<VerifyEmailPage> createState() => _VerifyEmailPageState();
 }
