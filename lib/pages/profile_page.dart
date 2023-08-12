@@ -96,23 +96,6 @@ class _ProfilePageState extends State<ProfilePage> {
             const AttendingEventsProfile(),
             inviteTitle,
             const InvitedEventsProfile(),
-            MenuEventWidget(
-                eventTitle: 'Welding Club',
-                eventCreator: 'Huds',
-                isCreator: false,
-                isMember: false),
-            MenuEventWidget(
-              eventTitle: "Pete's Bday Party",
-              eventCreator: 'Me',
-              isCreator: false,
-              isMember: false,
-            ),
-            MenuEventWidget(
-              eventTitle: 'Booze Cruise',
-              eventCreator: '@SigmaChi',
-              isCreator: false,
-              isMember: false,
-            ),
             const TagWidget(
               tagTitle: 'Yale2024',
               tagCreator: '@YaleAdmins',
