@@ -103,7 +103,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 30,
-                      color: Color.fromARGB(255, 255, 17, 0),
+                      color: absentRed,
                     ),
                   ),
                   const SizedBox(height: 50),
@@ -122,7 +122,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   // email textfeild
                   MyTextField(
                     controller: emailController,
-                    hintText: 'Email',
+                    hintText: 'College email',
                     obscureText: false,
                   ),
                   const SizedBox(height: 10),
