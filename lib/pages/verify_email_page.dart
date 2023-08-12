@@ -37,7 +37,6 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   @override
   void dispose() {
     timer?.cancel();
-
     super.dispose();
   }
 
@@ -55,8 +54,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   Future sendVerificationEmail() async {
     try {
       final user = FirebaseAuth.instance.currentUser!;
-      await user
-          .sendEmailVerification(); //might not work. might need additional backend permissions
+      await user.sendEmailVerification();
 
       setState(() {
         canResendEmail = false;
@@ -66,7 +64,8 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         canResendEmail = true;
       });
     } catch (e) {
-      showDialog(
+      print(e.toString());
+      /*showDialog(
         context: context,
         builder: (context) => DefaultOneOptionDialog(
           title: e.toString(),
@@ -75,7 +74,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
             Navigator.pop(context);
           },
         ),
-      );
+      );*/
     }
   }
 
