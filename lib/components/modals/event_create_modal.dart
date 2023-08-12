@@ -138,15 +138,9 @@ class _EventCreateModalState extends State<EventCreateModal> {
 
     // Convert currentCoords to geopoint
     GeoPoint geoPoint =
-        GeoPoint(currentCoords.latitude, currentCoords.longitude);
+      GeoPoint(currentCoords.latitude, currentCoords.longitude);
 
-    // Add event ID to current user's "attending" array
-    currentUser.update({
-      'invited': FieldValue.arrayUnion([eventId]),
-      'attending': FieldValue.arrayUnion([eventId]),
-    });
-
-    Map<String, dynamic> eventData = {
+    Map<String, dynamic> eventDetails = {
       'creator': uid,
       'eventId': eventId,
       'eventTitle': eventTitleController.text,
@@ -158,8 +152,30 @@ class _EventCreateModalState extends State<EventCreateModal> {
       'isPrivate': true,
     };
 
-    // Update profile pic using "update" function
-    await newEventRef.set(eventData);
+    /* TODO: move invited/attending events to doc in subcollection of current user */
+    
+    // TODO: OLD Add event ID to current user's "attending" array
+    currentUser.update({
+      'invited': FieldValue.arrayUnion([eventId]),
+      'attending': FieldValue.arrayUnion([eventId]),
+    });
+    
+    // Create new document in "MyEvents" subcollection with eventId
+    DocumentReference newMyEventRef = currentUser.collection('MyEvents').doc(eventId);
+
+    // TODO: NEW Add event to current user's "MyEvents" subcollection
+    Map<String, dynamic> myEventDetails = {
+      'creator': uid,
+      'eventId': eventId,
+      'eventTitle': eventTitleController.text,
+      'isCreator': true,
+      'isAttending': true,
+    };
+
+    // Create "Events" doc using "set" function
+    await newEventRef.set(eventDetails);
+    // Create "MyEvents" doc using "set" function
+    await newMyEventRef.set(myEventDetails);
     print('Event added with ID: ${newEventRef.id}');
   }
 
