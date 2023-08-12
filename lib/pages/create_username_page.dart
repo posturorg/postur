@@ -66,7 +66,7 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                             r'[a-zA-Z0-9]')), //allow only letters and numbers
                       ],
                       controller: usernameController,
-                      hintText: '@YourUsername',
+                      hintText: 'YourUsername',
                       obscureText: false,
                       maxCharacters: 25,
                     ),
@@ -83,7 +83,9 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                           builder: (context) => DefaultOneOptionDialog(
                             title: 'title',
                             buttonText: 'Poop',
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
                           ),
                         );
                       }

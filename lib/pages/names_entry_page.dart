@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/my_textfield.dart';
 import 'package:auth_test/pages/create_username_page.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:flutter/material.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class NamesEntryPage extends StatefulWidget {
   const NamesEntryPage({super.key});
@@ -16,18 +21,58 @@ class _NamesEntryPageState extends State<NamesEntryPage> {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
 
-  Future setName() async {
-    //function to set name in the backend equal to the front end
-    //also set hasName to true in the backend
-    setState(() {
-      hasName = true;
-    });
+  Future<void> setName() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final userDocRef =
+          FirebaseFirestore.instance.collection('Users').doc(currentUser.uid);
+
+      //print('clicked!');
+      await userDocRef.update({
+        'hasName': true,
+        'name': {
+          'first': firstNameController.text,
+          'last': lastNameController.text,
+        },
+      });
+      setState(() {
+        //Why did you crash...
+        hasName = true;
+      });
+    } else {
+      //should sign user out if user doesnt exist...
+      FirebaseAuth.instance.signOut();
+    }
+  }
+
+  Future<void> fetchHasName() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(currentUser.uid)
+          .get();
+
+      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
+      final hasNameFirebase = userData['hasName'];
+      setState(() {
+        hasName = hasNameFirebase;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    //get value of hasName from the backend...
+    fetchHasName();
   }
 
   @override
   Widget build(BuildContext context) {
     return hasName
-        ? const CreateUsernamePage() //should be create username...
+        ? const CreateUsernamePage()
         : Scaffold(
             appBar: AppBar(
               title: const Text(
