@@ -65,6 +65,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       setState(() {
         canResendEmail = true;
       });
+      print('email request attempt'); //DELETE
     } catch (e) {
       showDialog(
         context: context,
@@ -76,6 +77,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
           },
         ),
       );
+      print('email attempted but fail'); //DELETE
     }
   }
 
