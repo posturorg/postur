@@ -1,7 +1,9 @@
+import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/my_textfield.dart';
 import 'package:auth_test/pages/home_page.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CreateUsernamePage extends StatefulWidget {
   const CreateUsernamePage({super.key});
@@ -11,8 +13,18 @@ class CreateUsernamePage extends StatefulWidget {
 }
 
 class _CreateUsernamePageState extends State<CreateUsernamePage> {
-  bool hasUsername = false;
+  bool hasUsername = false; // on initState, get this from the backend.
   TextEditingController usernameController = TextEditingController();
+
+  Future setUsername() async {
+    //set this on backend
+    setState(() {
+      //this shouldn't be done on the frontend AT ALL.
+      //Should be listening perpetually to the backend.
+      usernameController.text.toLowerCase();
+      hasUsername = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +60,10 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: MyTextField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(
+                          r'[a-zA-Z0-9]')), //allow only letters and numbers
+                    ],
                     controller: usernameController,
                     hintText: '@YourUsername',
                     obscureText: false,
@@ -55,7 +71,22 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    if (usernameController.text.trim() != '') {
+                      //ALSO NEED TO MAKE SURE NO OTHER USER HAS SAME USERNAME!
+                      //ALSO NEED TO ADD CONDITION TO CHECK FOR OTHER SPECIAL CHARACTERS AND FORBID THEM!
+                      setUsername();
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) => DefaultOneOptionDialog(
+                          title: 'title',
+                          buttonText: 'Poop',
+                          onPressed: () {},
+                        ),
+                      );
+                    }
+                  },
                   icon: const Icon(Icons.arrow_upward_rounded),
                   label: const Text('Confirm'),
                   style: ElevatedButton.styleFrom(
