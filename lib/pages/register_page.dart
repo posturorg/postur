@@ -1,5 +1,6 @@
 import 'package:auth_test/components/my_textfield.dart';
 import 'package:auth_test/firestore.dart';
+import 'package:auth_test/src/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
       builder: (context) {
         return const Center(
           child: CircularProgressIndicator(
-            valueColor:
-                AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 255, 17, 0)),
+            valueColor: AlwaysStoppedAnimation<Color>(absentRed),
           ),
         );
       },
