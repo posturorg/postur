@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../src/colors.dart';
-import '../components/menu_event_widget.dart';
 import '../components/tag_widget.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -18,19 +17,21 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   // Retrieve uid of current user
   String uid = FirebaseAuth.instance.currentUser!.uid;
-  
+
   // Retrieve current user data from Firestore
-  final currentUser = FirebaseFirestore.instance.collection('Users').where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
+  final currentUser = FirebaseFirestore.instance
+      .collection('Users')
+      .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
 
   // Retrieve all public events from Firestore
-  final publicEvents = FirebaseFirestore.instance.collection('Events').where('isPrivate', isEqualTo: false);
+  final publicEvents = FirebaseFirestore.instance
+      .collection('Events')
+      .where('isPrivate', isEqualTo: false);
 
   @override
   Widget build(BuildContext context) {
-    
     // Borders around "Attending" and "Invites" titles widgets
     BoxDecoration sectionBoxDecoration() {
       return const BoxDecoration(
@@ -67,7 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
 
-    // Widget containing "Invites" title and the border above it 
+    // Widget containing "Invites" title and the border above it
     Widget inviteTitle = Container(
         decoration: sectionBoxDecoration(),
         padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),

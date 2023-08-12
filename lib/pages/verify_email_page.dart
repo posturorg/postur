@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
-import 'package:auth_test/pages/home_page.dart';
+import 'package:auth_test/pages/names_entry_page.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -85,7 +85,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   @override
   Widget build(BuildContext context) {
     return isEmailVerified
-        ? const HomePage() //Should be confirm Phone Number Page
+        ? const NamesEntryPage() //HomePage() //Should be add name page
         : Scaffold(
             // this is our actual verify email page
             appBar: AppBar(
@@ -124,7 +124,9 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                     },
                     child: const Text(
                       'Cancel',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
