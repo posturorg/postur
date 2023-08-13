@@ -23,9 +23,9 @@ class _MapPageState extends State<MapPage> {
   // Retrieve current user's uid
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
-  // Retrieve current user document
-  DocumentReference currentUser = FirebaseFirestore.instance
-      .collection('Users')
+  // Retrieve current user's "EventMembers" document
+  DocumentReference currentUserEvents = FirebaseFirestore.instance
+      .collection('EventMembers')
       .doc(FirebaseAuth.instance.currentUser!.uid);
 
   // Retrieve events to be shown on the map
@@ -83,7 +83,7 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     // Stream current user data to get list of events you're invitd to
     return StreamBuilder<QuerySnapshot>(
-        stream: currentUser
+        stream: currentUserEvents
           .collection('MyEvents')
           .snapshots(),
         builder: (context, snapshot) {

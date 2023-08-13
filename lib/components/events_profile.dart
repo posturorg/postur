@@ -27,12 +27,17 @@ class _EventsProfileState extends State<EventsProfile> {
   DocumentReference currentUser = FirebaseFirestore.instance
       .collection('Users')
       .doc(FirebaseAuth.instance.currentUser!.uid);
+  
+  // Retrieve current user's EventMembers data
+  DocumentReference currentUserEvents = FirebaseFirestore.instance
+      .collection('EventMembers')
+      .doc(FirebaseAuth.instance.currentUser!.uid);
 
   @override
   Widget build(BuildContext context) {
     try {
       return StreamBuilder<QuerySnapshot>(
-        stream: currentUser
+        stream: currentUserEvents
           .collection('MyEvents')
           .where('isAttending', isEqualTo: widget.isAttending)
           .snapshots(),
@@ -68,7 +73,6 @@ class _EventsProfileState extends State<EventsProfile> {
                   ),
                 );
               }
-
               // Return 
               return Column(children: myEventWidgets,);
             }
