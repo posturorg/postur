@@ -16,7 +16,7 @@ class EventDetailsModal extends StatefulWidget {
   final String eventTitle;
   final String creator;
   final bool isCreator;
-  final bool isAttending;
+  final bool? isAttending;
 
   const EventDetailsModal({
     super.key,
@@ -112,7 +112,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
           ),
         )
       };
-    } else if (widget.isAttending) {
+    } else if (widget.isAttending!) {
       bottomButtonText = 'Leave';
       onMainBottomTap = () => {
             showCupertinoDialog(
@@ -146,7 +146,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: widget.isAttending ? attendingOrange : absentRed,
+                color: widget.isAttending! ? attendingOrange : absentRed,
               ),
             ),
             Container(
@@ -293,7 +293,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => AttendingEventList(
-                                            isAttending: widget.isAttending,
+                                            isAttending: widget.isAttending!,
                                             namesAttending: const [
                                               {
                                                 'name': 'Ben duPont',
@@ -389,7 +389,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                     ModalBottomButton(
                       onTap: onMainBottomTap,
                       text: bottomButtonText,
-                      backgroundColor: widget.isAttending ? attendingOrange : absentRed,
+                      backgroundColor: widget.isAttending! ? attendingOrange : absentRed,
                     ),
                   ],
                 ),

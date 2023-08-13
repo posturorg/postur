@@ -103,12 +103,23 @@ class _MapPageState extends State<MapPage> {
               // Success
             } else if (snapshot.hasData) {
               // Save sets of events user is either invited to or attending (every element in attending should be inside of invited)
-              Set myEventDocs = snapshot.data!.docs.toSet();
+              List<QueryDocumentSnapshot> myEventDocs = snapshot.data!.docs;
 
-              List<String> myEventIds = myEventDocs.map((event) {
-                String eventId = event['eventId'];
-                return eventId;
-              }).toList();
+              // Initialize an empty map
+              Map<String, bool> eventIdToIsAttendingMap = {};
+
+              // Iterate through myEventDocs and populate the map
+              for (var myEventDoc in myEventDocs) {
+                // Get the data from the snapshot
+                Map<String, dynamic> data = myEventDoc.data() as Map<String, dynamic>;
+
+                // Extract the 'eventId' and 'isAttending' fields
+                String eventId = data['eventId'] as String;
+                bool isAttending = data['isAttending'] as bool;
+
+                // Add the entry to the map
+                eventIdToIsAttendingMap[eventId] = isAttending;
+              }
 
               return StreamBuilder<QuerySnapshot>(
                 stream: events.snapshots(),
@@ -132,7 +143,7 @@ class _MapPageState extends State<MapPage> {
                       //
                       Set<Marker> markers = snapshot.data!.docs
                           .where((event) =>
-                              myEventIds.contains(event.id))
+                              eventIdToIsAttendingMap.containsKey(event.id))
                           .map((event) {
                             // Retrieve GeoPoint location from backend
                             GeoPoint location = event['where'] as GeoPoint;
@@ -162,7 +173,7 @@ class _MapPageState extends State<MapPage> {
                                       eventTitle: event['eventTitle'],
                                       creator: event['creator'],
                                       isCreator: event['creator'] == uid ? true : false,
-                                      isAttending: myEventIds.contains(event.id),
+                                      isAttending: eventIdToIsAttendingMap[event.id],
                                     );
                                   },
                                 );
