@@ -29,9 +29,9 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
 
       Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
 
-      final hasNameFirebase = userData['hasUsername'];
+      final hasUsernameFirebase = userData['hasUsername'];
       setState(() {
-        hasUsername = hasNameFirebase;
+        hasUsername = hasUsernameFirebase;
       });
     }
   }
