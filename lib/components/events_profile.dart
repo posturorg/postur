@@ -23,13 +23,16 @@ class _EventsProfileState extends State<EventsProfile> {
   // Retrieve uid of current user
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
+  // Retrieve current user document
+  DocumentReference currentUser = FirebaseFirestore.instance
+      .collection('Users')
+      .doc(FirebaseAuth.instance.currentUser!.uid);
+
   @override
   Widget build(BuildContext context) {
     try {
       return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-          .collection('Users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
+        stream: currentUser
           .collection('MyEvents')
           .where('isAttending', isEqualTo: widget.isAttending)
           .snapshots(),
@@ -44,17 +47,18 @@ class _EventsProfileState extends State<EventsProfile> {
               return const Center(child: Text("Error Occured"));
             // Success
             } else if (snapshot.hasData) {
-              // Save set of MyEvents user is attending
-              List<Widget> attendingEventWidgets = snapshot.data!.docs.map((event) {
+
+              // Save list of MyEvents user is invited to/attending
+              List<Widget> myEventWidgets = snapshot.data!.docs.map((event) {
                 return MenuEventWidget(
-                  eventTitle: event['eventTitle'],
+                  eventId: event['eventId'],
                   eventCreator: event['creator'],
-                  isCreator: event['creator'] == uid,
-                  isAttending: widget.isAttending,
+                  isCreator: event['isCreator'],
+                  isAttending: event['isAttending'],
                 );
               }).toList();
 
-              if (attendingEventWidgets.isEmpty) {
+              if (myEventWidgets.isEmpty) {
                 return Text(
                   widget.isAttending ? "When you RSVP to events, they'll appear here :)" : "When you are invited to events or tags, they'll appear here :)",
                   style: const TextStyle(
@@ -66,7 +70,7 @@ class _EventsProfileState extends State<EventsProfile> {
               }
 
               // Return 
-              return Column(children: attendingEventWidgets,);
+              return Column(children: myEventWidgets,);
             }
           }
           return Center(child: Text(snapshot.connectionState.toString()));

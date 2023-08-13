@@ -13,6 +13,7 @@ dependencies:
   mobile_scanner: ^3.3.0
   google_maps_flutter: ^2.4.0
   google_maps_flutter_web: ^0.5.1
+  geoflutterfire_plus: ^0.0.16
   qr_flutter: ^4.1.0
   firebase_auth: ^4.6.3
   firebase_core: ^2.14.0
@@ -20,6 +21,7 @@ dependencies:
   cloud_firestore: ^4.8.3
   image_picker: ^1.0.2
   firebase_storage: ^11.2.5
+  rxdart: ^0.27.7
 
   # All of the below might not be necessary, used in location auto complete modal
   get: ^4.6.5
@@ -27,7 +29,6 @@ dependencies:
 
   geolocator: ^9.0.2
   geocoding: ^2.1.0
-  flutter_google_places: ^0.3.0
   flutter_typeahead: ^4.6.2
 
 dev_dependencies:

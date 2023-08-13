@@ -53,10 +53,10 @@ packages:
     dependency: "direct main"
     description:
       name: cloud_firestore
-      sha256: "035b91f66b60dab5eefcc217accc734020234f79d963b075699920b95334a755"
+      sha256: f1a06ad4499ed9ab73703560d44893e6b9e66ce3923c9121f4ef3981c972057f
       url: "https://pub.dev"
     source: hosted
-    version: "4.8.3"
+    version: "4.8.4"
   cloud_firestore_platform_interface:
     dependency: transitive
     description:
@@ -113,14 +113,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.1"
-  ffi:
-    dependency: transitive
-    description:
-      name: ffi
-      sha256: ed5337a5660c506388a9f012be0288fb38b49020ce2b45fe1f8b8323fe429f99
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.2"
   file_selector_linux:
     dependency: transitive
     description:
@@ -230,14 +222,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_google_places:
-    dependency: "direct main"
-    description:
-      name: flutter_google_places
-      sha256: e9fb23ceacdc7359aa759627550146f7fd3ae6c067d16f39f3c50d8feebf4809
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.0"
   flutter_keyboard_visibility:
     dependency: transitive
     description:
@@ -360,6 +344,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  geoflutterfire_plus:
+    dependency: "direct main"
+    description:
+      name: geoflutterfire_plus
+      sha256: "159b0f2cc8930d2931a8bb61b2750a87dc03fc2711d3913652042642147ea46b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.16"
   geolocator:
     dependency: "direct main"
     description:
@@ -416,14 +408,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.6.5"
-  google_api_headers:
-    dependency: transitive
-    description:
-      name: google_api_headers
-      sha256: b27a55935d5c51cedda8a925f5df8388cc327c94a47fef5a4335e8707e089878
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.6.0"
   google_maps:
     dependency: transitive
     description:
@@ -472,14 +456,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.2"
-  google_maps_webservice:
-    dependency: transitive
-    description:
-      name: google_maps_webservice
-      sha256: d0ae4e4508afd74a3f051565261a3cdbae59db29448f9b6e6beb5674545e1eb7
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.20-nullsafety.5"
   html:
     dependency: transitive
     description:
@@ -584,14 +560,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.4"
-  json_annotation:
-    dependency: transitive
-    description:
-      name: json_annotation
-      sha256: b10a7b2ff83d83c777edba3c6a0f97045ddadd56c944e1a23a3fdf43a1bf4467
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.8.1"
   lints:
     dependency: transitive
     description:
@@ -640,22 +608,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.0"
-  package_info_plus:
-    dependency: transitive
-    description:
-      name: package_info_plus
-      sha256: ceb027f6bc6a60674a233b4a90a7658af1aebdea833da0b5b53c1e9821a78c7b
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.0.2"
-  package_info_plus_platform_interface:
-    dependency: transitive
-    description:
-      name: package_info_plus_platform_interface
-      sha256: "9bc8ba46813a4cc42c66ab781470711781940780fd8beddd0c3da62506d3a6c6"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.1"
   path:
     dependency: transitive
     description:
@@ -713,13 +665,13 @@ packages:
     source: hosted
     version: "4.1.0"
   rxdart:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: rxdart
-      sha256: "2ef8b4e91cb3b55d155e0e34eeae0ac7107974e451495c955ac04ddee8cc21fd"
+      sha256: "0c7c0cedd93788d996e33041ffecda924cc54389199cde4e6a34b440f50044cb"
       url: "https://pub.dev"
     source: hosted
-    version: "0.26.0"
+    version: "0.27.7"
   sanitize_html:
     dependency: transitive
     description:
@@ -837,14 +789,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
-  win32:
-    dependency: transitive
-    description:
-      name: win32
-      sha256: dfdf0136e0aa7a1b474ea133e67cb0154a0acd2599c4f3ada3b49d38d38793ee
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.0.5"
   xml:
     dependency: transitive
     description:
