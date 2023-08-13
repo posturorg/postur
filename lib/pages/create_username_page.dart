@@ -2,6 +2,7 @@ import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/my_textfield.dart';
 import 'package:auth_test/pages/home_page.dart';
 import 'package:auth_test/src/colors.dart';
+import 'package:auth_test/src/user_info_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -32,26 +33,6 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
       setState(() {
         hasUsername = hasNameFirebase;
       });
-    }
-  }
-
-  Future<void> setUsername() async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      final userDocRef =
-          FirebaseFirestore.instance.collection('Users').doc(currentUser.uid);
-
-      //print('clicked!');
-      await userDocRef.update({
-        'hasUsername': true,
-      });
-      setState(() {
-        //Why did you crash...
-        hasUsername = true;
-      });
-    } else {
-      //should sign user out if user doesnt exist...
-      FirebaseAuth.instance.signOut();
     }
   }
 
@@ -107,11 +88,49 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                     ),
                   ),
                   ElevatedButton.icon(
-                    onPressed: () {
-                      if (usernameController.text.trim() != '') {
-                        //ALSO NEED TO MAKE SURE NO OTHER USER HAS SAME USERNAME!
-                        //ALSO NEED TO ADD CONDITION TO CHECK FOR OTHER SPECIAL CHARACTERS AND FORBID THEM!
-                        setUsername();
+                    onPressed: () async {
+                      usernameController.text.trim();
+                      String usernameTrimmed = usernameController.text;
+                      if (usernameTrimmed != '') {
+                        usernameController.text.toLowerCase();
+                        bool? isUnique =
+                            await isUsernameUnique(usernameController.text);
+                        if (isUnique == null) {
+                          //maybe make this nested loop cleaner...
+                          //maybe clean up a bit
+                          print('isUnique evaluated to null');
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return DefaultOneOptionDialog(
+                                title:
+                                    'Something went wrong. Please try again or restart your app.',
+                                buttonText: 'Ok',
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
+                          );
+                        } else if (isUnique) {
+                          setUsername(setState(() {
+                            //Why did you crash...
+                            hasUsername = true;
+                          }));
+                        } else {
+                          showDialog(
+                            context: (context),
+                            builder: (context) {
+                              return DefaultOneOptionDialog(
+                                title: 'This username is already taken',
+                                buttonText: 'Ok',
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
+                          );
+                        }
                       } else {
                         showDialog(
                           context: context,
