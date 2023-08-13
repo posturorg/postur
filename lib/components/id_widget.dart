@@ -38,7 +38,7 @@ class _IDWidgetState extends State<IDWidget> {
         UpdateProfilePic(reference: widget.currentUser['profile_pic'], radius: 45, borderRadius: 115),
         // Full Name
         Text(
-          "${widget.currentUser['first_name']} ${widget.currentUser['last_name']}",
+          "${widget.currentUser['name']['first']} ${widget.currentUser['name']['last']}",
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -47,7 +47,7 @@ class _IDWidgetState extends State<IDWidget> {
         ),
             // Username
         Text(
-          widget.currentUser['email'],
+          '@${widget.currentUser['username']}',
           style: const TextStyle(fontSize: 15),
         ),
       ],
