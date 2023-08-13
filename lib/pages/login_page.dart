@@ -71,19 +71,6 @@ class _LoginPageState extends State<LoginPage> {
           buttonText: 'Ok',
           onPressed: () => Navigator.pop(context),
         );
-
-        /*CupertinoAlertDialog(
-          title: Text(message),
-          actions: [
-            CupertinoDialogAction(
-              child: TextButton(
-                child: const Text('Ok'),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
-          ],
-        );
-      */
       },
     );
   }

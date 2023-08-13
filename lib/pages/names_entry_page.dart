@@ -23,19 +23,46 @@ class _NamesEntryPageState extends State<NamesEntryPage> {
   final lastNameController = TextEditingController();
 
   Future<void> fetchHasName() async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(currentUser.uid)
-          .get();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(absentRed),
+          ),
+        );
+      },
+    );
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        final userDoc = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(currentUser.uid)
+            .get();
 
-      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
 
-      final hasNameFirebase = userData['hasName'];
-      setState(() {
-        hasName = hasNameFirebase;
-      });
+        final hasNameFirebase = userData['hasName'];
+        setState(() {
+          hasName = hasNameFirebase;
+        });
+      }
+      Navigator.pop(context); //pops loading circle
+    } catch (e) {
+      Navigator.pop(context); //pops loading circle
+      showDialog(
+        context: context,
+        builder: (context) {
+          return DefaultOneOptionDialog(
+            title: e.toString(),
+            buttonText: 'Ok',
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          );
+        },
+      );
     }
   }
 
@@ -43,7 +70,9 @@ class _NamesEntryPageState extends State<NamesEntryPage> {
   void initState() {
     super.initState();
     //get value of hasName from the backend...
-    fetchHasName();
+    Future.delayed(Duration.zero, () {
+      this.fetchHasName();
+    });
   }
 
   @override

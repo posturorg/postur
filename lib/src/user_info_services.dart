@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 
 Future<bool> isUsernameUnique(String queriedUsername) async {
   CollectionReference<Map<String, dynamic>> collection =
@@ -67,4 +68,20 @@ Future<void> setName(
     //should sign user out if user doesnt exist...
     FirebaseAuth.instance.signOut();
   }
+}
+
+Future<Set<String>> extractPhoneNumbers(List<Contact> contacts) async {
+  final Set<String> phoneNumberSet = {};
+
+  for (final contact in contacts) {
+    if (contact.phones != null) {
+      for (final phone in contact.phones!) {
+        if (phone.number != null) {
+          phoneNumberSet.add(phone.number!);
+        }
+      }
+    }
+  }
+
+  return phoneNumberSet;
 }
