@@ -20,26 +20,55 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
   TextEditingController usernameController = TextEditingController();
 
   Future<void> fetchHasUsername() async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(currentUser.uid)
-          .get();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(absentRed),
+          ),
+        );
+      },
+    );
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        final userDoc = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(currentUser.uid)
+            .get();
 
-      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
 
-      final hasUsernameFirebase = userData['hasUsername'];
-      setState(() {
-        hasUsername = hasUsernameFirebase;
-      });
+        final hasUsernameFirebase = userData['hasUsername'];
+        setState(() {
+          hasUsername = hasUsernameFirebase;
+        });
+      }
+      Navigator.pop(context);
+    } catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return DefaultOneOptionDialog(
+            title: e.toString(),
+            buttonText: 'Ok',
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          );
+        },
+      );
     }
   }
 
   @override
   void initState() {
     super.initState();
-    fetchHasUsername();
+    Future.delayed(Duration.zero, () {
+      this.fetchHasUsername();
+    });
   }
 
   @override
