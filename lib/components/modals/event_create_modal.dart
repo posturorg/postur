@@ -140,8 +140,14 @@ class _EventCreateModalState extends State<EventCreateModal> {
     GeoPoint geoPoint =
       GeoPoint(currentCoords.latitude, currentCoords.longitude);
 
+    // Retrieve creator's profile picture
+    DocumentSnapshot documentSnapshot = await currentUser.get();
+    Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+    String profilePic = data['profile_pic'];
+
     Map<String, dynamic> eventDetails = {
       'creator': uid,
+      'profile_pic': profilePic,
       'eventId': eventId,
       'eventTitle': eventTitleController.text,
       'whenTime': whenTime,
@@ -152,18 +158,12 @@ class _EventCreateModalState extends State<EventCreateModal> {
       'isPrivate': true,
     };
 
-    /* TODO: move invited/attending events to doc in subcollection of current user */
+    // currentUser.update({
+    //   'invited': FieldValue.arrayUnion([eventId]),
+    //   'attending': FieldValue.arrayUnion([eventId]),
+    // });
     
-    // TODO: OLD Add event ID to current user's "attending" array
-    currentUser.update({
-      'invited': FieldValue.arrayUnion([eventId]),
-      'attending': FieldValue.arrayUnion([eventId]),
-    });
-    
-    // Create new document in "MyEvents" subcollection with eventId
-    DocumentReference newMyEventRef = currentUser.collection('MyEvents').doc(eventId);
-
-    // TODO: NEW Add event to current user's "MyEvents" subcollection
+    // Add event to current user's "MyEvents" subcollection in "EventMembers"
     Map<String, dynamic> myEventDetails = {
       'creator': uid,
       'eventId': eventId,
@@ -171,6 +171,9 @@ class _EventCreateModalState extends State<EventCreateModal> {
       'isCreator': true,
       'isAttending': true,
     };
+    
+    // Create new document in "MyEvents" subcollection with eventId
+    DocumentReference newMyEventRef = FirebaseFirestore.instance.collection('EventMembers').doc(uid).collection('MyEvents').doc(eventId);
 
     // Create "Events" doc using "set" function
     await newEventRef.set(eventDetails);

@@ -44,6 +44,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
 
   // Initialize creator full name variable
   String creatorName = '';
+  String creatorProfilePic = '';
   String eventTitle = '';
   Timestamp whenTime = Timestamp.fromDate(DateTime.now());
   Timestamp endTime = Timestamp.fromDate(DateTime.now());
@@ -60,6 +61,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
       if (snapshot.exists) {
         setState(() {
           creatorName = '${snapshot['name']['first']} ${snapshot['name']['last']}';
+          creatorProfilePic = snapshot['profile_pic'];
         });
       }
     } catch (e) {

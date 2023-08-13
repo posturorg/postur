@@ -29,6 +29,7 @@ class MenuEventWidget extends StatefulWidget {
 
 class _MenuEventWidgetState extends State<MenuEventWidget> {
   String fullName = '';
+  String profilePic = '';
   
   BoxDecoration tagBoxDecoration() {
     return const BoxDecoration(
@@ -41,7 +42,7 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
     );
   }
 
-  Future<void> _getCreatorName() async {
+  Future<void> _getCreatorInfo() async {
     late DocumentSnapshot documentSnapshot;
     
     await FirebaseFirestore
@@ -57,6 +58,7 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
       Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
       setState(() {
         fullName = '${data['name']['first']} ${data['name']['last']}';
+        profilePic = data['profile_pic'];
       });
     }
   }
@@ -64,7 +66,7 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
   @override
   void initState() {
     super.initState();
-    _getCreatorName();
+    _getCreatorInfo();
   }
 
   @override
