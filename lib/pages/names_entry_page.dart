@@ -4,6 +4,7 @@ import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/my_textfield.dart';
 import 'package:auth_test/pages/create_username_page.dart';
 import 'package:auth_test/src/colors.dart';
+import 'package:auth_test/src/user_info_services.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,30 +21,6 @@ class _NamesEntryPageState extends State<NamesEntryPage> {
   bool hasName = false; // should pull this from the backend on initState.
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
-
-  Future<void> setName() async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      final userDocRef =
-          FirebaseFirestore.instance.collection('Users').doc(currentUser.uid);
-
-      //print('clicked!');
-      await userDocRef.update({
-        'hasName': true,
-        'name': {
-          'first': firstNameController.text.trim(),
-          'last': lastNameController.text.trim(),
-        },
-      });
-      setState(() {
-        //Why did you crash...
-        hasName = true;
-      });
-    } else {
-      //should sign user out if user doesnt exist...
-      FirebaseAuth.instance.signOut();
-    }
-  }
 
   Future<void> fetchHasName() async {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -113,7 +90,17 @@ class _NamesEntryPageState extends State<NamesEntryPage> {
                   ElevatedButton.icon(
                     onPressed: () {
                       if (firstNameController.text.trim() != '') {
-                        setName();
+                        setName(
+                          () {
+                            setState(() {
+                              //Why did you crash...
+                              print('set Name occurs');
+                              hasName = true;
+                            });
+                          },
+                          firstNameController,
+                          lastNameController,
+                        );
                       } else {
                         showDialog(
                           context: context,

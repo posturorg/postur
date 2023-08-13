@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 Future<bool> isUsernameUnique(String queriedUsername) async {
   CollectionReference<Map<String, dynamic>> collection =
@@ -22,7 +23,10 @@ Future<bool> isUsernameUnique(String queriedUsername) async {
   }
 }
 
-Future<void> setUsername(void stateSetter) async {
+Future<void> setUsername(
+  dynamic stateSetter,
+  TextEditingController enteredUsernameController,
+) async {
   final currentUser = FirebaseAuth.instance.currentUser;
   if (currentUser != null) {
     final userDocRef =
@@ -31,7 +35,34 @@ Future<void> setUsername(void stateSetter) async {
     //print('clicked!');
     await userDocRef.update({
       'hasUsername': true,
+      'username': enteredUsernameController.text.trim().toLowerCase(),
     });
+    stateSetter();
+  } else {
+    //should sign user out if user doesnt exist...
+    FirebaseAuth.instance.signOut();
+  }
+}
+
+Future<void> setName(
+  dynamic stateSetter,
+  TextEditingController firstNameController,
+  TextEditingController lastNameController,
+) async {
+  final currentUser = FirebaseAuth.instance.currentUser;
+  if (currentUser != null) {
+    final userDocRef =
+        FirebaseFirestore.instance.collection('Users').doc(currentUser.uid);
+
+    //print('clicked!');
+    await userDocRef.update({
+      'hasName': true,
+      'name': {
+        'first': firstNameController.text.trim(),
+        'last': lastNameController.text.trim(),
+      },
+    });
+    stateSetter();
   } else {
     //should sign user out if user doesnt exist...
     FirebaseAuth.instance.signOut();

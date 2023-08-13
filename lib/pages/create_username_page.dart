@@ -113,10 +113,16 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                             },
                           );
                         } else if (isUnique) {
-                          setUsername(setState(() {
-                            //Why did you crash...
-                            hasUsername = true;
-                          }));
+                          setUsername(
+                            () {
+                              setState(() {
+                                //Why did you crash...
+                                print('set username occurs');
+                                hasUsername = true;
+                              });
+                            },
+                            usernameController,
+                          );
                         } else {
                           showDialog(
                             context: (context),
