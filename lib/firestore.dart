@@ -30,6 +30,7 @@ Future<void> userSetup(String email) async {
     'accountType': 'private',
     'hasName': false,
     'hasUsername': false,
+    'hasAllowedContacts': false,
   };
 
   // Set map of values to user doc
