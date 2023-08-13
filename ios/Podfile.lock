@@ -634,7 +634,7 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.24):
     - BoringSSL-GRPC/Interface (= 0.0.24)
   - BoringSSL-GRPC/Interface (0.0.24)
-  - cloud_firestore (4.8.3):
+  - cloud_firestore (4.8.4):
     - Firebase/Firestore (= 10.12.0)
     - firebase_core
     - Flutter
@@ -697,6 +697,8 @@ PODS:
     - FirebaseCoreExtension (~> 10.0)
     - GTMSessionFetcher/Core (< 4.0, >= 2.1)
   - Flutter (1.0.0)
+  - flutter_contacts (0.0.1):
+    - Flutter
   - flutter_keyboard_visibility (0.0.1):
     - Flutter
   - geocoding_ios (1.0.5):
@@ -842,8 +844,6 @@ PODS:
     - nanopb/encode (= 2.30909.0)
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
-  - package_info_plus (0.4.5):
-    - Flutter
   - PromisesObjC (2.3.1)
 
 DEPENDENCIES:
@@ -852,13 +852,13 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
+  - flutter_contacts (from `.symlinks/plugins/flutter_contacts/ios`)
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - mobile_scanner (from `.symlinks/plugins/mobile_scanner/ios`)
-  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
 
 SPEC REPOS:
   trunk:
@@ -901,6 +901,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_storage/ios"
   Flutter:
     :path: Flutter
+  flutter_contacts:
+    :path: ".symlinks/plugins/flutter_contacts/ios"
   flutter_keyboard_visibility:
     :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   geocoding_ios:
@@ -913,13 +915,11 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   mobile_scanner:
     :path: ".symlinks/plugins/mobile_scanner/ios"
-  package_info_plus:
-    :path: ".symlinks/plugins/package_info_plus/ios"
 
 SPEC CHECKSUMS:
   abseil: 926fb7a82dc6d2b8e1f2ed7f3a718bce691d1e46
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
-  cloud_firestore: ac09bcf42ed1f477cb6eeb1d5937255023862e29
+  cloud_firestore: 005e157ad342dbfb2e461cb111a9020aa71bfb22
   Firebase: 07150e75d142fb9399f6777fa56a187b17f833a0
   firebase_auth: a57bf431e73283cbffaa562717256ec6bd2d8d4c
   firebase_core: e477125798fc37cd4ab43ca6a8536bf7e0929c00
@@ -933,6 +933,7 @@ SPEC CHECKSUMS:
   FirebaseFirestore: f94c9541515fa4a49af52269bbc50349009424b4
   FirebaseStorage: 1d7ca8c8953fc61ccacaa7c612696b5402968a0d
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_contacts: edb1c5ce76aa433e20e6cb14c615f4c0b66e0983
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   geocoding_ios: a389ea40f6f548de6e63006a2e31bf66ff80769a
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
@@ -954,7 +955,6 @@ SPEC CHECKSUMS:
   MLKitVision: 8baa5f46ee3352614169b85250574fde38c36f49
   mobile_scanner: 47056db0c04027ea5f41a716385542da28574662
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
-  package_info_plus: fd030dabf36271f146f1f3beacd48f564b0f17f7
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
 
 PODFILE CHECKSUM: a57f30d18f102dd3ce366b1d62a55ecbef2158e5
