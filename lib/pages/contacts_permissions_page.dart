@@ -1,9 +1,13 @@
 import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/pages/home_page.dart';
 import 'package:auth_test/src/colors.dart';
+import 'package:auth_test/src/user_info_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+// AndroidManifest.xml and Info.plist also modified in installation.
+import 'package:flutter_contacts/flutter_contacts.dart';
 
 class ContactsPermissionsPage extends StatefulWidget {
   const ContactsPermissionsPage({super.key});
@@ -15,6 +19,58 @@ class ContactsPermissionsPage extends StatefulWidget {
 
 class _ContactsPermissionsPageState extends State<ContactsPermissionsPage> {
   bool hasAllowedContacts = false;
+  Set<String> othersPhoneNumbers = {};
+
+  Future getContacts() async {
+    if (!await FlutterContacts.requestPermission(readonly: true)) {
+      //REJECTED
+      //send othersPhoneNumbers to backend...
+      setState(() => hasAllowedContacts = true); //proceed to app
+      //don't change backend value of hasAllowedContacts.
+    } else {
+      //ACCEPTED
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(absentRed),
+            ),
+          );
+        },
+      );
+      try {
+        final List<Contact> contacts = await FlutterContacts.getContacts();
+        othersPhoneNumbers = await extractPhoneNumbers(
+            contacts); //make sure this does not include your own.
+
+        setState(() {
+          //change othersPhoneNumbers to a new value
+        });
+        //send othersPhoneNumbers to backend...
+        //change backend value of hasAllowedContacts to true.
+        final currentUser = FirebaseAuth.instance.currentUser;
+        setState(() {
+          hasAllowedContacts = true;
+        });
+        Navigator.pop(context);
+      } catch (e) {
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (context) {
+            return DefaultOneOptionDialog(
+              title: e.toString(),
+              buttonText: 'Ok',
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            );
+          },
+        );
+      }
+    }
+  }
 
   Future<void> fetchHasAllowedContacts() async {
     showDialog(
@@ -37,7 +93,7 @@ class _ContactsPermissionsPageState extends State<ContactsPermissionsPage> {
 
         Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
 
-        final hasAllowedContactsFirebase = userData['hasAllowedContacts'];
+        final bool hasAllowedContactsFirebase = userData['hasAllowedContacts'];
         setState(() {
           hasAllowedContacts = hasAllowedContactsFirebase;
         });
@@ -63,7 +119,9 @@ class _ContactsPermissionsPageState extends State<ContactsPermissionsPage> {
   @override
   void initState() {
     super.initState();
-    //fetchHasAllowedContacts();
+    Future.delayed(Duration.zero, () {
+      this.fetchHasAllowedContacts();
+    });
   }
 
   @override
@@ -93,20 +151,28 @@ class _ContactsPermissionsPageState extends State<ContactsPermissionsPage> {
                   ),
                   const SizedBox(height: 10),
                   const Text(
-                    'This is only used to to friend people you already know.',
+                    'This is only used to friend people you already know.',
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 350),
+                  const SizedBox(height: 60),
                   ElevatedButton.icon(
                     onPressed: () {
-                      print('done pressed!');
+                      // here is where we will upload contacts
                     },
-                    icon: const Icon(Icons.check_box_rounded),
-                    label: const Text('Done'),
+                    icon: const Icon(Icons.check_rounded),
+                    label: const Text('Accept'),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       backgroundColor: absentRed,
                     ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        hasAllowedContacts = true;
+                      });
+                    },
+                    child: Text('NEXT PAGE!'),
                   ),
                   const SizedBox(height: 110),
                 ],
