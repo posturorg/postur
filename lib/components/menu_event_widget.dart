@@ -10,14 +10,14 @@ import 'modals/event_details_modal.dart';
 import '../src/colors.dart';
 
 class MenuEventWidget extends StatefulWidget {
-  final String eventTitle;
+  final String eventId;
   final String eventCreator;
   final bool isCreator;
   final bool isAttending;
 
   const MenuEventWidget({
     super.key,
-    required this.eventTitle,
+    required this.eventId,
     required this.eventCreator,
     required this.isCreator,
     required this.isAttending,
@@ -41,7 +41,7 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
     );
   }
 
-  Future<void> getCreatorName() async {
+  Future<void> _getCreatorName() async {
     late DocumentSnapshot documentSnapshot;
     
     await FirebaseFirestore
@@ -56,7 +56,7 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
     if (documentSnapshot.exists) {
       Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
       setState(() {
-        fullName = '${data['first_name']} ${data['last_name']}';
+        fullName = '${data['name']['first']} ${data['name']['last']}';
       });
     }
   }
@@ -64,7 +64,7 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
   @override
   void initState() {
     super.initState();
-    getCreatorName();
+    _getCreatorName();
   }
 
   @override
@@ -112,107 +112,130 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
       onMainButtonPress = () {};
     }
 
-    return GestureDetector(
-      onTap: () {
-        //print("$eventTitle details");
-        showModalBottomSheet<void>(
-          // context and builder are
-          // required properties in this widget
-          context: context,
-          isScrollControlled: true,
-          elevation: 0.0,
-          backgroundColor: Colors.white,
-          clipBehavior: Clip.antiAlias,
-          showDragHandle: true,
-          builder: (BuildContext context) {
-            // we set up a container inside which
-            // we create center column and display text
-
-            // Returning SizedBox instead of a Container
-            return EventDetailsModal(
-              eventTitle: widget.eventTitle,
-              creator: widget.eventCreator,
-              isCreator: widget.isCreator,
-              isMember: widget.isAttending,
-            );
-          },
-        );
-      },
-      child: Container(
-        // This is the actual display part of the "in list" event
-        decoration: tagBoxDecoration(),
-        padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.circle,
-              size: 50,
-            ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(7, 0, 20, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(widget.eventTitle,
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.bold)),
-                  Text(
-                    widget.isCreator ? 'Me' : fullName,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: neutralGrey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Visibility(
-                    visible: widget.isCreator,
-                    child: MyInlineButton(
-                      color: neutralGrey,
-                      text: 'Edit',
-                      onTap: () {
-                        showModalBottomSheet<void>(
-                          context: context,
-                          isScrollControlled: true,
-                          elevation: 0.0,
-                          backgroundColor: Colors.white,
-                          clipBehavior: Clip.antiAlias,
-                          showDragHandle: true,
-                          builder: (BuildContext context) => EventCreateModal(
-                              exists: true,
-                              initialSelectedPlace: PlaceAutoComplete(
-                                'Harvard Square, Brattle Street, Cambridge, MA, USA',
-                                'ChIJecplvEJ344kRdjumhjIYylk',
-                              ), //pull this info from the backend...
-                              initialCoords: const LatLng(42.3730, 71.1209)),
-                        );
-                      }, // This is where on edit function will go.
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Container(
-                  padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                  child: MyInlineButton(
-                    color: widget.isAttending ? attendingOrange : absentRed,
-                    text: mainButtonText,
-                    onTap: onMainButtonPress,
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+        .collection('Events')
+        .doc(widget.eventId)
+        .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+            // Show Waiting Indicator
+            return const Center(child: CircularProgressIndicator(color: absentRed,));
+          // What to show if data has been received
+          } else if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.done) {
+            // Potenital error message
+            if (snapshot.hasError) {
+              return const Center(child: Text("Error Occured"));
+            // Success
+            } else if (snapshot.hasData) {
+              String eventTitle = snapshot.data!['eventTitle'];
+              return GestureDetector(
+                onTap: () {
+                  //print("$eventTitle details");
+                  showModalBottomSheet<void>(
+                    // context and builder are
+                    // required properties in this widget
+                    context: context,
+                    isScrollControlled: true,
+                    elevation: 0.0,
+                    backgroundColor: Colors.white,
+                    clipBehavior: Clip.antiAlias,
+                    showDragHandle: true,
+                    builder: (BuildContext context) {
+                      // we set up a container inside which
+                      // we create center column and display text
+          
+                      // Returning SizedBox instead of a Container
+                      return EventDetailsModal(
+                        eventId: widget.eventId,
+                        eventTitle: eventTitle,
+                        creator: widget.eventCreator,
+                        isCreator: widget.isCreator,
+                        isAttending: widget.isAttending,
+                      );
+                    },
+                  );
+                },
+                child: Container(
+                  // This is the actual display part of the "in list" event
+                  decoration: tagBoxDecoration(),
+                  padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.circle,
+                        size: 50,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(7, 0, 20, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(eventTitle,
+                                style: const TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.bold)),
+                            Text(
+                              widget.isCreator ? 'Me' : fullName,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                color: neutralGrey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Visibility(
+                              visible: widget.isCreator,
+                              child: MyInlineButton(
+                                color: neutralGrey,
+                                text: 'Edit',
+                                onTap: () {
+                                  showModalBottomSheet<void>(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    elevation: 0.0,
+                                    backgroundColor: Colors.white,
+                                    clipBehavior: Clip.antiAlias,
+                                    showDragHandle: true,
+                                    builder: (BuildContext context) => EventCreateModal(
+                                        exists: true,
+                                        initialSelectedPlace: PlaceAutoComplete(
+                                          'Harvard Square, Brattle Street, Cambridge, MA, USA',
+                                          'ChIJecplvEJ344kRdjumhjIYylk',
+                                        ), //pull this info from the backend...
+                                        initialCoords: const LatLng(42.3730, 71.1209)),
+                                  );
+                                }, // This is where on edit function will go.
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                            child: MyInlineButton(
+                              color: widget.isAttending ? attendingOrange : absentRed,
+                              text: mainButtonText,
+                              onTap: onMainButtonPress,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ],
-        ),
-      ),
+              );
+            }
+          } 
+        return const Text("Don't worry, be happy :)");
+      }
     );
   }
 }
