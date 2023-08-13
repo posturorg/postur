@@ -41,8 +41,11 @@ class _ContactsPermissionsPageState extends State<ContactsPermissionsPage> {
       );
       try {
         final List<Contact> contacts = await FlutterContacts.getContacts();
+        print(contacts);
         othersPhoneNumbers = await extractPhoneNumbers(
             contacts); //make sure this does not include your own.
+        print('OTHERS NUMBERS:');
+        print(othersPhoneNumbers);
 
         setState(() {
           //change othersPhoneNumbers to a new value
@@ -86,15 +89,12 @@ class _ContactsPermissionsPageState extends State<ContactsPermissionsPage> {
     try {
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
-        //print('here');
         final userDoc = await FirebaseFirestore.instance
             .collection('Users')
             .doc(currentUser.uid)
             .get();
         Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
         final bool hasAllowedContactsFirebase = userData['hasAllowedContacts'];
-        //LINE ABOVE THIS PROBABLY CREATES THE ERROR!
-        print('error here?');
         print(hasAllowedContactsFirebase);
         setState(() {
           hasAllowedContacts = hasAllowedContactsFirebase;
@@ -172,7 +172,7 @@ class _ContactsPermissionsPageState extends State<ContactsPermissionsPage> {
                   const SizedBox(height: 60),
                   ElevatedButton.icon(
                     onPressed: () {
-                      // here is where we will upload contacts
+                      getContacts();
                     },
                     icon: const Icon(Icons.check_rounded),
                     label: const Text('Accept'),
