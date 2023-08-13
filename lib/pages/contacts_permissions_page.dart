@@ -48,8 +48,8 @@ class _ContactsPermissionsPageState extends State<ContactsPermissionsPage> {
           //change othersPhoneNumbers to a new value
         });
         //send othersPhoneNumbers to backend...
-        //change backend value of hasAllowedContacts to true.
         final currentUser = FirebaseAuth.instance.currentUser;
+        //change backend value of hasAllowedContacts to true.
         setState(() {
           hasAllowedContacts = true;
         });
