@@ -1,6 +1,6 @@
 import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/my_textfield.dart';
-import 'package:auth_test/pages/home_page.dart';
+import 'package:auth_test/pages/contacts_permissions_page.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:auth_test/src/user_info_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -45,7 +45,7 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
   @override
   Widget build(BuildContext context) {
     return hasUsername
-        ? const HomePage()
+        ? const ContactsPermissionsPage()
         : Scaffold(
             appBar: AppBar(
               title: const Text(
