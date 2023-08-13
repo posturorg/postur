@@ -86,17 +86,32 @@ class _ContactsPermissionsPageState extends State<ContactsPermissionsPage> {
     try {
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
+        //print('here');
         final userDoc = await FirebaseFirestore.instance
             .collection('Users')
             .doc(currentUser.uid)
             .get();
-
         Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-
         final bool hasAllowedContactsFirebase = userData['hasAllowedContacts'];
+        //LINE ABOVE THIS PROBABLY CREATES THE ERROR!
+        print('error here?');
+        print(hasAllowedContactsFirebase);
         setState(() {
           hasAllowedContacts = hasAllowedContactsFirebase;
         });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return DefaultOneOptionDialog(
+              title: 'User is null. Try restarting the app',
+              buttonText: 'Ok',
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            );
+          },
+        );
       }
       Navigator.pop(context);
     } catch (e) {
