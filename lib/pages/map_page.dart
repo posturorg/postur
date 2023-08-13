@@ -82,8 +82,10 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     // Stream current user data to get list of events you're invitd to
-    return StreamBuilder<DocumentSnapshot>(
-        stream: currentUser.snapshots(),
+    return StreamBuilder<QuerySnapshot>(
+        stream: currentUser
+          .collection('MyEvents')
+          .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Show Waiting Indicator
@@ -101,90 +103,90 @@ class _MapPageState extends State<MapPage> {
               // Success
             } else if (snapshot.hasData) {
               // Save sets of events user is either invited to or attending (every element in attending should be inside of invited)
-              Set<String> invitedEventIds =
-                  Set.from(snapshot.data!['invited'] ?? []);
-              Set<String> attendingEventIds =
-                  Set.from(snapshot.data!['attending'] ?? []);
+              Set myEventDocs = snapshot.data!.docs.toSet();
+
+              List<String> myEventIds = myEventDocs.map((event) {
+                String eventId = event['eventId'];
+                return eventId;
+              }).toList();
 
               return StreamBuilder<QuerySnapshot>(
-                  stream: events.snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      // Show Waiting Indicator
-                      return const Center(
-                          child: CircularProgressIndicator(
-                        color: absentRed,
-                      ));
+                stream: events.snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    // Show Waiting Indicator
+                    return const Center(
+                        child: CircularProgressIndicator(
+                      color: absentRed,
+                    ));
 
-                      // What to show if data has been received
-                    } else if (snapshot.connectionState ==
-                            ConnectionState.active ||
-                        snapshot.connectionState == ConnectionState.done) {
-                      // Potenital error message
-                      if (snapshot.hasError) {
-                        return const Center(child: Text("Error Occured"));
-                        // Success
-                      } else if (snapshot.hasData) {
-                        //
-                        Set<Marker> markers = snapshot.data!.docs
-                            .where((event) =>
-                                invitedEventIds.contains(event.id) ||
-                                attendingEventIds.contains(event.id))
-                            .map((event) {
-                          // Retrieve GeoPoint location from backend
-                          GeoPoint location = event['where'] as GeoPoint;
-                          // Convert to LatLng
-                          LatLng position =
-                              LatLng(location.latitude, location.longitude);
-                          // Return each marker
-                          return Marker(
-                            // Set marker ID equal to eventId
-                            markerId: MarkerId(event.id),
-                            position: position,
-                            onTap: () {
-                              //THIS FUNCTION SHOWS THE MODAL
-                              showModalBottomSheet<void>(
-                                // context and builder are
-                                // required properties in this widget
-                                context: context,
-                                isScrollControlled: true,
-                                elevation: 0.0,
-                                backgroundColor: Colors.white,
-                                clipBehavior: Clip.antiAlias,
-                                showDragHandle: true,
-                                builder: (BuildContext context) {
-                                  //Marker details MODAL START (IT IS THE SIZED BOX)
-                                  return EventDetailsModal(
-                                    //Change this if you made it...
-                                    eventTitle: event['eventTitle'],
-                                    creator: event['creator'],
-                                    isCreator:
-                                        event['creator'] == uid ? true : false,
-                                    isMember:
-                                        attendingEventIds.contains(event.id),
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        }).toSet();
+                    // What to show if data has been received
+                  } else if (snapshot.connectionState ==
+                          ConnectionState.active ||
+                      snapshot.connectionState == ConnectionState.done) {
+                    // Potenital error message
+                    if (snapshot.hasError) {
+                      return const Center(child: Text("Error Occured"));
+                      // Success
+                    } else if (snapshot.hasData) {
+                      //
+                      Set<Marker> markers = snapshot.data!.docs
+                          .where((event) =>
+                              myEventIds.contains(event.id))
+                          .map((event) {
+                            // Retrieve GeoPoint location from backend
+                            GeoPoint location = event['where'] as GeoPoint;
+                            // Convert to LatLng
+                            LatLng position = LatLng(location.latitude, location.longitude);
+                            // Return each marker
+                            return Marker(
+                              // Set marker ID equal to eventId
+                              markerId: MarkerId(event.id),
+                              position: position,
+                              onTap: () {
+                                //THIS FUNCTION SHOWS THE MODAL
+                                showModalBottomSheet<void>(
+                                  // context and builder are
+                                  // required properties in this widget
+                                  context: context,
+                                  isScrollControlled: true,
+                                  elevation: 0.0,
+                                  backgroundColor: Colors.white,
+                                  clipBehavior: Clip.antiAlias,
+                                  showDragHandle: true,
+                                  builder: (BuildContext context) {
+                                    //Marker details MODAL START (IT IS THE SIZED BOX)
+                                    return EventDetailsModal(
+                                      //Change this if you made it...
+                                      eventId: event['eventId'],
+                                      eventTitle: event['eventTitle'],
+                                      creator: event['creator'],
+                                      isCreator: event['creator'] == uid ? true : false,
+                                      isAttending: myEventIds.contains(event.id),
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          }).toSet();
 
-                        return GoogleMap(
-                          myLocationButtonEnabled: true,
-                          myLocationEnabled: true,
-                          compassEnabled: false,
-                          onLongPress: _onMapHold,
-                          onMapCreated: _onMapCreated,
-                          initialCameraPosition: CameraPosition(
-                            target: _center,
-                            zoom: 15.0,
-                          ),
-                          markers: markers,
-                        );
-                      }
+                      return GoogleMap(
+                        myLocationButtonEnabled: true,
+                        myLocationEnabled: true,
+                        compassEnabled: false,
+                        onLongPress: _onMapHold,
+                        onMapCreated: _onMapCreated,
+                        initialCameraPosition: CameraPosition(
+                          target: _center,
+                          zoom: 15.0,
+                        ),
+                        markers: markers,
+                      );
                     }
-                    return const Center(child: Text("No Data Received"));
-                  });
+                  }
+                  return const Center(child: Text("No Data Received"));
+                }
+              );
             }
           }
           return const Center(child: Text("No Data Received"));

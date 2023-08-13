@@ -12,17 +12,19 @@ import '../../src/event_box_decoration.dart';
 import '../../src/colors.dart';
 
 class EventDetailsModal extends StatefulWidget {
+  final String eventId;
   final String eventTitle;
   final String creator;
   final bool isCreator;
-  final bool isMember;
+  final bool isAttending;
 
   const EventDetailsModal({
     super.key,
+    required this.eventId,
     required this.eventTitle,
     required this.creator,
     required this.isCreator,
-    required this.isMember,
+    required this.isAttending,
   });
 
   @override
@@ -42,24 +44,53 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
 
   // Initialize creator full name variable
   String creatorName = '';
+  String eventTitle = '';
+  Timestamp whenTime = Timestamp.fromDate(DateTime.now());
+  Timestamp endTime = Timestamp.fromDate(DateTime.now());
+  Timestamp rsvpTime = Timestamp.fromDate(DateTime.now());
+  GeoPoint where = GeoPoint(0,0);
+  String description = '';
 
-  Future<void> _fetchCreatorName() async {
+
+
+  // Get Creator Name
+  Future<void> _getCreatorName() async {
     try {
       DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('Users').doc(widget.creator).get();
       if (snapshot.exists) {
         setState(() {
-          creatorName = '${snapshot['first_name']} ${snapshot['first_name']}';
+          creatorName = '${snapshot['name']['first']} ${snapshot['name']['last']}';
         });
       }
     } catch (e) {
-      print("Error fetching event creator's name: $e");
+      print("Error getting event creator's name: $e");
+    }
+  }
+
+  // Get Event Data Name
+  Future<void> _getEventData() async {
+    try {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('Events').doc(widget.eventId).get();
+      if (snapshot.exists) {
+        setState(() {
+          eventTitle = snapshot['eventTitle'];
+          whenTime = snapshot['whenTime'];
+          endTime = snapshot['endime'];
+          rsvpTime = snapshot['rsvpTime'];
+          where = snapshot['where'];
+          description = snapshot['description'];
+        });
+      }
+    } catch (e) {
+      print("Error getting event info: $e");
     }
   }
 
   @override
   void initState() {
     super.initState();
-    _fetchCreatorName();
+    _getCreatorName();
+    _getEventData();
   }
 
   @override
@@ -81,7 +112,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
           ),
         )
       };
-    } else if (widget.isMember) {
+    } else if (widget.isAttending) {
       bottomButtonText = 'Leave';
       onMainBottomTap = () => {
             showCupertinoDialog(
@@ -115,7 +146,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: widget.isMember ? attendingOrange : absentRed,
+                color: widget.isAttending ? attendingOrange : absentRed,
               ),
             ),
             Container(
@@ -262,7 +293,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => AttendingEventList(
-                                            isAttending: widget.isMember,
+                                            isAttending: widget.isAttending,
                                             namesAttending: const [
                                               {
                                                 'name': 'Ben duPont',
@@ -358,7 +389,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                     ModalBottomButton(
                       onTap: onMainBottomTap,
                       text: bottomButtonText,
-                      backgroundColor: widget.isMember ? attendingOrange : absentRed,
+                      backgroundColor: widget.isAttending ? attendingOrange : absentRed,
                     ),
                   ],
                 ),
