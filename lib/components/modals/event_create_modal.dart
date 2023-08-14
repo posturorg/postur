@@ -22,7 +22,8 @@ class EventCreateModal extends StatefulWidget {
   final bool
       exists; //essentially toggles whether or not this is an editing widget...
   final PlaceAutoComplete initialSelectedPlace;
-  final LatLng initialCoords;
+  final LatLng initialCoords; //will get this when you click on the map, or from
+  //back end when editing an event
   final String? initialTitle;
   final String? initialDescription;
 
@@ -138,7 +139,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
 
     // Convert currentCoords to geopoint
     GeoPoint geoPoint =
-      GeoPoint(currentCoords.latitude, currentCoords.longitude);
+        GeoPoint(currentCoords.latitude, currentCoords.longitude);
 
     // Retrieve creator's profile picture
     DocumentSnapshot documentSnapshot = await currentUser.get();
@@ -162,7 +163,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
     //   'invited': FieldValue.arrayUnion([eventId]),
     //   'attending': FieldValue.arrayUnion([eventId]),
     // });
-    
+
     // Add event to current user's "MyEvents" subcollection in "EventMembers"
     Map<String, dynamic> myEventDetails = {
       'creator': uid,
@@ -171,9 +172,13 @@ class _EventCreateModalState extends State<EventCreateModal> {
       'isCreator': true,
       'isAttending': true,
     };
-    
+
     // Create new document in "MyEvents" subcollection with eventId
-    DocumentReference newMyEventRef = FirebaseFirestore.instance.collection('EventMembers').doc(uid).collection('MyEvents').doc(eventId);
+    DocumentReference newMyEventRef = FirebaseFirestore.instance
+        .collection('EventMembers')
+        .doc(uid)
+        .collection('MyEvents')
+        .doc(eventId);
 
     // Create "Events" doc using "set" function
     await newEventRef.set(eventDetails);
@@ -431,8 +436,16 @@ class _EventCreateModalState extends State<EventCreateModal> {
                       'Invite:',
                       style: defaultBold,
                     ),
-                    const SizedBox(width: 8.0),
-                    const Text('Function of Number of Peeps invited!'),
+                    IconButton(
+                        onPressed: () {
+                          print('Open invite page');
+                        },
+                        icon: const Icon(
+                          Icons.add,
+                          color: attendingOrange,
+                          size: 30,
+                        )),
+                    const Text('#DunsterHaus, Alvin Adjei, & 20 others'),
                   ],
                 ),
               ),
