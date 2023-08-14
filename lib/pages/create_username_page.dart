@@ -1,6 +1,6 @@
 import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/my_textfield.dart';
-import 'package:auth_test/pages/home_page.dart';
+import 'package:auth_test/pages/contacts_permissions_page.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:auth_test/src/user_info_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,32 +20,61 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
   TextEditingController usernameController = TextEditingController();
 
   Future<void> fetchHasUsername() async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(currentUser.uid)
-          .get();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(absentRed),
+          ),
+        );
+      },
+    );
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        final userDoc = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(currentUser.uid)
+            .get();
 
-      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
 
-      final hasNameFirebase = userData['hasUsername'];
-      setState(() {
-        hasUsername = hasNameFirebase;
-      });
+        final hasUsernameFirebase = userData['hasUsername'];
+        setState(() {
+          hasUsername = hasUsernameFirebase;
+        });
+      }
+      Navigator.pop(context);
+    } catch (e) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return DefaultOneOptionDialog(
+            title: e.toString(),
+            buttonText: 'Ok',
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          );
+        },
+      );
     }
   }
 
   @override
   void initState() {
     super.initState();
-    fetchHasUsername();
+    Future.delayed(Duration.zero, () {
+      this.fetchHasUsername();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return hasUsername
-        ? const HomePage()
+        ? const ContactsPermissionsPage()
         : Scaffold(
             appBar: AppBar(
               title: const Text(
