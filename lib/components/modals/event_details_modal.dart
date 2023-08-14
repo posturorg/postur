@@ -16,7 +16,7 @@ class EventDetailsModal extends StatefulWidget {
   final String eventId;
   final String eventTitle;
   final String creator;
-  final bool isCreator;
+  final bool? isCreator;
   final bool? isAttending;
 
   const EventDetailsModal({
@@ -152,7 +152,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
   Widget build(BuildContext context) {
     late String bottomButtonText;
     late Function()? onMainBottomTap;
-    if (widget.isCreator) {
+    if (widget.isCreator!) {
       bottomButtonText = 'Cancel';
       onMainBottomTap = () => {
             showCupertinoDialog(
@@ -211,7 +211,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Creator: ${widget.isCreator ? 'Me' : creatorName}',
+                    'Creator: ${widget.isCreator! ? 'Me' : creatorName}',
                     style: const TextStyle(
                       fontSize: 17,
                     ),
@@ -411,7 +411,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Visibility(
-                      visible: widget.isCreator,
+                      visible: widget.isCreator!,
                       child: ModalBottomButton(
                         onTap: () => {
                           //first close this existing modal.
