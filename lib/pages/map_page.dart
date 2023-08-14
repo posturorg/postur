@@ -101,8 +101,10 @@ class _MapPageState extends State<MapPage> {
               // Save sets of events user is either invited to or attending (every element in attending should be inside of invited)
               List<QueryDocumentSnapshot> myEventDocs = snapshot.data!.docs;
 
-              // Initialize an empty map
+              // Initialize an empty map matching eventId's to isAttending
               Map<String, bool> eventIdToIsAttendingMap = {};
+              // Initialize an empty map matching eventId's to isCreator
+              Map<String, bool> eventIdToIsCreator = {};
 
               // Iterate through myEventDocs and populate the map
               for (var myEventDoc in myEventDocs) {
@@ -113,10 +115,14 @@ class _MapPageState extends State<MapPage> {
                 // Extract the 'eventId' and 'isAttending' fields
                 String eventId = data['eventId'] as String;
                 bool isAttending = data['isAttending'] as bool;
+                bool isCreator = data['isCreator'] as bool;
 
                 // Add the entry to the map
                 eventIdToIsAttendingMap[eventId] = isAttending;
+                eventIdToIsCreator[eventId] = isCreator;
               }
+
+              
 
               return StreamBuilder<QuerySnapshot>(
                   stream: events.snapshots(),
@@ -171,7 +177,7 @@ class _MapPageState extends State<MapPage> {
                                     eventTitle: event['eventTitle'],
                                     creator: event['creator'],
                                     isCreator:
-                                        event['creator'] == uid ? true : false,
+                                        eventIdToIsCreator[event.id],
                                     isAttending:
                                         eventIdToIsAttendingMap[event.id],
                                   );
