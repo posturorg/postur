@@ -437,14 +437,15 @@ class _EventCreateModalState extends State<EventCreateModal> {
                       style: defaultBold,
                     ),
                     IconButton(
-                        onPressed: () {
-                          print('Open invite page');
-                        },
-                        icon: const Icon(
-                          Icons.add,
-                          color: attendingOrange,
-                          size: 30,
-                        )),
+                      onPressed: () {
+                        print('Open invite page');
+                      },
+                      icon: const Icon(
+                        Icons.add,
+                        color: attendingOrange,
+                        size: 30,
+                      ),
+                    ),
                     const Text('#DunsterHaus, Alvin Adjei, & 20 others'),
                   ],
                 ),
