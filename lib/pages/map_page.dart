@@ -176,8 +176,7 @@ class _MapPageState extends State<MapPage> {
                                     eventId: event['eventId'],
                                     eventTitle: event['eventTitle'],
                                     creator: event['creator'],
-                                    isCreator:
-                                        eventIdToIsCreator[event.id],
+                                    isCreator: eventIdToIsCreator[event.id],
                                     isAttending:
                                         eventIdToIsAttendingMap[event.id],
                                   );
