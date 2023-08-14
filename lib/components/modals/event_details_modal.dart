@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import '../modal_bottom_button.dart';
 import '../../src/event_box_decoration.dart';
 import '../../src/colors.dart';
@@ -42,7 +43,6 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
     fontSize: 15,
   );
 
-  // Initialize creator full name variable
   String creatorName = '';
   String creatorProfilePic = '';
   String eventTitle = '';
@@ -50,6 +50,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
   Timestamp endTime = Timestamp.fromDate(DateTime.now());
   Timestamp rsvpTime = Timestamp.fromDate(DateTime.now());
   GeoPoint where = GeoPoint(0,0);
+  String attending = '';
   String description = '';
 
 
@@ -77,7 +78,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
         setState(() {
           eventTitle = snapshot['eventTitle'];
           whenTime = snapshot['whenTime'];
-          endTime = snapshot['endime'];
+          endTime = snapshot['endTime'];
           rsvpTime = snapshot['rsvpTime'];
           where = snapshot['where'];
           description = snapshot['description'];
@@ -86,6 +87,45 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
     } catch (e) {
       print("Error getting event info: $e");
     }
+  }
+
+  // This function formats timestamps from the backend to be displayed
+  String _formatTimestamp(Timestamp timestamp) {
+    DateTime now = DateTime.now();
+    DateTime eventTime = timestamp.toDate();
+
+    if (eventTime.isBefore(now.add(const Duration(days: 7))) &&
+        eventTime.isAfter(now.subtract(const Duration(days: 2)))) {
+
+      // Event is less than a week away
+      if (eventTime.weekday == now.subtract(const Duration(days: 1)).weekday) {
+        String formattedDate = DateFormat('hh:mm a').format(eventTime);
+        return 'Yesterday, $formattedDate';
+        
+      } else if (eventTime.weekday == now.weekday) {
+
+        String formattedDate = DateFormat('hh:mm a').format(eventTime);
+        return 'Today, $formattedDate';
+
+      } else if (eventTime.weekday == now.add(const Duration(days: 1)).weekday) {
+        
+        String formattedDate = DateFormat('hh:mm a').format(eventTime);
+        return 'Tomorrow, $formattedDate';
+
+      } else {
+        String formattedDate = DateFormat('hh:mm a').format(eventTime);
+        return 'This ${_getWeekdayName(eventTime.weekday)}, $formattedDate';
+      }
+    } else {
+      // Format timestamp as per your requirement
+      String formattedDate = DateFormat('EEE, MMM d, hh:mm a').format(eventTime);
+      return formattedDate;
+    }
+  }
+
+  String _getWeekdayName(int weekday) {
+    List<String> weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    return weekdays[weekday - 1];
   }
 
   @override
@@ -182,7 +222,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                             style: defaultBold,
                           ),
                           TextSpan(
-                            text: 'This Wednesday, 7:30 p.m.',
+                            text: _formatTimestamp(whenTime),
                             style: defaultBody,
                           ),
                         ],
@@ -208,7 +248,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                             style: defaultBold,
                           ),
                           TextSpan(
-                            text: '10 p.m.',
+                            text: _formatTimestamp(endTime),
                             style: defaultBody,
                           ),
                         ],
@@ -234,7 +274,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                             style: defaultBold,
                           ),
                           TextSpan(
-                            text: 'This Tuesday, 10 a.m.',
+                            text: _formatTimestamp(rsvpTime),
                             style: defaultBody,
                           ),
                         ],
@@ -345,7 +385,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                           ),
                           TextSpan(
                             text:
-                                'Never gonna give you up, never gonna let you down, never gonna run around and desert you!',
+                                description,
                             style: defaultBody,
                           ),
                         ],

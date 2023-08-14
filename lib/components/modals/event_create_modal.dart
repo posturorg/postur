@@ -192,6 +192,9 @@ class _EventCreateModalState extends State<EventCreateModal> {
     await newEventRef.set(eventDetails);
     // Create "MyEvents" doc using "set" function
     await newMyEventRef.set(eventMemberDetails);
+    // Create "Attending" doc using "set" function
+    await newAttendingRef.set(attendingList);
+
     print('Event added with ID: ${newEventRef.id}');
   }
 
@@ -461,7 +464,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
                         size: 30,
                       ),
                     ),
-                    const Text('#DunsterHaus, Alvin Adjei, & 20 others'),
+                    const Flexible(child: Text('#DunsterHaus, Alvin Adjei, & 20 others')),
                   ],
                 ),
               ),

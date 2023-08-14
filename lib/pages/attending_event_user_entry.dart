@@ -1,26 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-BoxDecoration attendingBoxDecoration() {
-  return const BoxDecoration(
-    border: Border(
-        /*top: BorderSide(
-            color: Color.fromARGB(255, 230, 230, 229),
-            width: 1.0,
-          ),*/
-        bottom: BorderSide(
-      color: Color.fromARGB(255, 230, 230, 229),
-      width: 1.0,
-    )),
-  );
-}
-
 class AttendingEventUserEntry extends StatelessWidget {
-  final Map<String, String>
+  final DocumentSnapshot<Object?>
       user; // will ultimately be obtained from the User ID
   const AttendingEventUserEntry({
     super.key,
     required this.user,
   });
+
+  BoxDecoration attendingBoxDecoration() {
+    return const BoxDecoration(
+      border: Border(
+        bottom: BorderSide(
+          color: Color.fromARGB(255, 230, 230, 229),
+          width: 1.0,
+        )
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +34,7 @@ class AttendingEventUserEntry extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(6, 0, 0, 0),
             child: Text(
-              user["name"]!,
+              '${user["name"]['first']} ${user["name"]['last']}',
               style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
           ),
@@ -45,6 +43,3 @@ class AttendingEventUserEntry extends StatelessWidget {
     );
   }
 }
-
-late bool isSelected;
-late void Function() onTap;
