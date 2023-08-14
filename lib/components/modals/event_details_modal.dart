@@ -49,19 +49,21 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
   Timestamp whenTime = Timestamp.fromDate(DateTime.now());
   Timestamp endTime = Timestamp.fromDate(DateTime.now());
   Timestamp rsvpTime = Timestamp.fromDate(DateTime.now());
-  GeoPoint where = GeoPoint(0,0);
+  GeoPoint where = GeoPoint(0, 0);
   String attending = '';
   String description = '';
-
-
 
   // Get Creator Name
   Future<void> _getCreatorName() async {
     try {
-      DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('Users').doc(widget.creator).get();
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(widget.creator)
+          .get();
       if (snapshot.exists) {
         setState(() {
-          creatorName = '${snapshot['name']['first']} ${snapshot['name']['last']}';
+          creatorName =
+              '${snapshot['name']['first']} ${snapshot['name']['last']}';
           creatorProfilePic = snapshot['profile_pic'];
         });
       }
@@ -73,7 +75,10 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
   // Get Event Data Name
   Future<void> _getEventData() async {
     try {
-      DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('Events').doc(widget.eventId).get();
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('Events')
+          .doc(widget.eventId)
+          .get();
       if (snapshot.exists) {
         setState(() {
           eventTitle = snapshot['eventTitle'];
@@ -117,13 +122,22 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
       String formattedDate = DateFormat('hh:mm a').format(eventTime);
       return 'Next ${_getWeekdayName(eventTime.weekday)}, $formattedDate';
     } else {
-      String formattedDate = DateFormat('EEE, MMM d, hh:mm a').format(eventTime);
+      String formattedDate =
+          DateFormat('EEE, MMM d, hh:mm a').format(eventTime);
       return formattedDate;
     }
   }
 
   String _getWeekdayName(int weekday) {
-    List<String> weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    List<String> weekdays = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
     return weekdays[weekday - 1];
   }
 
@@ -141,18 +155,18 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
     if (widget.isCreator) {
       bottomButtonText = 'Cancel';
       onMainBottomTap = () => {
-        showCupertinoDialog(
-          context: context,
-          builder: (context) => DefaultTwoOptionDialog(
-            title: 'Are you sure?',
-            content: 'Are you sure you want to cancel this event?',
-            optionOneText: 'Yes, poop the party.',
-            optionTwoText: 'No, party on!',
-            onOptionOne: () {}, //Should leave event, and pop both modals
-            onOptionTwo: () => {Navigator.pop(context)},
-          ),
-        )
-      };
+            showCupertinoDialog(
+              context: context,
+              builder: (context) => DefaultTwoOptionDialog(
+                title: 'Are you sure?',
+                content: 'Are you sure you want to cancel this event?',
+                optionOneText: 'Yes, poop the party.',
+                optionTwoText: 'No, party on!',
+                onOptionOne: () {}, //Should leave event, and pop both modals
+                onOptionTwo: () => {Navigator.pop(context)},
+              ),
+            )
+          };
     } else if (widget.isAttending!) {
       bottomButtonText = 'Leave';
       onMainBottomTap = () => {
@@ -331,8 +345,8 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                             style: defaultBody,
                             recognizer: TapGestureRecognizer()
                               ..onTap = () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
+                                  context,
+                                  MaterialPageRoute(
                                       builder: (context) => AttendingEventList(
                                             eventId: widget.eventId,
                                             isAttending: widget.isAttending!,
@@ -356,9 +370,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                                                     'https://www.gradeinflation.com',
                                               },
                                             ], //Get this from the backend!
-                                          )
-                                    )
-                              ),
+                                          ))),
                           ),
                         ],
                       ),
@@ -383,8 +395,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                             style: defaultBold,
                           ),
                           TextSpan(
-                            text:
-                                description,
+                            text: description,
                             style: defaultBody,
                           ),
                         ],
@@ -431,7 +442,8 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                     ModalBottomButton(
                       onTap: onMainBottomTap,
                       text: bottomButtonText,
-                      backgroundColor: widget.isAttending! ? attendingOrange : absentRed,
+                      backgroundColor:
+                          widget.isAttending! ? attendingOrange : absentRed,
                     ),
                   ],
                 ),
