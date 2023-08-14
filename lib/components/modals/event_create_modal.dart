@@ -159,10 +159,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
       'description': eventDescriptionController.text,
       'isPrivate': true,
     };
-    // currentUser.update({
-    //   'invited': FieldValue.arrayUnion([eventId]),
-    //   'attending': FieldValue.arrayUnion([eventId]),
-    // });
 
     // Add event to current user's "MyEvents" subcollection in "EventMembers"
     Map<String, dynamic> eventMemberDetails = {
@@ -171,6 +167,8 @@ class _EventCreateModalState extends State<EventCreateModal> {
       'eventTitle': eventTitleController.text,
       'isCreator': true,
       'isAttending': true,
+      'indivInvite': true,
+      'tagInvites': [],
     };
 
     Map<String, dynamic> attendingList = {
