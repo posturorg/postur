@@ -20,7 +20,6 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  
   // Retrieve current user's uid
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
