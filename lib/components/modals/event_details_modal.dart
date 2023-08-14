@@ -295,6 +295,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => AttendingEventList(
+                                            eventId: widget.eventId,
                                             isAttending: widget.isAttending!,
                                             namesAttending: const [
                                               {
