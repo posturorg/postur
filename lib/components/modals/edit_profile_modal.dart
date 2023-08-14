@@ -213,31 +213,49 @@ class _EditProfileModalState extends State<EditProfileModal> {
                           bool isUniqueUsername =
                               await isUsernameUnique(queriedName);
                           if (isUniqueUsername || queriedName == userUsername) {
-                            //Confirm changes
-                            Navigator.pop(context); //pops wheel
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return DefaultTwoOptionDialog(
-                                  title: 'Confirm these changes?',
-                                  optionOneText: 'Yes',
-                                  optionTwoText: 'No',
-                                  onOptionOne: () {
-                                    setUsername(null, usernameController);
-                                    setName(
-                                      null,
-                                      firstNameController,
-                                      lastNameController,
-                                    );
-                                    Navigator.pop(context); //pops popup
-                                    Navigator.pop(context); //pops modal
-                                  },
-                                  onOptionTwo: () {
-                                    Navigator.pop(context); //pops popup
-                                  },
-                                );
-                              },
-                            );
+                            if (usernameController.text.trim() == '' ||
+                                firstNameController.text.trim() == '') {
+                              Navigator.pop(context); //pops wheeel
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return DefaultOneOptionDialog(
+                                    title:
+                                        'Username & First name cannot be empty.',
+                                    buttonText: 'Ok',
+                                    onPressed: () {
+                                      Navigator.pop(context); //pops popup.
+                                    },
+                                  );
+                                },
+                              );
+                            } else {
+                              //Confirm changes
+                              Navigator.pop(context); //pops wheel
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return DefaultTwoOptionDialog(
+                                    title: 'Confirm these changes?',
+                                    optionOneText: 'Yes',
+                                    optionTwoText: 'No',
+                                    onOptionOne: () {
+                                      setUsername(null, usernameController);
+                                      setName(
+                                        null,
+                                        firstNameController,
+                                        lastNameController,
+                                      );
+                                      Navigator.pop(context); //pops popup
+                                      Navigator.pop(context); //pops modal
+                                    },
+                                    onOptionTwo: () {
+                                      Navigator.pop(context); //pops popup
+                                    },
+                                  );
+                                },
+                              );
+                            }
                           } else {
                             Navigator.pop(context); //pops wheel
                             showDialog(
@@ -254,8 +272,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
                             );
                           }
                         } catch (e) {
-                          Navigator.pop(
-                              context); // pops spinning wheel of death
+                          Navigator.pop(context); // pops spinning wheel
                           showDialog(
                             context: context,
                             builder: (context) {
@@ -263,7 +280,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
                                 title: e.toString(),
                                 buttonText: 'Ok',
                                 onPressed: () {
-                                  Navigator.pop(context); //pops error popup
+                                  Navigator.pop(context); // pops error popup
                                 },
                               );
                             },
