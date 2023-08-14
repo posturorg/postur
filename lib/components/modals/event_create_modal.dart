@@ -157,28 +157,30 @@ class _EventCreateModalState extends State<EventCreateModal> {
       'description': eventDescriptionController.text,
       'isPrivate': true,
     };
-
-    // currentUser.update({
-    //   'invited': FieldValue.arrayUnion([eventId]),
-    //   'attending': FieldValue.arrayUnion([eventId]),
-    // });
     
     // Add event to current user's "MyEvents" subcollection in "EventMembers"
-    Map<String, dynamic> myEventDetails = {
+    Map<String, dynamic> eventMemberDetails = {
       'creator': uid,
       'eventId': eventId,
       'eventTitle': eventTitleController.text,
       'isCreator': true,
       'isAttending': true,
     };
+
+    Map<String, dynamic> attendingList = {
+      'uid': uid,
+    };
     
     // Create new document in "MyEvents" subcollection with eventId
     DocumentReference newMyEventRef = FirebaseFirestore.instance.collection('EventMembers').doc(uid).collection('MyEvents').doc(eventId);
 
+    // Create new document in "Attending" subcollection with eventId
+    DocumentReference newAttendingRef = FirebaseFirestore.instance.collection('Events').doc(eventId).collection('Attending').doc(uid);
+
     // Create "Events" doc using "set" function
     await newEventRef.set(eventDetails);
     // Create "MyEvents" doc using "set" function
-    await newMyEventRef.set(myEventDetails);
+    await newMyEventRef.set(eventMemberDetails);
     print('Event added with ID: ${newEventRef.id}');
   }
 

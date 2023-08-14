@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../src/colors.dart';
@@ -17,6 +19,28 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   var selectedIndex = 0;
   bool isOnProfilePage = false;
+
+  // Set up debouncer
+  Timer? _debounceTimer;
+
+  void _handleNavigation(int index) {
+    // Cancel the previous debounce timer, if any
+    _debounceTimer?.cancel();
+
+    // Start a new debounce timer
+    _debounceTimer = Timer(const Duration(milliseconds: 100), () {
+      setState(() {
+      selectedIndex = index;
+    });
+    });
+  }
+
+  @override
+  void dispose() {
+    // Cancel the debounce timer when the widget is disposed
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,11 +158,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                     currentIndex: selectedIndex,
-                    onTap: (value) {
-                      setState(() {
-                        selectedIndex = value;
-                      });
-                    },
+                    onTap: _handleNavigation,
                   ),
                 )
               ],

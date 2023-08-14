@@ -20,6 +20,7 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  
   // Retrieve current user's uid
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -74,9 +75,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _onMapHold(LatLng location) {
-    setState(() {
-      _showCreateModal(location);
-    });
+    _showCreateModal(location);
   }
 
   @override
