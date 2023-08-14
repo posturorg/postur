@@ -4,7 +4,6 @@ import '../src/colors.dart';
 import 'modals/edit_profile_modal.dart';
 
 class ProfileButtons extends StatelessWidget {
-
   const ProfileButtons({
     super.key,
   });
@@ -66,7 +65,7 @@ class ProfileButtons extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-              backgroundColor: const Color.fromARGB(255, 93, 93, 93),
+              backgroundColor: neutralGrey,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
               elevation: 0.0,
