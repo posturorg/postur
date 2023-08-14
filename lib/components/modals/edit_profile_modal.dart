@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../src/colors.dart';
 
 class EditProfileModal extends StatefulWidget {
-
   const EditProfileModal({
     super.key,
   });
@@ -23,6 +22,8 @@ class _EditProfileModalState extends State<EditProfileModal> {
     );
   }
 
+  String userFirstName = '';
+  String userLastName = '';
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -34,9 +35,16 @@ class _EditProfileModalState extends State<EditProfileModal> {
             Container(
               decoration: modalLine(),
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-              child: const Row(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Text(
+                    'Editing Profile',
+                    style: TextStyle(
+                        color: absentRed,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22),
+                  ),
                   Icon(
                     Icons.circle,
                     size: 85,
@@ -49,7 +57,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('Name:',
+                  const Text('First name:',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       )),
@@ -60,7 +68,43 @@ class _EditProfileModalState extends State<EditProfileModal> {
                       height: 50.0,
                       child: TextFormField(
                         decoration: const InputDecoration(
-                          hintText: 'Alvin Adjei',
+                          hintText: 'Enter first name...',
+                          border:
+                              OutlineInputBorder(), // Customize the border style
+                        ),
+                        onChanged: (value) {
+                          // Handle the text input change
+                          // ...
+                        },
+                        validator: (value) {
+                          // Perform form validation and return an error message if necessary
+                          // ...
+                          return null; // Return null to indicate no validation errors
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text('Last name:',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      )),
+                  const SizedBox(width: 8.0),
+                  Expanded(
+                    child: SizedBox(
+                      width: 200.0,
+                      height: 50.0,
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                          hintText:
+                              'Enter last name...', //should be user's name...
                           border:
                               OutlineInputBorder(), // Customize the border style
                         ),
@@ -163,8 +207,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
                             vertical: 8, horizontal: 20),
                         backgroundColor: neutralGrey,
                         shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(13)),
+                            borderRadius: BorderRadius.circular(13)),
                         elevation: 0.0,
                       ),
                       child: const Text('Cancel',
@@ -180,13 +223,11 @@ class _EditProfileModalState extends State<EditProfileModal> {
                             vertical: 8, horizontal: 14),
                         backgroundColor: absentRed,
                         shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(13)),
+                            borderRadius: BorderRadius.circular(13)),
                         elevation: 0.0,
                       ),
                       child: const Text('Confirm',
-                          style: TextStyle(
-                              color: Colors.white, fontSize: 15)),
+                          style: TextStyle(color: Colors.white, fontSize: 15)),
                     ),
                   ],
                 ),
