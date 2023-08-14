@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class AttendingEventUserEntry extends StatelessWidget {
   final DocumentSnapshot<Object?>
+
       user; // will ultimately be obtained from the User ID
   const AttendingEventUserEntry({
     super.key,
@@ -19,7 +20,7 @@ class AttendingEventUserEntry extends StatelessWidget {
       ),
     );
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Container(
