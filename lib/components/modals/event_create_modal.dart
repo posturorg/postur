@@ -5,6 +5,7 @@ import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/event_address_form.dart';
 import 'package:auth_test/components/modal_bottom_button.dart';
+import 'package:auth_test/pages/invite_to_event_page.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -438,7 +439,14 @@ class _EventCreateModalState extends State<EventCreateModal> {
                     ),
                     IconButton(
                       onPressed: () {
-                        print('Open invite page');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return const InviteToEventPage();
+                            },
+                          ),
+                        );
                       },
                       icon: const Icon(
                         Icons.add,
