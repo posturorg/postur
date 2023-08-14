@@ -9,7 +9,7 @@ import 'update_profile_pic.dart';
 class IDWidget extends StatefulWidget {
   final QueryDocumentSnapshot<Object?> currentUser;
 
-  const IDWidget ({
+  const IDWidget({
     super.key,
     required this.currentUser,
   });
@@ -19,7 +19,6 @@ class IDWidget extends StatefulWidget {
 }
 
 class _IDWidgetState extends State<IDWidget> {
-
   // Retrieve uid of current user
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -35,17 +34,19 @@ class _IDWidgetState extends State<IDWidget> {
           uid: widget.currentUser['uid'],
         ),
         // Profile Picture
-        UpdateProfilePic(reference: widget.currentUser['profile_pic'], radius: 45, borderRadius: 115),
+        UpdateProfilePic(
+            reference: widget.currentUser['profile_pic'],
+            radius: 45,
+            borderRadius: 115),
         // Full Name
         Text(
-          "${widget.currentUser['name']['first']} ${widget.currentUser['name']['last']}",
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: absentRed,
-          )
-        ),
-            // Username
+            "${widget.currentUser['name']['first']} ${widget.currentUser['name']['last']}",
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: absentRed,
+            )),
+        // Username
         Text(
           '@${widget.currentUser['username']}',
           style: const TextStyle(fontSize: 15),
@@ -54,12 +55,12 @@ class _IDWidgetState extends State<IDWidget> {
     );
   }
 }
- 
+
 // Widget that streams current user data to ID widget
 class IDStream extends StatefulWidget {
   final Query<Map<String, dynamic>> currentUser;
 
-  const IDStream ({
+  const IDStream({
     super.key,
     required this.currentUser,
   });
@@ -69,32 +70,34 @@ class IDStream extends StatefulWidget {
 }
 
 class _IDStreamState extends State<IDStream> {
-  
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: widget.currentUser.snapshots(),
-      builder: (context, snapshot) {
-        // What to show if waiting for data
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show Waiting Indicator
-          return const Center(child: CircularProgressIndicator(color: absentRed));
+        stream: widget.currentUser.snapshots(),
+        builder: (context, snapshot) {
+          // What to show if waiting for data
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Show Waiting Indicator
+            return const Center(
+                child: CircularProgressIndicator(color: absentRed));
 
-        // What to show if data has been received
-        } else if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.done) {
-          // Potenital error message
-          if (snapshot.hasError) {
-            return const Center(child: Text("Error Occured"));
-          // Success
-          } else if (snapshot.hasData) {  
-            /* Access current user's data from streams */
-            final currentUserData = snapshot.data!.docs[0];
-            return IDWidget(currentUser: currentUserData,);
+            // What to show if data has been received
+          } else if (snapshot.connectionState == ConnectionState.active ||
+              snapshot.connectionState == ConnectionState.done) {
+            // Potenital error message
+            if (snapshot.hasError) {
+              return const Center(child: Text("Error Occured"));
+              // Success
+            } else if (snapshot.hasData) {
+              /* Access current user's data from streams */
+              final currentUserData = snapshot.data!.docs[0];
+              return IDWidget(
+                currentUser: currentUserData,
+              );
+            }
+            return const Center(child: Text("No Data Received"));
           }
-          return const Center(child: Text("No Data Received"));
-        }
-        return Center(child: Text(snapshot.connectionState.toString()));
-      }
-    );
+          return Center(child: Text(snapshot.connectionState.toString()));
+        });
   }
 }

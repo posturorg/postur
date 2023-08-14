@@ -38,7 +38,9 @@ Future<void> setUsername(
       'hasUsername': true,
       'username': enteredUsernameController.text.trim().toLowerCase(),
     });
-    stateSetter();
+    if (stateSetter != null) {
+      stateSetter();
+    }
   } else {
     //should sign user out if user doesnt exist...
     FirebaseAuth.instance.signOut();
@@ -63,7 +65,9 @@ Future<void> setName(
         'last': lastNameController.text.trim(),
       },
     });
-    stateSetter();
+    if (stateSetter != null) {
+      stateSetter();
+    }
   } else {
     //should sign user out if user doesnt exist...
     FirebaseAuth.instance.signOut();
