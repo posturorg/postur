@@ -1,5 +1,5 @@
 import 'package:auth_test/components/my_searchbar.dart';
-import 'package:auth_test/pages/attending_event_user_entry.dart';
+import 'package:auth_test/components/attending_event_user_entry.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:auth_test/src/search_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
