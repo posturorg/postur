@@ -94,30 +94,29 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
     DateTime now = DateTime.now();
     DateTime eventTime = timestamp.toDate();
 
-    if (eventTime.isBefore(now.add(const Duration(days: 7))) &&
-        eventTime.isAfter(now.subtract(const Duration(days: 2)))) {
+    int daysDifference = DateTime(now.year, now.month, now.day)
+        .difference(DateTime(eventTime.year, eventTime.month, eventTime.day))
+        .inDays;
 
-      // Event is less than a week away
-      if (eventTime.weekday == now.subtract(const Duration(days: 1)).weekday) {
-        String formattedDate = DateFormat('hh:mm a').format(eventTime);
-        return 'Yesterday, $formattedDate';
-        
-      } else if (eventTime.weekday == now.weekday) {
-
-        String formattedDate = DateFormat('hh:mm a').format(eventTime);
-        return 'Today, $formattedDate';
-
-      } else if (eventTime.weekday == now.add(const Duration(days: 1)).weekday) {
-        
-        String formattedDate = DateFormat('hh:mm a').format(eventTime);
-        return 'Tomorrow, $formattedDate';
-
-      } else {
-        String formattedDate = DateFormat('hh:mm a').format(eventTime);
-        return 'This ${_getWeekdayName(eventTime.weekday)}, $formattedDate';
-      }
+    if (daysDifference == 0) {
+      String formattedDate = DateFormat('hh:mm a').format(eventTime);
+      return 'Today, $formattedDate';
+    } else if (daysDifference == -1) {
+      String formattedDate = DateFormat('hh:mm a').format(eventTime);
+      return 'Tomorrow, $formattedDate';
+    } else if (daysDifference == 1) {
+      String formattedDate = DateFormat('hh:mm a').format(eventTime);
+      return 'Yesterday, $formattedDate';
+    } else if (1 < daysDifference && daysDifference <= 7) {
+      String formattedDate = DateFormat('hh:mm a').format(eventTime);
+      return 'Last ${_getWeekdayName(eventTime.weekday)}, $formattedDate';
+    } else if (-7 < daysDifference && daysDifference < -1) {
+      String formattedDate = DateFormat('hh:mm a').format(eventTime);
+      return 'This ${_getWeekdayName(eventTime.weekday)}, $formattedDate';
+    } else if (daysDifference == -7) {
+      String formattedDate = DateFormat('hh:mm a').format(eventTime);
+      return 'Next ${_getWeekdayName(eventTime.weekday)}, $formattedDate';
     } else {
-      // Format timestamp as per your requirement
       String formattedDate = DateFormat('EEE, MMM d, hh:mm a').format(eventTime);
       return formattedDate;
     }
