@@ -1,4 +1,5 @@
 import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
+import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/my_textfield.dart';
 import 'package:auth_test/src/user_info_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -207,9 +208,51 @@ class _EditProfileModalState extends State<EditProfileModal> {
                         );
                         try {
                           //conditions for updating userName...
-                          //have to go to sleep...
-                          Navigator.pop(context); //pops wheel
-                          Navigator.pop(context); //pops modal...
+                          String queriedName =
+                              usernameController.text.trim().toLowerCase();
+                          bool isUniqueUsername =
+                              await isUsernameUnique(queriedName);
+                          if (isUniqueUsername || queriedName == userUsername) {
+                            //Confirm changes
+                            Navigator.pop(context); //pops wheel
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return DefaultTwoOptionDialog(
+                                  title: 'Confirm these changes?',
+                                  optionOneText: 'Yes',
+                                  optionTwoText: 'No',
+                                  onOptionOne: () {
+                                    setUsername(null, usernameController);
+                                    setName(
+                                      null,
+                                      firstNameController,
+                                      lastNameController,
+                                    );
+                                    Navigator.pop(context); //pops popup
+                                    Navigator.pop(context); //pops modal
+                                  },
+                                  onOptionTwo: () {
+                                    Navigator.pop(context); //pops popup
+                                  },
+                                );
+                              },
+                            );
+                          } else {
+                            Navigator.pop(context); //pops wheel
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return DefaultOneOptionDialog(
+                                  title: 'Username is already taken',
+                                  buttonText: 'Ok',
+                                  onPressed: () {
+                                    Navigator.pop(context); //closes popup...
+                                  },
+                                );
+                              },
+                            );
+                          }
                         } catch (e) {
                           Navigator.pop(
                               context); // pops spinning wheel of death
