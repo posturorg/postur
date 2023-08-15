@@ -5,7 +5,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class InviteToEventPage extends StatefulWidget {
-  const InviteToEventPage({super.key});
+  final Set<String> alreadyInvited; // set of UID's already invited to event
+  final void Function(Set<String>) onBottomButtonPress;
+  const InviteToEventPage({
+    super.key,
+    required this.alreadyInvited, // set of UID's already invited to event
+    required this.onBottomButtonPress,
+  });
 
   @override
   State<InviteToEventPage> createState() => _InviteToEventPageState();
@@ -13,6 +19,15 @@ class InviteToEventPage extends StatefulWidget {
 
 class _InviteToEventPageState extends State<InviteToEventPage> {
   final TextEditingController searchController = TextEditingController();
+  Set<String> toBeInvited =
+      {}; //Set of uid strings. (Need to make tag strings too)
+
+  @override
+  void initState() {
+    super.initState();
+    toBeInvited = Set<String>.from(widget.alreadyInvited);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,29 +71,37 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                         ); // Loading indicator
                       }
                       final usersDocs = snapshot.data!.docs;
-                      final userList = usersDocs
-                          .map((userDoc) =>
-                              userDoc.data() as Map<String, dynamic>)
-                          .toList();
+                      final userList =
+                          usersDocs //must be a function of search bar...
+                              .map((userDoc) =>
+                                  userDoc.data() as Map<String, dynamic>)
+                              .toList();
                       return ListView.builder(
                         itemCount: userList.length,
                         itemBuilder: (context, index) {
-                          return InviteToEventEntry(user: userList[index]);
+                          String uid = userList[index]['uid'];
+                          return InviteToEventEntry(
+                            user: userList[index],
+                            selected: toBeInvited.contains(uid),
+                            onSelect: () {
+                              setState(() {
+                                toBeInvited.add(uid);
+                                //toBeInvited = toBeInvited;
+                              });
+                              print(toBeInvited);
+                            },
+                            onDeselect: () {
+                              setState(() {
+                                toBeInvited.removeWhere((item) => item == uid);
+                                //toBeInvited = toBeInvited;
+                              });
+                              print(toBeInvited);
+                            },
+                          );
                         },
                       );
                     }),
                 //SHOULD NOT!!! PULL ALL USERS, JUST MAX OF LIKE 40 OF THEM
-                /*ListView(
-                  children: const [
-                    InviteToEventEntry(
-                      user: {
-                        'first': 'Ben',
-                        'last': 'du Pont',
-                        'username': 'me'
-                      },
-                    )
-                  ],
-                ),*/
                 SafeArea(
                   child: Center(
                     child: Column(
@@ -90,7 +113,8 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                             backgroundColor: attendingOrange,
                           ),
                           onPressed: () {
-                            print('Add selected users to relevant event!');
+                            widget.onBottomButtonPress(toBeInvited);
+                            Navigator.pop(context); //goes back to modal.
                           },
                           child: const Text(
                             'Add to event',
