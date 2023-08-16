@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
     _debounceTimer = Timer(const Duration(milliseconds: 100), () {
       setState(() {
       selectedIndex = index;
-    });
+      });
     });
   }
 

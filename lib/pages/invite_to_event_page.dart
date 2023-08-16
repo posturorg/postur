@@ -56,6 +56,9 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                         ); // Loading indicator
                       }
                       final usersDocs = snapshot.data!.docs;
+                      // Sort the documents by a specific field (e.g., 'name') alphabetically
+                      usersDocs.sort((a, b) =>
+                          a['name']['first'].toString().compareTo(b['name']['first'].toString()));
                       final userList = usersDocs
                           .map((userDoc) =>
                               userDoc.data() as Map<String, dynamic>)
