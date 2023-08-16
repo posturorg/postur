@@ -171,8 +171,9 @@ class _EventCreateModalState extends State<EventCreateModal> {
       'tagInvites': [],
     };
 
-    Map<String, dynamic> attendingList = {
+    Map<String, dynamic> invitedList = {
       'uid': uid,
+      'isAttending': true,
     };
 
     // Create new document in "MyEvents" subcollection with eventId
@@ -182,19 +183,19 @@ class _EventCreateModalState extends State<EventCreateModal> {
         .collection('MyEvents')
         .doc(eventId);
 
-    // Create new document in "Attending" subcollection with eventId
-    DocumentReference newAttendingRef = FirebaseFirestore.instance
+    // Create new document in "Invited" subcollection with eventId
+    DocumentReference newInvitedRef = FirebaseFirestore.instance
         .collection('Events')
         .doc(eventId)
-        .collection('Attending')
+        .collection('Invited')
         .doc(uid);
 
     // Create "Events" doc using "set" function
     await newEventRef.set(eventDetails);
     // Create "MyEvents" doc using "set" function
     await newMyEventRef.set(eventMemberDetails);
-    // Create "Attending" doc using "set" function
-    await newAttendingRef.set(attendingList);
+    // Create "Invited" doc using "set" function
+    await newInvitedRef.set(invitedList);
 
     print('Event added with ID: ${newEventRef.id}');
   }
