@@ -134,7 +134,8 @@ Future<List<String>> _fetchAttendees(String eventId) async {
   QuerySnapshot querySnapshot = await FirebaseFirestore.instance
       .collection('Events')
       .doc(eventId)
-      .collection('Attending')
+      .collection('Invited')
+      .where('isAttending', isEqualTo: true)
       .get();
 
   List<String> attendees = querySnapshot.docs.map((doc) => doc.id).toList();
