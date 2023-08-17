@@ -41,11 +41,10 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> _showCreateModal(LatLng location) async {
-    //CREATE EVENT MODAL
-    //UI PROBLEM, NEED TO FIX WHAT HAPPENS WHEN A KEYBOARD IS PULLED UP
+    PlaceAutoComplete locationToPlaceAutoComplete =
+        await PlacesRepository().getPlaceAutoCompleteFromLatLng(location);
+    // ignore: use_build_context_synchronously
     showModalBottomSheet<void>(
-      // context and builder are
-      // required properties in this widget
       context: context,
       isScrollControlled: true,
       elevation: 0.0,
@@ -53,22 +52,15 @@ class _MapPageState extends State<MapPage> {
       clipBehavior: Clip.antiAlias,
       showDragHandle: true,
       builder: (BuildContext context) {
-        // we set up a container inside which
-        // we create center column and display text
-
-        // Returning SizedBox instead of a Container
         return EventCreateModal(
           thoseInvited: {},
           exists: false,
           /* TODO: Need to edit initialSelectedPlace so that all new events don't end up in Kyrgyzstan */
           /* TODO: NOTE FOR BEN: Right now we have longitude in degrees WEST, Firestore stores them in degrees EAST, so*/
           /* TODO: we have to multiply longitude by -1 somewhere to stay out of Kyrgyzstan*/
-          initialSelectedPlace: PlaceAutoComplete(
-            'Harvard Square, Brattle Street, Cambridge, MA, USA',
-            'ChIJecplvEJ344kRdjumhjIYylk',
-          ),
-          initialCoords: const LatLng(42.3730,
-              71.1209), //Should be obtained from the coordinates of the place clicked
+          initialSelectedPlace: locationToPlaceAutoComplete,
+          initialCoords:
+              location, //Should be obtained from the coordinates of the place clicked
         ); //Need to fix this...
       },
     );

@@ -99,4 +99,30 @@ class PlacesRepository {
       return [];
     }
   }
+
+  Future<PlaceAutoComplete> getPlaceAutoCompleteFromLatLng(
+      LatLng pointClicked) async {
+    final String lat = pointClicked.latitude.toString();
+    final String lng = pointClicked.longitude.toString();
+    final String url =
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$key';
+    try {
+      var response = await http.get(Uri.parse(url));
+      Map<String, dynamic> jsonMap = convert.jsonDecode(response.body);
+      var status = jsonMap['status'];
+      if (status == 'OK') {
+        String formattedAddress =
+            jsonMap['results'][0]['formatted_address'] as String;
+        String placeId = jsonMap['results'][0]['place_id'] as String;
+        return PlaceAutoComplete(formattedAddress, placeId);
+      } else {
+        print(status);
+        return PlaceAutoComplete(
+            'Error getting location. Status not ok.', 'Null');
+      }
+    } catch (e) {
+      print(e.toString);
+      return PlaceAutoComplete('Error getting location...', 'Null');
+    }
+  }
 }

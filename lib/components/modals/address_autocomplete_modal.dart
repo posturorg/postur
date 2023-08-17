@@ -72,7 +72,7 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
                 onPressed: () async {
                   if (selectedPlace == null) {
                     if (widget.textController.text == '') {
-                      Navigator.pop(context);
+                      //do nothing... fix this code structuring soon
                     } else {
                       List<PlaceAutoComplete>? internalList =
                           await PlacesRepository()

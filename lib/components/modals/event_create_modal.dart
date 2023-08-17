@@ -89,6 +89,8 @@ class _EventCreateModalState extends State<EventCreateModal> {
       selectedPlace = newPlace;
       changedAddress = true;
     });
+    print('CHANGED ADDRESS!');
+    print(changedAddress);
   }
 
   @override
@@ -222,6 +224,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
                         .getCoordsFromPlaceId(selectedPlace.placeId);
                     //print(selectedPlace.placeId);
                     if (newCoords == null) {
+                      print('newCoords is null');
                       Navigator.pop(
                           context); // this is a bad practice, apparently.
                       showCupertinoDialog(
@@ -236,13 +239,10 @@ class _EventCreateModalState extends State<EventCreateModal> {
                     } else {
                       setState(() {
                         currentCoords = newCoords;
-                        //print('-------NEW COORDS ARE:-------');
-                        //print('${currentCoords.latitude}, ${currentCoords.longitude}');
                       });
                       Navigator.pop(context); //should close our popup
                       // this is where normally we would submit changed to the backend
                       Navigator.pop(context); //should close our modal
-
                       //HERE IS WHERE WE SHALL ADD THE CODE TO CREATE AN EVENT IN THE BACKEND.
                     }
                   } else {
@@ -257,12 +257,50 @@ class _EventCreateModalState extends State<EventCreateModal> {
             )
           };
     } else {
-      onBottomButtonPress = () => {
-            // Create event in the backend
-            print('User created an event'),
-            createEvent(),
-            Navigator.pop(context), //Closes modal
-          }; //This should be where code for
+      onBottomButtonPress = () async {
+        if (changedAddress) {
+          dynamic newCoords = await PlacesRepository()
+              .getCoordsFromPlaceId(selectedPlace.placeId);
+          //seriously remove this repeated code...
+          if (newCoords == null) {
+            print('newCoords is null');
+            Navigator.pop(context); // this is a bad practice, apparently.
+            showCupertinoDialog(
+              context: context,
+              builder: (context) => DefaultOneOptionDialog(
+                title:
+                    'Something went wrong. Check your internet connection or restart the app.',
+                buttonText: 'Ok',
+                onPressed: () => {Navigator.pop(context)},
+              ),
+            );
+          } else {
+            setState(() {
+              currentCoords = newCoords;
+            });
+            print('-------NEW COORDS ARE:-------');
+            print('${currentCoords.latitude}, ${currentCoords.longitude}');
+          }
+        }
+        if (eventTitleController.text != '') {
+          createEvent();
+          Navigator.pop(context);
+        } else {
+          showCupertinoDialog(
+            context: context,
+            builder: (context) {
+              return DefaultOneOptionDialog(
+                title: 'Events need a title...',
+                buttonText: 'Ok',
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              );
+            },
+          );
+        }
+        //Closes modal
+      }; //This should be where code for
       //event creation and pin placement go
     }
     return SizedBox(
