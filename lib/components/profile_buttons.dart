@@ -1,3 +1,4 @@
+import 'package:auth_test/components/modals/scan_event_modal.dart';
 import 'package:flutter/material.dart';
 import '../pages/qr_scan_page.dart';
 import '../src/colors.dart';
@@ -28,13 +29,18 @@ class ProfileButtons extends StatelessWidget {
           Container(
             padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
+              onPressed: () {showDialog(
+                context: context,
+                builder: (BuildContext context) => const AlertDialog(
+                  content: ScanForEventModal(),
+                ),
+              );
+                /* Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => const QRScanPage(),
                   ),
-                );
+                ); */
               },
               style: ElevatedButton.styleFrom(
                 padding:

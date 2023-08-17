@@ -8,7 +8,12 @@ import 'package:flutter/material.dart';
 import '../components/qr_scan_widget.dart';
 
 class QRScanPage extends StatelessWidget {
-  const QRScanPage({super.key});
+  final String eventId;
+
+  const QRScanPage({
+    super.key,
+    required this.eventId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +36,7 @@ class QRScanPage extends StatelessWidget {
           )
         )
       ),
-      body: const QRView()
+      body: QRView(eventId: eventId,)
     );
   }
 }

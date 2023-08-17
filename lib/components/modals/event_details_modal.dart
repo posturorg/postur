@@ -50,7 +50,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
   Timestamp whenTime = Timestamp.fromDate(DateTime.now());
   Timestamp endTime = Timestamp.fromDate(DateTime.now());
   Timestamp rsvpTime = Timestamp.fromDate(DateTime.now());
-  GeoPoint where = GeoPoint(0, 0);
+  GeoPoint where = const GeoPoint(42.373, -71.1209);
   String attending = '';
   String description = '';
 
