@@ -73,7 +73,7 @@ class _ScanResultState extends State<ScanResult> {
     
     if (snapshot.exists) {
       // Map eventData = snapshot.data as Map<String, dynamic>;
-      if (snapshot['isAttending'] == true) {
+      if (snapshot['isAttending']) {
         setState(() {
           isOnList = true;
         });
@@ -102,71 +102,81 @@ class _ScanResultState extends State<ScanResult> {
     late Color alertColor;
     isOnList ? alertColor = Colors.green : alertColor = absentRed;
 
-    return AlertDialog(
-      backgroundColor: alertColor,
-      title: Column(
-        children: [
-          // IconButton(
-          //   icon: mutualEvents ? const Icon(Icons.check_circle_outline, color: backgroundWhite) : const Icon(Icons.cancel_outlined, color: backgroundWhite),
-          //   onPressed: () => Navigator.pop(context),
-          //   iconSize: 100,
-          // ),
-          Icon(
-            isOnList ? Icons.check_circle_outline : Icons.cancel_outlined,
-            size: 150.0,
-            color: backgroundWhite,
-          ),
-          Text(
-            fullName,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: backgroundWhite,
-              fontSize: 20,
-            ),
-          ),
-          Text(
-            username,
-            style: const TextStyle(
-              color: backgroundWhite,
-              fontSize: 15,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-            child: Column(
+    return FutureBuilder<void>(
+      future: Future.delayed(const Duration(milliseconds: 200)),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show a loading indicator or any other widget while waiting
+          return const CircularProgressIndicator(strokeWidth: 2.0,);
+        } else {
+          return AlertDialog(
+            backgroundColor: alertColor,
+            title: Column(
               children: [
+                // IconButton(
+                //   icon: mutualEvents ? const Icon(Icons.check_circle_outline, color: backgroundWhite) : const Icon(Icons.cancel_outlined, color: backgroundWhite),
+                //   onPressed: () => Navigator.pop(context),
+                //   iconSize: 100,
+                // ),
+                Icon(
+                  isOnList ? Icons.check_circle_outline : Icons.cancel_outlined,
+                  size: 150.0,
+                  color: backgroundWhite,
+                ),
                 Text(
-                  isOnList ? 'On the list for:' : 'NOT on the list for:',
+                  fullName,
                   style: const TextStyle(
+                    fontWeight: FontWeight.bold,
                     color: backgroundWhite,
-                    fontSize: 18,
+                    fontSize: 20,
                   ),
                 ),
                 Text(
-                  eventTitle,
+                  username,
                   style: const TextStyle(
                     color: backgroundWhite,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
                   ),
-                )
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: Column(
+                    children: [
+                      Text(
+                        isOnList ? 'On the list for:' : 'NOT on the list for:',
+                        style: const TextStyle(
+                          color: backgroundWhite,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        eventTitle,
+                        style: const TextStyle(
+                          color: backgroundWhite,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
-      ),
-      content: ElevatedButton(
-        onPressed: () => Navigator.pop(context),
-        style: ElevatedButton.styleFrom(
-          padding:
-              const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-          backgroundColor: backgroundWhite,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15)),
-          elevation: 0.0,
-        ),
-        child: Text("OK",style: TextStyle(fontSize: 16, color: alertColor, fontWeight: FontWeight.bold)),
-      ),
+            content: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                backgroundColor: backgroundWhite,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                elevation: 0.0,
+              ),
+              child: Text("OK",style: TextStyle(fontSize: 16, color: alertColor, fontWeight: FontWeight.bold)),
+            ),
+          );
+        }
+      }
     );
   }
 }

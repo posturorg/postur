@@ -1,5 +1,4 @@
 import 'package:auth_test/components/scan_event_entry.dart';
-import 'package:auth_test/src/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -88,20 +87,19 @@ class _ScanForEventModalState extends State<ScanForEventModal> {
                   ),
                 );
               } else {
-                print(eventDocs.length);
                 return SizedBox(
                   width: 250.0,
                   height: eventDocs.length < 5 ? (50.0 + 50.0*eventDocs.length) : 300.0,
                   child: ListView.builder(
-                  itemCount: eventDocs.length,
-                  itemBuilder: (context, index) {
-                    final eventData = eventDocs[index].data() as Map<String, dynamic>;
-                    final eventId = eventData['eventId'];
-                    final eventTitle = eventData['eventTitle'];
-                
-                    return ScanEventEntry(eventId: eventId, eventTitle: eventTitle);
-                  },
-                                ),
+                    itemCount: eventDocs.length,
+                    itemBuilder: (context, index) {
+                      final eventData = eventDocs[index].data() as Map<String, dynamic>;
+                      final eventId = eventData['eventId'];
+                      final eventTitle = eventData['eventTitle'];
+                  
+                      return ScanEventEntry(eventId: eventId, eventTitle: eventTitle);
+                    },
+                  ),
                 );
               }
             }
