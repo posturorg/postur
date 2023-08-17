@@ -5,8 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QRView extends StatefulWidget {
+  final String eventId;
   
-  const QRView({super.key,});
+  const QRView({
+    super.key,
+    required this.eventId,
+    });
 
   @override
   State<QRView> createState() => _QRViewState();
@@ -24,12 +28,13 @@ class _QRViewState extends State<QRView> {
       ),
       onDetect: (capture) {
         final List<Barcode> barcodes = capture.barcodes;
+        String? userId = barcodes[0].rawValue;
+        print(userId);
         showDialog(
           context: context,
-          builder: (_) => const ScanResult(
-            fullName: 'Alvin Adjei',
-            userName: 'alldayadjei',
-            mutualEvents: false,
+          builder: (_) => ScanResult(
+            eventId: widget.eventId,
+            userId: userId,
           ),
             barrierDismissible: true,
         );
