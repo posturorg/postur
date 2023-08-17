@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
 Future<bool> isUsernameUnique(String queriedUsername) async {
+  queriedUsername = queriedUsername.trim().toLowerCase(); //just in case
   CollectionReference<Map<String, dynamic>> collection =
       FirebaseFirestore.instance.collection('Users');
   Query query = collection.where('username', isEqualTo: queriedUsername);
