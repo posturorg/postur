@@ -209,7 +209,12 @@ class _EventCreateModalState extends State<EventCreateModal> {
 
   @override
   Widget build(BuildContext context) {
-    late Function()? onBottomButtonPress;
+    // Calculate Added IDs
+    Set<String> addedIds = whoToInvite.difference(widget.thoseInvited);
+    // Calculate Removed IDs
+    Set<String> removedIDs = widget.thoseInvited.difference(whoToInvite);
+
+    late Function() onBottomButtonPress;
     if (widget.exists) {
       onBottomButtonPress = () => {
             showCupertinoDialog(
