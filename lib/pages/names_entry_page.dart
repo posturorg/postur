@@ -106,16 +106,6 @@ class _NamesEntryPageState extends State<NamesEntryPage> {
                     obscureText: false,
                     maxCharacters: 30,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
-                    child: Text(
-                      'Your last name will only ever be shown to people in your contacts or friends.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
                   ElevatedButton.icon(
                     onPressed: () {
                       if (firstNameController.text.trim() != '') {
