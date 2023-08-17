@@ -3,6 +3,7 @@ import 'package:auth_test/components/modals/event_create_modal.dart';
 import 'package:auth_test/components/my_inline_button.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -69,6 +70,39 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
     _getCreatorInfo();
   }
 
+  void cancelEvent() async {
+    try {
+      // Step 1: Delete Invited Users and MyEvents Documents
+      final eventRef = FirebaseFirestore.instance.collection('Events').doc(widget.eventId);
+      final invitedQuery = eventRef.collection('Invited');
+      final invitedSnapshot = await invitedQuery.get();
+
+      final batch = FirebaseFirestore.instance.batch();
+
+      for (QueryDocumentSnapshot invitedDoc in invitedSnapshot.docs) {
+        final userId = invitedDoc.id;
+        final myEventsRef = FirebaseFirestore.instance.collection('EventMembers')
+            .doc(userId).collection('MyEvents').doc(widget.eventId);
+        
+        batch.delete(myEventsRef); // Delete MyEvents document for each invited user
+        batch.delete(invitedQuery.doc(userId)); // Delete document in the Invited subcollection corresponding to each invited user
+      }
+
+      // Step 2: Delete Event Document
+      batch.delete(eventRef);
+
+      // Commit the batch delete
+      await batch.commit();
+    } catch (e) {
+      print("Error canceling event: $e");
+    }
+  }
+
+  // Call this function when the "Cancel Event" button is pressed
+  void onPressedCancelButton() {
+    cancelEvent();
+  }
+
   @override
   Widget build(BuildContext context) {
     late String mainButtonText;
@@ -76,7 +110,7 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
     if (widget.isCreator) {
       mainButtonText = 'Cancel';
       onMainButtonPress = () => {
-        showDialog(
+        showCupertinoDialog(
           //Need to compress this
           context: context,
           builder: (_) => DefaultTwoOptionDialog(
@@ -84,18 +118,24 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
             content: 'Are you sure you want to cancel the event?',
             optionOneText: 'Yes, poop the party.',
             optionTwoText: 'No, party on!',
-            onOptionOne: () {},
+            onOptionOne: () => {
+
+              // Delete relevant documents from backend
+              onPressedCancelButton(),
+
+              // Close alert
+              Navigator.pop(context),
+            },
             onOptionTwo: () {
               Navigator.pop(context);
             },
           ),
-          barrierDismissible: true,
         )
       };
     } else if (widget.isAttending) {
       mainButtonText = 'Leave';
       onMainButtonPress = () => {
-        showDialog(
+        showCupertinoDialog(
           context: context,
           builder: (_) => DefaultTwoOptionDialog(
             title: 'Are you sure?',
