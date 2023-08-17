@@ -55,9 +55,6 @@ class _MapPageState extends State<MapPage> {
         return EventCreateModal(
           thoseInvited: {},
           exists: false,
-          /* TODO: Need to edit initialSelectedPlace so that all new events don't end up in Kyrgyzstan */
-          /* TODO: NOTE FOR BEN: Right now we have longitude in degrees WEST, Firestore stores them in degrees EAST, so*/
-          /* TODO: we have to multiply longitude by -1 somewhere to stay out of Kyrgyzstan*/
           initialSelectedPlace: locationToPlaceAutoComplete,
           initialCoords:
               location, //Should be obtained from the coordinates of the place clicked

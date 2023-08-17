@@ -122,8 +122,8 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                       String usernameTrimmed = usernameController.text;
                       if (usernameTrimmed != '') {
                         usernameController.text.toLowerCase();
-                        bool? isUnique =
-                            await isUsernameUnique(usernameController.text);
+                        bool? isUnique = await isUsernameUnique(
+                            usernameController.text.trim().toLowerCase());
                         if (isUnique == null) {
                           //maybe make this nested loop cleaner...
                           //maybe clean up a bit
