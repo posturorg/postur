@@ -1,3 +1,4 @@
+import 'package:auth_test/pages/has_user_completed_signup_page.dart';
 import 'package:auth_test/pages/verify_email_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class AuthPage extends StatelessWidget {
       builder: (context, snapshot) {
         //user logged in
         if (snapshot.hasData) {
-          return const VerifyEmailPage(); //get specific data about the user...
+          return const HasUserCompletedSignupPage(); //get specific data about the user...
         }
         //user NOT logged in
         else {
