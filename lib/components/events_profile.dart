@@ -64,12 +64,16 @@ class _EventsProfileState extends State<EventsProfile> {
               }).toList();
 
               if (myEventWidgets.isEmpty) {
-                return Text(
-                  widget.isAttending ? "When you RSVP to events, they'll appear here :)" : "When you are invited to events or tags, they'll appear here :)",
-                  style: const TextStyle(
-                    color: absentRed,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 12.5, 0, 12.5),
+                  child: Text(
+                    widget.isAttending ? "When you RSVP to events, \nthey'll appear here :)" : "When you are invited to events or \ntags, they'll appear here :)",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: absentRed,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
                   ),
                 );
               }

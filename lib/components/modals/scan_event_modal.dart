@@ -53,51 +53,58 @@ class _ScanForEventModalState extends State<ScanForEventModal> {
           const SizedBox(
             height: 10.0,
           ),
-          SizedBox(
-            width: 200.0,
-            height: 250.0,
-            child: FutureBuilder<List<QueryDocumentSnapshot>>(
-              future: fetchEventData(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+          FutureBuilder<List<QueryDocumentSnapshot>>(
+            future: fetchEventData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-                
-                // Store documents of all events user is attending
-                final eventDocs = snapshot.data!;
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+              
+              // Store documents of all events user is attending
+              final eventDocs = snapshot.data!;
 
-                // Sort the eventDocs list alphabetically by eventTitle
-                eventDocs.sort((a, b) {
-                  final aData = a.data() as Map<String, dynamic>;
-                  final bData = b.data() as Map<String, dynamic>;
-                  final aTitle = aData['eventTitle'] as String;
-                  final bTitle = bData['eventTitle'] as String;
-                  return aTitle.compareTo(bTitle);
-                });
+              // Sort the eventDocs list alphabetically by eventTitle
+              eventDocs.sort((a, b) {
+                final aData = a.data() as Map<String, dynamic>;
+                final bData = b.data() as Map<String, dynamic>;
+                final aTitle = aData['eventTitle'] as String;
+                final bTitle = bData['eventTitle'] as String;
+                return aTitle.compareTo(bTitle);
+              });
 
-                if (eventDocs.isEmpty) {
-                  return const Text(
-                  "When you RSVP to events, \nthey'll appear here :)",
-                  textAlign: TextAlign.center,
+              if (eventDocs.isEmpty) {
+                return const SizedBox(
+                  width: 250.0,
+                  height: 100.0,
+                  child: Center(
+                    child: Text(
+                    "When you RSVP to events, \nthey'll appear here :)",
+                    textAlign: TextAlign.center,
+                    ),
+                  ),
                 );
-                } else {
-                  return ListView.builder(
+              } else {
+                print(eventDocs.length);
+                return SizedBox(
+                  width: 250.0,
+                  height: eventDocs.length < 5 ? (50.0 + 50.0*eventDocs.length) : 300.0,
+                  child: ListView.builder(
                   itemCount: eventDocs.length,
                   itemBuilder: (context, index) {
                     final eventData = eventDocs[index].data() as Map<String, dynamic>;
                     final eventId = eventData['eventId'];
                     final eventTitle = eventData['eventTitle'];
-
+                
                     return ScanEventEntry(eventId: eventId, eventTitle: eventTitle);
                   },
+                                ),
                 );
-                }
               }
-            ),
+            }
           ),
         ],
       ),
