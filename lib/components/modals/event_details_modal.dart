@@ -1,9 +1,9 @@
 import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/modals/event_create_modal.dart';
 import 'package:auth_test/pages/attending_event_list.dart';
+import 'package:auth_test/src/event_info_services.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -114,25 +114,23 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
       String formattedDate = DateFormat('hh:mm a').format(eventTime);
       return 'Yesterday, $formattedDate';
     } else if (1 < daysDifference && daysDifference <= 7) {
-      
       String formattedDate = DateFormat('hh:mm a').format(eventTime);
 
-      if (now.add(const Duration(days: 1)).weekday > eventTime.add(const Duration(days: 1)).weekday) {
+      if (now.add(const Duration(days: 1)).weekday >
+          eventTime.add(const Duration(days: 1)).weekday) {
         return 'This past ${_getWeekdayName(eventTime.weekday)}, $formattedDate';
       } else {
         return 'Last ${_getWeekdayName(eventTime.weekday)}, $formattedDate';
       }
-
     } else if (-7 < daysDifference && daysDifference < -1) {
-
       String formattedDate = DateFormat('hh:mm a').format(eventTime);
 
-      if (now.add(const Duration(days: 1)).weekday > eventTime.add(const Duration(days: 1)).weekday) {
+      if (now.add(const Duration(days: 1)).weekday >
+          eventTime.add(const Duration(days: 1)).weekday) {
         return 'Next ${_getWeekdayName(eventTime.weekday)}, $formattedDate';
       } else {
         return 'This ${_getWeekdayName(eventTime.weekday)}, $formattedDate';
       }
-
     } else if (daysDifference == -7) {
       String formattedDate = DateFormat('hh:mm a').format(eventTime);
       return 'Next ${_getWeekdayName(eventTime.weekday)}, $formattedDate';
@@ -156,17 +154,36 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
     return weekdays[weekday - 1];
   }
 
+  Set<String> thoseInvited = {};
+
+  Future<void> fetchThoseInvited() async {
+    CollectionReference<Map<String, dynamic>> relevantCollection =
+        FirebaseFirestore.instance
+            .collection('Events')
+            .doc(widget.eventId)
+            .collection('Invited');
+    Set<String> thoseInvitedInternal =
+        await getUidsFromCollection(relevantCollection);
+    setState(() {
+      thoseInvited = thoseInvitedInternal;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _getCreatorName();
     _getEventData();
+    Future.delayed(Duration.zero, () {
+      this.fetchThoseInvited();
+    });
   }
 
   void cancelEvent() async {
     try {
       // Step 1: Delete Invited Users and MyEvents Documents
-      final eventRef = FirebaseFirestore.instance.collection('Events').doc(widget.eventId);
+      final eventRef =
+          FirebaseFirestore.instance.collection('Events').doc(widget.eventId);
       final invitedQuery = eventRef.collection('Invited');
       final invitedSnapshot = await invitedQuery.get();
 
@@ -174,11 +191,16 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
 
       for (QueryDocumentSnapshot invitedDoc in invitedSnapshot.docs) {
         final userId = invitedDoc.id;
-        final myEventsRef = FirebaseFirestore.instance.collection('EventMembers')
-            .doc(userId).collection('MyEvents').doc(widget.eventId);
-        
-        batch.delete(myEventsRef); // Delete MyEvents document for each invited user
-        batch.delete(invitedQuery.doc(userId)); // Delete document in the Invited subcollection corresponding to each invited user
+        final myEventsRef = FirebaseFirestore.instance
+            .collection('EventMembers')
+            .doc(userId)
+            .collection('MyEvents')
+            .doc(widget.eventId);
+
+        batch.delete(
+            myEventsRef); // Delete MyEvents document for each invited user
+        batch.delete(invitedQuery.doc(
+            userId)); // Delete document in the Invited subcollection corresponding to each invited user
       }
 
       // Step 2: Delete Event Document
@@ -211,7 +233,6 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                 optionOneText: 'Yes, poop the party.',
                 optionTwoText: 'No, party on!',
                 onOptionOne: () => {
-
                   // Delete relevant documents from backend
                   onPressedCancelButton(),
 
@@ -220,7 +241,6 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
 
                   // Close modal
                   Navigator.pop(context),
-
                 }, //Should cancel event, and pop both modals
                 onOptionTwo: () => Navigator.pop(context),
               ),
@@ -472,11 +492,12 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                     Visibility(
                       visible: widget.isCreator!,
                       child: ModalBottomButton(
-                        onTap: () => {
+                        onTap: () async {
                           //first close this existing modal.
-                          //then, open new one
-                          Navigator.pop(context),
+                          Navigator.pop(
+                              context); //first close this existing modal.
                           showModalBottomSheet<void>(
+                            //then, open new one
                             context: context,
                             isScrollControlled: true,
                             elevation: 0.0,
@@ -484,6 +505,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                             clipBehavior: Clip.antiAlias,
                             showDragHandle: true,
                             builder: (BuildContext context) => EventCreateModal(
+                              thoseInvited: thoseInvited,
                               exists: true, //also, toggles creator, Me
                               initialSelectedPlace: PlaceAutoComplete(
                                 'Harvard Square, Brattle Street, Cambridge, MA, USA',
@@ -492,7 +514,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                               initialCoords: const LatLng(42.3730,
                                   71.1209), //Also should be obtained from the backend
                             ),
-                          )
+                          );
                         },
                         text: 'Edit',
                         backgroundColor: neutralGrey,

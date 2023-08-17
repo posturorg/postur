@@ -1,6 +1,7 @@
 import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/modals/event_create_modal.dart';
 import 'package:auth_test/components/my_inline_button.dart';
+import 'package:auth_test/src/event_info_services.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,7 +32,7 @@ class MenuEventWidget extends StatefulWidget {
 class _MenuEventWidgetState extends State<MenuEventWidget> {
   String fullName = '';
   String profilePic = '';
-  
+
   BoxDecoration tagBoxDecoration() {
     return const BoxDecoration(
       border: Border(
@@ -45,18 +46,18 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
 
   Future<void> _getCreatorInfo() async {
     late DocumentSnapshot documentSnapshot;
-    
-    await FirebaseFirestore
-      .instance
-      .collection('Users')
-      .doc(widget.eventCreator)
-      .get()
-      .then((value) {
-        documentSnapshot = value;
-      });
-    
+
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(widget.eventCreator)
+        .get()
+        .then((value) {
+      documentSnapshot = value;
+    });
+
     if (documentSnapshot.exists) {
-      Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+      Map<String, dynamic> data =
+          documentSnapshot.data() as Map<String, dynamic>;
       setState(() {
         fullName = '${data['name']['first']} ${data['name']['last']}';
         profilePic = data['profile_pic'];
@@ -73,7 +74,8 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
   void cancelEvent() async {
     try {
       // Step 1: Delete Invited Users and MyEvents Documents
-      final eventRef = FirebaseFirestore.instance.collection('Events').doc(widget.eventId);
+      final eventRef =
+          FirebaseFirestore.instance.collection('Events').doc(widget.eventId);
       final invitedQuery = eventRef.collection('Invited');
       final invitedSnapshot = await invitedQuery.get();
 
@@ -81,11 +83,16 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
 
       for (QueryDocumentSnapshot invitedDoc in invitedSnapshot.docs) {
         final userId = invitedDoc.id;
-        final myEventsRef = FirebaseFirestore.instance.collection('EventMembers')
-            .doc(userId).collection('MyEvents').doc(widget.eventId);
-        
-        batch.delete(myEventsRef); // Delete MyEvents document for each invited user
-        batch.delete(invitedQuery.doc(userId)); // Delete document in the Invited subcollection corresponding to each invited user
+        final myEventsRef = FirebaseFirestore.instance
+            .collection('EventMembers')
+            .doc(userId)
+            .collection('MyEvents')
+            .doc(widget.eventId);
+
+        batch.delete(
+            myEventsRef); // Delete MyEvents document for each invited user
+        batch.delete(invitedQuery.doc(
+            userId)); // Delete document in the Invited subcollection corresponding to each invited user
       }
 
       // Step 2: Delete Event Document
@@ -110,65 +117,68 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
     if (widget.isCreator) {
       mainButtonText = 'Cancel';
       onMainButtonPress = () => {
-        showCupertinoDialog(
-          //Need to compress this
-          context: context,
-          builder: (_) => DefaultTwoOptionDialog(
-            title: 'Are you sure?',
-            content: 'Are you sure you want to cancel the event?',
-            optionOneText: 'Yes, poop the party.',
-            optionTwoText: 'No, party on!',
-            onOptionOne: () => {
+            showCupertinoDialog(
+              //Need to compress this
+              context: context,
+              builder: (_) => DefaultTwoOptionDialog(
+                title: 'Are you sure?',
+                content: 'Are you sure you want to cancel the event?',
+                optionOneText: 'Yes, poop the party.',
+                optionTwoText: 'No, party on!',
+                onOptionOne: () => {
+                  // Delete relevant documents from backend
+                  onPressedCancelButton(),
 
-              // Delete relevant documents from backend
-              onPressedCancelButton(),
-
-              // Close alert
-              Navigator.pop(context),
-            },
-            onOptionTwo: () {
-              Navigator.pop(context);
-            },
-          ),
-        )
-      };
+                  // Close alert
+                  Navigator.pop(context),
+                },
+                onOptionTwo: () {
+                  Navigator.pop(context);
+                },
+              ),
+            )
+          };
     } else if (widget.isAttending) {
       mainButtonText = 'Leave';
       onMainButtonPress = () => {
-        showCupertinoDialog(
-          context: context,
-          builder: (_) => DefaultTwoOptionDialog(
-            title: 'Are you sure?',
-            content: 'Are you sure you want to leave the event?',
-            optionOneText: 'Yes, leave.',
-            optionTwoText: 'No, stay.',
-            onOptionOne: () {},
-            onOptionTwo: () {
-              Navigator.pop(context);
-            },
-          ),
-        )
-      };
+            showCupertinoDialog(
+              context: context,
+              builder: (_) => DefaultTwoOptionDialog(
+                title: 'Are you sure?',
+                content: 'Are you sure you want to leave the event?',
+                optionOneText: 'Yes, leave.',
+                optionTwoText: 'No, stay.',
+                onOptionOne: () {},
+                onOptionTwo: () {
+                  Navigator.pop(context);
+                },
+              ),
+            )
+          };
     } else {
       mainButtonText = 'RSVP';
       onMainButtonPress = () {};
     }
 
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
-        .collection('Events')
-        .doc(widget.eventId)
-        .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        stream: FirebaseFirestore.instance
+            .collection('Events')
+            .doc(widget.eventId)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             // Show Waiting Indicator
-            return const Center(child: CircularProgressIndicator(color: absentRed,));
-          // What to show if data has been received
-          } else if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.done) {
+            return const Center(
+                child: CircularProgressIndicator(
+              color: absentRed,
+            ));
+            // What to show if data has been received
+          } else if (snapshot.connectionState == ConnectionState.active ||
+              snapshot.connectionState == ConnectionState.done) {
             // Potenital error message
             if (snapshot.hasError) {
               return const Center(child: Text("Error Occured"));
-            // Success
+              // Success
             } else if (snapshot.hasData) {
               String eventTitle = snapshot.data!['eventTitle'];
               return GestureDetector(
@@ -186,7 +196,7 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
                     builder: (BuildContext context) {
                       // we set up a container inside which
                       // we create center column and display text
-          
+
                       // Returning SizedBox instead of a Container
                       return EventDetailsModal(
                         eventId: widget.eventId,
@@ -235,7 +245,18 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
                               child: MyInlineButton(
                                 color: neutralGrey,
                                 text: 'Edit',
-                                onTap: () {
+                                onTap: () async {
+                                  //this might cause weirdness
+                                  CollectionReference<Map<String, dynamic>>
+                                      relevantCollection = FirebaseFirestore
+                                          .instance
+                                          .collection('Events')
+                                          .doc(widget.eventId)
+                                          .collection('Invited');
+
+                                  Set<String> thoseInvitedInternal =
+                                      await getUidsFromCollection(
+                                          relevantCollection);
                                   showModalBottomSheet<void>(
                                     context: context,
                                     isScrollControlled: true,
@@ -243,13 +264,17 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
                                     backgroundColor: Colors.white,
                                     clipBehavior: Clip.antiAlias,
                                     showDragHandle: true,
-                                    builder: (BuildContext context) => EventCreateModal(
-                                        exists: true,
-                                        initialSelectedPlace: PlaceAutoComplete(
-                                          'Harvard Square, Brattle Street, Cambridge, MA, USA',
-                                          'ChIJecplvEJ344kRdjumhjIYylk',
-                                        ), //pull this info from the backend...
-                                        initialCoords: const LatLng(42.3730, 71.1209)),
+                                    builder: (BuildContext context) =>
+                                        EventCreateModal(
+                                            thoseInvited: thoseInvitedInternal,
+                                            exists: true,
+                                            initialSelectedPlace:
+                                                PlaceAutoComplete(
+                                              'Harvard Square, Brattle Street, Cambridge, MA, USA',
+                                              'ChIJecplvEJ344kRdjumhjIYylk',
+                                            ), //pull this info from the backend...
+                                            initialCoords:
+                                                const LatLng(42.3730, 71.1209)),
                                   );
                                 }, // This is where on edit function will go.
                               ),
@@ -263,7 +288,9 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
                           Container(
                             padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                             child: MyInlineButton(
-                              color: widget.isAttending ? attendingOrange : absentRed,
+                              color: widget.isAttending
+                                  ? attendingOrange
+                                  : absentRed,
                               text: mainButtonText,
                               onTap: onMainButtonPress,
                             ),
@@ -275,9 +302,8 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
                 ),
               );
             }
-          } 
-        return const Text("Don't worry, be happy :)");
-      }
-    );
+          }
+          return const Text("Don't worry, be happy :)");
+        });
   }
 }

@@ -58,6 +58,7 @@ class _MapPageState extends State<MapPage> {
 
         // Returning SizedBox instead of a Container
         return EventCreateModal(
+          thoseInvited: {},
           exists: false,
           /* TODO: Need to edit initialSelectedPlace so that all new events don't end up in Kyrgyzstan */
           /* TODO: NOTE FOR BEN: Right now we have longitude in degrees WEST, Firestore stores them in degrees EAST, so*/
@@ -121,8 +122,6 @@ class _MapPageState extends State<MapPage> {
                 eventIdToIsAttendingMap[eventId] = isAttending;
                 eventIdToIsCreator[eventId] = isCreator;
               }
-
-              
 
               return StreamBuilder<QuerySnapshot>(
                   stream: events.snapshots(),

@@ -27,6 +27,7 @@ class EventCreateModal extends StatefulWidget {
   //back end when editing an event
   final String? initialTitle;
   final String? initialDescription;
+  final Set<String> thoseInvited;
 
   const EventCreateModal({
     super.key,
@@ -36,6 +37,7 @@ class EventCreateModal extends StatefulWidget {
     //on the map
     this.initialTitle,
     this.initialDescription,
+    required this.thoseInvited,
   });
 
   @override
@@ -105,6 +107,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
     if (widget.exists && widget.initialDescription != null) {
       eventDescriptionController.text = widget.initialDescription!;
     }
+    whoToInvite = Set<String>.from(widget.thoseInvited);
   }
 
   @override
