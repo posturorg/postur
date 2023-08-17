@@ -46,6 +46,8 @@ class _EventCreateModalState extends State<EventCreateModal> {
   late DateTime whenTime;
   late DateTime endTime;
   late DateTime rsvpTime;
+  Set<String> whoToInvite =
+      Set<String>.from({}); //should be pulled from backend if exists
 
   void changeWhen(DateTime newTime) {
     setState(() {
@@ -455,7 +457,16 @@ class _EventCreateModalState extends State<EventCreateModal> {
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return const InviteToEventPage();
+                              return InviteToEventPage(
+                                onBottomButtonPress: (Set<String> newSet) {
+                                  setState(() {
+                                    whoToInvite = newSet;
+                                  });
+                                  print(whoToInvite);
+                                },
+                                alreadyInvited:
+                                    whoToInvite, //get this from the backend
+                              );
                             },
                           ),
                         );
@@ -466,7 +477,8 @@ class _EventCreateModalState extends State<EventCreateModal> {
                         size: 30,
                       ),
                     ),
-                    const Flexible(child: Text('#DunsterHaus, Alvin Adjei, & 20 others')),
+                    const Flexible(
+                        child: Text('#DunsterHaus, Alvin Adjei, & 20 others')),
                   ],
                 ),
               ),
