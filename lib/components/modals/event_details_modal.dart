@@ -17,6 +17,8 @@ class EventDetailsModal extends StatefulWidget {
   final String eventId;
   final String eventTitle;
   final String creator;
+  //TODO: CHECK WITH ALVIN ABOUT HOW THIS IS HANDLED. ENSURE THAT ANY USER IS
+  //NOT BY DEFAULT THE EVENT CREATOR PRIOR TO LOADING.
   final bool? isCreator;
   final bool? isAttending;
 
@@ -106,7 +108,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
         });
       }
     } catch (e) {
-      print("Error getting event info: $e");
+      print("Error getting event info: ${e.toString()}");
     }
   }
 
