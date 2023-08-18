@@ -59,6 +59,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
   );
   String attending = '';
   String description = '';
+  bool hasFullyLoaded = false; //prevents small editing bug...
 
   // Get Creator Name
   Future<void> _getCreatorName() async {
@@ -101,6 +102,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
           whereLatLng = whereLatLngInternal;
           description = snapshot['description'];
           wherePlaceInfo = wherePlaceInfoInternal;
+          hasFullyLoaded = true;
         });
       }
     } catch (e) {
@@ -502,7 +504,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Visibility(
-                      visible: widget.isCreator!,
+                      visible: widget.isCreator! && hasFullyLoaded,
                       child: ModalBottomButton(
                         onTap: () async {
                           //first close this existing modal.
