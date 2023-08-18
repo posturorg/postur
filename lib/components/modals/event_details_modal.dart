@@ -51,6 +51,12 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
   Timestamp endTime = Timestamp.fromDate(DateTime.now());
   Timestamp rsvpTime = Timestamp.fromDate(DateTime.now());
   GeoPoint where = const GeoPoint(42.373, -71.1209);
+  LatLng whereLatLng = const LatLng(42.373, -71.1209);
+  //TODO: GOTTA ADD ACTUAL INFORMATION UPDATING
+  PlaceAutoComplete wherePlaceInfo = PlaceAutoComplete(
+    'Harvard Square, Brattle Street, Cambridge, MA, USA',
+    'ChIJH9cEblR344kR4_5hOythj0k',
+  );
   String attending = '';
   String description = '';
 
@@ -80,14 +86,21 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
           .collection('Events')
           .doc(widget.eventId)
           .get();
+      GeoPoint whereInternal = snapshot['where'];
+      LatLng whereLatLngInternal =
+          LatLng(whereInternal.latitude, whereInternal.longitude);
+      PlaceAutoComplete wherePlaceInfoInternal = await PlacesRepository()
+          .getPlaceAutoCompleteFromLatLng(whereLatLngInternal);
       if (snapshot.exists) {
         setState(() {
           eventTitle = snapshot['eventTitle'];
           whenTime = snapshot['whenTime'];
           endTime = snapshot['endTime'];
           rsvpTime = snapshot['rsvpTime'];
-          where = snapshot['where'];
+          where = whereInternal;
+          whereLatLng = whereLatLngInternal;
           description = snapshot['description'];
+          wherePlaceInfo = wherePlaceInfoInternal;
         });
       }
     } catch (e) {
@@ -392,8 +405,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                             style: defaultBold,
                           ),
                           TextSpan(
-                            text:
-                                '901 Fictitious Square, Unreal City, USA 67890',
+                            text: wherePlaceInfo.address,
                             style: defaultBody,
                           ),
                         ],
@@ -505,14 +517,12 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                             clipBehavior: Clip.antiAlias,
                             showDragHandle: true,
                             builder: (BuildContext context) => EventCreateModal(
+                              initialTitle: eventTitle,
+                              initialDescription: description,
+                              initialCoords: whereLatLng,
                               thoseInvited: thoseInvited,
                               exists: true, //also, toggles creator, Me
-                              initialSelectedPlace: PlaceAutoComplete(
-                                'Harvard Square, Brattle Street, Cambridge, MA, USA',
-                                'ChIJecplvEJ344kRdjumhjIYylk',
-                              ), //This info should be pulled from the backend
-                              initialCoords: const LatLng(42.3730,
-                                  71.1209), //Also should be obtained from the backend
+                              initialSelectedPlace: wherePlaceInfo,
                             ),
                           );
                         },
