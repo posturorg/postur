@@ -9,7 +9,7 @@ class CreateTagModal extends StatefulWidget {
   final bool exists;
   final String? preEnteredTitle;
   final String? preEnteredDescription;
-  
+
   const CreateTagModal({
     super.key,
     required this.exists,
@@ -67,7 +67,7 @@ class _CreateTagModalState extends State<CreateTagModal> {
       'tagTitle': tagTitleController.text,
       'description': tagDescriptionController.text,
     };
-    
+
     // Add tag to current user's "MyTags" subcollection in "TagMembers"
     Map<String, dynamic> tagMemberDetails = {
       'creator': uid,
@@ -75,7 +75,6 @@ class _CreateTagModalState extends State<CreateTagModal> {
       'tagTitle': tagTitleController.text,
       'isCreator': true,
     };
-
 
     Map<String, dynamic> tagMemberList = {
       'uid': uid,
@@ -89,7 +88,11 @@ class _CreateTagModalState extends State<CreateTagModal> {
         .doc(tagId);
 
     // Create new document in "Members" subcollection with tagId
-    DocumentReference newMemberRef = FirebaseFirestore.instance.collection('Tags').doc(tagId).collection('Members').doc(uid);
+    DocumentReference newMemberRef = FirebaseFirestore.instance
+        .collection('Tags')
+        .doc(tagId)
+        .collection('Members')
+        .doc(uid);
 
     // Create "Tags" doc using "set" function
     await newTagRef.set(tagDetails);
@@ -250,7 +253,7 @@ class _CreateTagModalState extends State<CreateTagModal> {
                         createTag();
                         // Close modal
                         Navigator.pop(context);
-                        }, //need to properly populate this...
+                      }, //need to properly populate this...
                       text: widget.exists ? 'Confirm Changes' : 'Create',
                       backgroundColor: attendingOrange,
                     )

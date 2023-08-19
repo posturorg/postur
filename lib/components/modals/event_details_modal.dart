@@ -506,30 +506,33 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Visibility(
-                      visible: widget.isCreator! && hasFullyLoaded,
+                      visible: widget.isCreator!,
                       child: ModalBottomButton(
-                        onTap: () async {
-                          //first close this existing modal.
-                          Navigator.pop(
-                              context); //first close this existing modal.
-                          showModalBottomSheet<void>(
-                            //then, open new one
-                            context: context,
-                            isScrollControlled: true,
-                            elevation: 0.0,
-                            backgroundColor: Colors.white,
-                            clipBehavior: Clip.antiAlias,
-                            showDragHandle: true,
-                            builder: (BuildContext context) => EventCreateModal(
-                              initialTitle: eventTitle,
-                              initialDescription: description,
-                              initialCoords: whereLatLng,
-                              thoseInvited: thoseInvited,
-                              exists: true, //also, toggles creator, Me
-                              initialSelectedPlace: wherePlaceInfo,
-                            ),
-                          );
-                        },
+                        onTap: !hasFullyLoaded
+                            ? () async {}
+                            : () async {
+                                //first close this existing modal.
+                                Navigator.pop(
+                                    context); //first close this existing modal.
+                                showModalBottomSheet<void>(
+                                  //then, open new one
+                                  context: context,
+                                  isScrollControlled: true,
+                                  elevation: 0.0,
+                                  backgroundColor: Colors.white,
+                                  clipBehavior: Clip.antiAlias,
+                                  showDragHandle: true,
+                                  builder: (BuildContext context) =>
+                                      EventCreateModal(
+                                    initialTitle: eventTitle,
+                                    initialDescription: description,
+                                    initialCoords: whereLatLng,
+                                    thoseInvited: thoseInvited,
+                                    exists: true, //also, toggles creator, Me
+                                    initialSelectedPlace: wherePlaceInfo,
+                                  ),
+                                );
+                              },
                         text: 'Edit',
                         backgroundColor: neutralGrey,
                       ),
