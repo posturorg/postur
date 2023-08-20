@@ -305,16 +305,12 @@ class _EventCreateModalState extends State<EventCreateModal> {
                         'whenTime': Timestamp.fromDate(whenTime),
                         'where': GeoPoint(
                             currentCoords.latitude, currentCoords.longitude),
-
-                        //update where here...
                       }); //maybe make this more efficient, only on event changes.
                       print('Event informaiton updated successfully');
                       //TODO: change event in the backend
-                      Navigator.pop(context); //closes confirmation popup
-                      Navigator.pop(context); //should close our modal
+                      Navigator.pop(context); //Closes popup
+                      Navigator.pop(context); //Closes modal
                     }
-                    Navigator.pop(context); //Closes popup
-                    Navigator.pop(context); //Closes modal
                   }
                 }, //interface with backend to change event...
                 optionTwoText: 'No',
