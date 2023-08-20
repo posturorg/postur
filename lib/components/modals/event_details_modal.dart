@@ -61,7 +61,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
   );
   String attending = '';
   String description = '';
-  bool hasFullyLoaded = false; //prevents small editing bug...
+  bool hasFullyLoaded = false; //prevents small editing bug
 
   // Get Creator Name
   Future<void> _getCreatorName() async {
@@ -522,8 +522,8 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                                   backgroundColor: Colors.white,
                                   clipBehavior: Clip.antiAlias,
                                   showDragHandle: true,
-                                  builder: (BuildContext context) =>
-                                      EventCreateModal(
+                                  builder: (context) => EventCreateModal(
+                                    eventID: widget.eventId,
                                     initialTitle: eventTitle,
                                     initialDescription: description,
                                     initialCoords: whereLatLng,

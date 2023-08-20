@@ -22,6 +22,7 @@ This widget is what appears inside the modal for event creation
 class EventCreateModal extends StatefulWidget {
   final bool
       exists; //essentially toggles whether or not this is an editing widget...
+  final String? eventID;
   final PlaceAutoComplete initialSelectedPlace;
   final LatLng initialCoords; //will get this when you click on the map, or from
   //back end when editing an event
@@ -31,6 +32,7 @@ class EventCreateModal extends StatefulWidget {
 
   const EventCreateModal({
     super.key,
+    this.eventID,
     required this.exists,
     required this.initialSelectedPlace,
     required this.initialCoords, // will get this from where you click
@@ -215,7 +217,8 @@ class _EventCreateModalState extends State<EventCreateModal> {
     Set<String> removedIDs = widget.thoseInvited.difference(whoToInvite);
 
     late Function() onBottomButtonPress;
-    if (widget.exists) {
+    if (widget.exists && widget.eventID != null) {
+      //This is the case we need to fix...
       onBottomButtonPress = () => {
             showCupertinoDialog(
               context: context,
@@ -223,15 +226,12 @@ class _EventCreateModalState extends State<EventCreateModal> {
                 title: 'Confirm event changes?',
                 optionOneText: 'Yes, confirm',
                 onOptionOne: () async {
-                  //does this need to be async
                   if (changedAddress) {
                     dynamic newCoords = await PlacesRepository()
                         .getCoordsFromPlaceId(selectedPlace.placeId);
-                    //print(selectedPlace.placeId);
                     if (newCoords == null) {
                       print('newCoords is null');
-                      Navigator.pop(
-                          context); // this is a bad practice, apparently.
+                      Navigator.pop(context);
                       showCupertinoDialog(
                         context: context,
                         builder: (context) => DefaultOneOptionDialog(
@@ -245,22 +245,94 @@ class _EventCreateModalState extends State<EventCreateModal> {
                       setState(() {
                         currentCoords = newCoords;
                       });
-                      Navigator.pop(context); //should close our popup
-                      // this is where normally we would submit changed to the backend
-                      Navigator.pop(context); //should close our modal
-                      //HERE IS WHERE WE SHALL ADD THE CODE TO CREATE AN EVENT IN THE BACKEND.
+                      //TODO: Add changes to who's invited/attending
+                      if (eventTitleController.text == '') {
+                        //TODO: Make this a function! code is copied
+                        showDialog(
+                            context: context,
+                            builder: (context) => DefaultOneOptionDialog(
+                                  title: 'Events must have a title',
+                                  buttonText: 'Ok',
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ));
+                      } else {
+                        CollectionReference eventsCollection =
+                            FirebaseFirestore.instance.collection('Events');
+                        DocumentReference eventDoc =
+                            eventsCollection.doc(widget.eventID);
+                        await eventDoc.update({
+                          'eventTitle': eventTitleController.text,
+                          'description': eventDescriptionController.text,
+                          'endTime': Timestamp.fromDate(endTime),
+                          'rsvpTime': Timestamp.fromDate(rsvpTime),
+                          'whenTime': Timestamp.fromDate(whenTime),
+                          'where': GeoPoint(
+                              currentCoords.latitude, currentCoords.longitude),
+
+                          //update where here...
+                        }); //maybe make this more efficient, only on event changes.
+                        print('Event informaiton updated successfully');
+                        //TODO: change event in the backend
+                        Navigator.pop(context); //closes confirmation popup
+                        Navigator.pop(context); //should close our modal
+                      }
                     }
                   } else {
-                    //this is where we would normally submit changes to the backend
+                    //TODO: Add changes to who's invited/attending
+                    if (eventTitleController.text == '') {
+                      //TODO: Make this a function! code is copied
+                      showDialog(
+                          context: context,
+                          builder: (context) => DefaultOneOptionDialog(
+                                title: 'Events must have a title',
+                                buttonText: 'Ok',
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ));
+                    } else {
+                      CollectionReference eventsCollection =
+                          FirebaseFirestore.instance.collection('Events');
+                      DocumentReference eventDoc =
+                          eventsCollection.doc(widget.eventID);
+                      await eventDoc.update({
+                        'eventTitle': eventTitleController.text,
+                        'description': eventDescriptionController.text,
+                        'endTime': Timestamp.fromDate(endTime),
+                        'rsvpTime': Timestamp.fromDate(rsvpTime),
+                        'whenTime': Timestamp.fromDate(whenTime),
+                        'where': GeoPoint(
+                            currentCoords.latitude, currentCoords.longitude),
+
+                        //update where here...
+                      }); //maybe make this more efficient, only on event changes.
+                      print('Event informaiton updated successfully');
+                      //TODO: change event in the backend
+                      Navigator.pop(context); //closes confirmation popup
+                      Navigator.pop(context); //should close our modal
+                    }
                     Navigator.pop(context); //Closes popup
                     Navigator.pop(context); //Closes modal
                   }
                 }, //interface with backend to change event...
                 optionTwoText: 'No',
-                onOptionTwo: () => {Navigator.pop(context)},
+                onOptionTwo: () =>
+                    {Navigator.pop(context)}, //closes confirmation
               ),
             )
           };
+    } else if (widget.exists && widget.eventID == null) {
+      showDialog(
+          context: context,
+          builder: (context) => DefaultOneOptionDialog(
+                title: 'Oops, something went wrong. Please try again.',
+                buttonText: 'Ok',
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ));
     } else {
       onBottomButtonPress = () async {
         if (changedAddress) {
