@@ -1,3 +1,4 @@
+import 'package:auth_test/components/event_marker.dart';
 import 'package:auth_test/components/id_widget.dart';
 import 'package:auth_test/components/events_profile.dart';
 import 'package:auth_test/components/profile_buttons.dart';

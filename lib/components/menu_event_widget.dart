@@ -1,3 +1,4 @@
+import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/modals/event_create_modal.dart';
 import 'package:auth_test/components/my_inline_button.dart';
@@ -246,37 +247,99 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
                                 color: neutralGrey,
                                 text: 'Edit',
                                 onTap: () async {
-                                  //this might cause weirdness
-                                  CollectionReference<Map<String, dynamic>>
-                                      relevantCollection = FirebaseFirestore
-                                          .instance
-                                          .collection('Events')
-                                          .doc(widget.eventId)
-                                          .collection('Invited');
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return const Center(
+                                          child: CircularProgressIndicator(
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    attendingOrange),
+                                          ),
+                                        );
+                                      });
+                                  try {
+                                    CollectionReference<Map<String, dynamic>>
+                                        relevantCollection = FirebaseFirestore
+                                            .instance
+                                            .collection('Events')
+                                            .doc(widget.eventId)
+                                            .collection('Invited');
 
-                                  Set<String> thoseInvitedInternal =
-                                      await getUidsFromCollection(
-                                          relevantCollection);
-                                  showModalBottomSheet<void>(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    elevation: 0.0,
-                                    backgroundColor: Colors.white,
-                                    clipBehavior: Clip.antiAlias,
-                                    showDragHandle: true,
-                                    builder: (BuildContext context) =>
-                                        EventCreateModal(
-                                            thoseInvited: thoseInvitedInternal,
-                                            exists: true,
-                                            initialSelectedPlace:
-                                                PlaceAutoComplete(
-                                              'Harvard Square, Brattle Street, Cambridge, MA, USA',
-                                              'ChIJecplvEJ344kRdjumhjIYylk',
-                                            ), //pull this info from the backend...
-                                            initialCoords:
-                                                const LatLng(42.3730, 71.1209)),
-                                  );
-                                }, // This is where on edit function will go.
+                                    DocumentSnapshot eventSnapshot =
+                                        await FirebaseFirestore.instance
+                                            .collection('Events')
+                                            .doc(widget.eventId)
+                                            .get();
+
+                                    String initialTitle =
+                                        eventSnapshot['eventTitle'];
+
+                                    String initialDescription =
+                                        eventSnapshot['description'];
+
+                                    Map<String, dynamic> eventData =
+                                        eventSnapshot.data()
+                                            as Map<String, dynamic>;
+                                    GeoPoint whereGeoPoint = eventData['where'];
+
+                                    double initialLatitude =
+                                        whereGeoPoint.latitude;
+
+                                    double initialLongitude =
+                                        whereGeoPoint.longitude;
+
+                                    LatLng initialCoords = LatLng(
+                                        initialLatitude, initialLongitude);
+
+                                    PlaceAutoComplete initialSelectedPlace =
+                                        await PlacesRepository()
+                                            .getPlaceAutoCompleteFromLatLng(
+                                                initialCoords);
+
+                                    Set<String>
+                                        thoseInvitedInternal = //need to fix this!
+                                        await getUidsFromCollection(
+                                            relevantCollection);
+                                    Navigator.pop(
+                                        context); //pops spinning wheel of death.
+
+                                    // ignore: use_build_context_synchronously
+                                    showModalBottomSheet<void>(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      elevation: 0.0,
+                                      backgroundColor: Colors.white,
+                                      clipBehavior: Clip.antiAlias,
+                                      showDragHandle: true,
+                                      builder: (BuildContext context) =>
+                                          EventCreateModal(
+                                              initialTitle: eventTitle,
+                                              initialDescription:
+                                                  initialDescription,
+                                              eventID: widget.eventId,
+                                              thoseInvited:
+                                                  thoseInvitedInternal,
+                                              exists: true,
+                                              initialSelectedPlace:
+                                                  initialSelectedPlace,
+                                              initialCoords: initialCoords),
+                                    );
+                                  } catch (e) {
+                                    Navigator.pop(context);
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          DefaultOneOptionDialog(
+                                        title: e.toString(),
+                                        buttonText: 'Ok',
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    );
+                                  }
+                                },
                               ),
                             ),
                           ],
