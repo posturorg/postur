@@ -42,6 +42,8 @@ class _MapPageState extends State<MapPage> {
   //   mapController.setMapStyle(mapStyleString);
   // }
 
+  latlong2.LatLng _center = latlong2.LatLng(42.3732, -71.1202);
+
   Future<void> _showCreateModal(latlong2.LatLng location) async {
     PlaceAutoComplete locationToPlaceAutoComplete =
         await PlacesRepository().getPlaceAutoCompleteFromLatLng2(location);
@@ -162,20 +164,35 @@ class _MapPageState extends State<MapPage> {
                       //add a button to go to user location
                       //show user location
                       options: MapOptions(
-                        onLongPress: (tapPosition, point) => _onMapHold(point),
+                        onLongPress: (tapPosition, point) => {
+                          _onMapHold(point),
+                          _center = point,
+                        },
                         maxZoom: 18.42, //seems to work well
-                        center: const latlong2.LatLng(42.3732,
-                            -71.1202), //ideally this is the user's location.
+                        center: _center, //ideally this is the user's location.
                         zoom: 18,
                       ),
                       nonRotatedChildren: [
                         RichAttributionWidget(
                           //update these...
                           attributions: [
+                            //LogoSourceAttribution(image),
                             TextSourceAttribution(
-                              'OpenStreetMap contributors',
+                              //ensure this is done correctly
+                              'Mapbox',
                               onTap: () => launchUrl(Uri.parse(
-                                  'https://openstreetmap.org/copyright')),
+                                  'https://www.mapbox.com/about/maps/')),
+                            ),
+                            TextSourceAttribution(
+                              'OpenStreetMap',
+                              onTap: () => launchUrl(Uri.parse(
+                                  'https://www.openstreetmap.org/about/')),
+                            ),
+                            TextSourceAttribution(
+                              'Improve this map',
+                              prependCopyright: false,
+                              onTap: () => launchUrl(Uri.parse(
+                                  'https://www.mapbox.com/contribute/#/?utm_source=https%3A%2F%2Fdocs.mapbox.com%2F&utm_medium=attribution_link&utm_campaign=referrer&l=10%2F40%2F-74.5&q=')),
                             ),
                           ],
                         ),
