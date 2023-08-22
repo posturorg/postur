@@ -119,10 +119,6 @@ class _EventMarkerState extends State<EventMarker> {
                       return defaultAvatar;
                     }
                   },
-                  // child: CircleAvatar(
-                  //   backgroundImage: AssetImage('lib/assets/thumbtack.png'),
-                  //   radius: 15,
-                  // ),
                 ),
               )
             ],
