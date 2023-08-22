@@ -192,7 +192,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
 
   final Widget defaultAvatar = const CircleAvatar(
     backgroundImage: AssetImage('lib/assets/thumbtack.png'),
-    radius: 30,
+    radius: 37,
   );
 
   @override
@@ -316,7 +316,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                   } else {
                     return CircleAvatar(
                       backgroundImage: NetworkImage(snapshot.data!),
-                      radius: 30,
+                      radius: 37,
                     );
                   }
                 } else {
