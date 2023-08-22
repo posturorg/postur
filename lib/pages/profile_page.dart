@@ -96,12 +96,12 @@ class _ProfilePageState extends State<ProfilePage> {
             const EventsProfile(isAttending: true),
             inviteTitle,
             const EventsProfile(isAttending: false),
-            const TagWidget(
-              tagTitle: 'Yale2024',
-              tagCreator: '@YaleAdmins',
-              isMember: false,
-              isCreator: false,
-            ),
+            // const TagWidget(
+            //   tagId: 'Yale2024',
+            //   tagCreator: '@YaleAdmins',
+            //   isMember: false,
+            //   isCreator: false,
+            // ),
           ],
         ),
       ],

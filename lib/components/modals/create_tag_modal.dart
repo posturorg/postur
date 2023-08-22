@@ -74,10 +74,12 @@ class _CreateTagModalState extends State<CreateTagModal> {
       'tagId': tagId,
       'tagTitle': tagTitleController.text,
       'isCreator': true,
+      'isMember': true,
     };
 
     Map<String, dynamic> tagMemberList = {
       'uid': uid,
+      'isMember': true,
     };
 
     // Create new document in "MyTags" subcollection with tagId
@@ -250,7 +252,11 @@ class _CreateTagModalState extends State<CreateTagModal> {
                     ModalBottomButton(
                       onTap: () {
                         // Create new tag
-                        createTag();
+                        if (widget.exists) {
+                          // TODO: Insert update tag function
+                        } else {
+                          createTag();
+                        }
                         // Close modal
                         Navigator.pop(context);
                       }, //need to properly populate this...

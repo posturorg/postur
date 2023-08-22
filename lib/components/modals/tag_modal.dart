@@ -1,10 +1,14 @@
 import 'package:auth_test/components/modal_bottom_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../src/colors.dart';
 import '../tag_box_decoration.dart';
 import 'package:flutter/material.dart';
 
-class TagModal extends StatelessWidget {
+import 'create_tag_modal.dart';
+
+class TagModal extends StatefulWidget {
+  final String tagId;
   final String tagTitle;
   final bool isCreator;
   final String tagCreator;
@@ -14,6 +18,7 @@ class TagModal extends StatelessWidget {
 
   const TagModal({
     super.key,
+    required this.tagId,
     required this.tagTitle,
     required this.isCreator,
     required this.tagCreator,
@@ -21,6 +26,37 @@ class TagModal extends StatelessWidget {
     required this.onJoin,
     required this.onLeave,
   });
+
+  @override
+  State<TagModal> createState() => _TagModalState();
+}
+
+class _TagModalState extends State<TagModal> {
+  // Initialize description string
+  String description = '';
+
+  // Get Event Data Name
+  Future<void> _getTagData() async {
+    try {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('Tags')
+          .doc(widget.tagId)
+          .get();
+      if (snapshot.exists) {
+        setState(() {
+          description = snapshot['description'];
+        });
+      }
+    } catch (e) {
+      print("Error getting event info: ${e.toString()}");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getTagData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +71,11 @@ class TagModal extends StatelessWidget {
               size: 85,
             ),
             Text(
-              '#$tagTitle',
+              '#${widget.tagTitle}',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: isMember ? attendingOrange : absentRed,
+                color: widget.isMember ? attendingOrange : absentRed,
               ),
             ),
             Container(
@@ -48,7 +84,7 @@ class TagModal extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Creator: ${isCreator ? 'Me' : tagCreator}',
+                  Text('Creator: ${widget.isCreator ? 'Me' : widget.tagCreator}',
                       style: const TextStyle(
                         fontSize: 17,
                       )),
@@ -65,15 +101,15 @@ class TagModal extends StatelessWidget {
                       text: TextSpan(
                         style: DefaultTextStyle.of(context)
                             .style, // Use the default text style from the context
-                        children: const [
-                          TextSpan(
+                        children: [
+                          const TextSpan(
                             text: 'Description: ',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 15),
                           ),
                           TextSpan(
                             text:
-                                'Never gonna give you up, never gonna let you down, never gonna run around and desert you!',
+                                description,
                             style: TextStyle(
                                 fontWeight: FontWeight.normal, fontSize: 15),
                           ),
@@ -119,20 +155,36 @@ class TagModal extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Visibility(
-                        visible: isCreator,
+                        visible: widget.isCreator,
                         //This is the edit button:
                         child: ModalBottomButton(
-                          onTap: () {},
+                          onTap: () async {
+                            Navigator.pop(context);
+                            showModalBottomSheet<void>(
+                            //then, open new one
+                            context: context,
+                            isScrollControlled: true,
+                            elevation: 0.0,
+                            backgroundColor: Colors.white,
+                            clipBehavior: Clip.antiAlias,
+                            showDragHandle: true,
+                            builder: (BuildContext context) => CreateTagModal(
+                              preEnteredTitle: widget.tagTitle,
+                              preEnteredDescription: description,
+                              exists: true, //also, toggles creator, Me
+                            ),
+                          );
+                          },
                           text: 'Edit',
                           backgroundColor: neutralGrey,
                         )),
                     ModalBottomButton(
-                        onTap: isMember
-                            ? onLeave
-                            : onJoin, //Replace this with notification if isMember, else nothing
-                        text: isMember ? 'Leave' : 'Join',
+                        onTap: widget.isMember
+                            ? widget.onLeave
+                            : widget.onJoin, //Replace this with notification if isMember, else nothing
+                        text: widget.isCreator ? 'Disband' : (widget.isMember ? 'Leave' : 'Join'),
                         backgroundColor:
-                            isMember ? attendingOrange : absentRed),
+                            widget.isMember ? attendingOrange : absentRed),
                   ],
                 ),
               ),

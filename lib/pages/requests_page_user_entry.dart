@@ -17,7 +17,7 @@ BoxDecoration attendingBoxDecoration() {
 }
 
 class RequestsPageUserEntry extends StatelessWidget {
-  final Map<String, String> user;
+  final Map<String, dynamic> user;
   const RequestsPageUserEntry({
     super.key,
     required this.user,
@@ -37,7 +37,7 @@ class RequestsPageUserEntry extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(6, 0, 0, 0),
             child: Text(
-              user["name"]!,
+              '${user['name']['first']} ${user['name']['last']}',
               style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
           ),
