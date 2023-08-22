@@ -1,6 +1,7 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+import 'package:latlong2/latlong.dart' as latlong2;
 
 List<String> parseLatLng(String resultsString) {
   String initialSubstring = 'geometry: {location: {lat: ';
@@ -124,5 +125,43 @@ class PlacesRepository {
       print(e.toString);
       return PlaceAutoComplete('Error getting location...', 'Null');
     }
+  }
+
+  Future<PlaceAutoComplete> getPlaceAutoCompleteFromLatLng2(
+      latlong2.LatLng pointClicked) async {
+    final String lat = pointClicked.latitude.toString();
+    final String lng = pointClicked.longitude.toString();
+    final String url =
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$key';
+    try {
+      var response = await http.get(Uri.parse(url));
+      Map<String, dynamic> jsonMap = convert.jsonDecode(response.body);
+      var status = jsonMap['status'];
+      if (status == 'OK') {
+        String formattedAddress =
+            jsonMap['results'][0]['formatted_address'] as String;
+        String placeId = jsonMap['results'][0]['place_id'] as String;
+        return PlaceAutoComplete(formattedAddress, placeId);
+      } else {
+        print(status);
+        return PlaceAutoComplete(
+            'Error getting location. Status not ok.', 'Null');
+      }
+    } catch (e) {
+      print(e.toString);
+      return PlaceAutoComplete('Error getting location...', 'Null');
+    }
+  }
+
+  LatLng latLng2ToLatLng(latlong2.LatLng coords) {
+    double latitude = coords.latitude;
+    double longitude = coords.longitude;
+    return LatLng(latitude, longitude);
+  }
+
+  latlong2.LatLng latLngToLatLng2(LatLng coords) {
+    double latitude = coords.latitude;
+    double longitude = coords.longitude;
+    return latlong2.LatLng(latitude, longitude);
   }
 }
