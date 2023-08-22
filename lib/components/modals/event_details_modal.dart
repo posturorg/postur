@@ -3,6 +3,7 @@ import 'package:auth_test/components/modals/event_create_modal.dart';
 import 'package:auth_test/pages/attending_event_list.dart';
 import 'package:auth_test/src/event_info_services.dart';
 import 'package:auth_test/src/places/places_repository.dart';
+import 'package:auth_test/src/user_info_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -186,11 +187,24 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
     });
   }
 
+  late Future<String> profilePicUrl;
+  bool wasErrorLoadingPic = false;
+
+  final Widget defaultAvatar = const CircleAvatar(
+    backgroundImage: AssetImage('lib/assets/thumbtack.png'),
+    radius: 30,
+  );
+
   @override
   void initState() {
     super.initState();
     _getCreatorName();
     _getEventData();
+    profilePicUrl = getProfilePicUrl(widget.creator, () {
+      setState(() {
+        wasErrorLoadingPic = true;
+      });
+    });
     Future.delayed(Duration.zero, () {
       this.fetchThoseInvited();
     });
@@ -288,9 +302,27 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            const Icon(
-              Icons.circle,
-              size: 85,
+            FutureBuilder(
+              //you can probably make this more consise
+              future: profilePicUrl,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  print('snapshot had error!');
+                  return defaultAvatar;
+                }
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (wasErrorLoadingPic) {
+                    return defaultAvatar;
+                  } else {
+                    return CircleAvatar(
+                      backgroundImage: NetworkImage(snapshot.data!),
+                      radius: 30,
+                    );
+                  }
+                } else {
+                  return defaultAvatar;
+                }
+              },
             ),
             Text(
               widget.eventTitle,
