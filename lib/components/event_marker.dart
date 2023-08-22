@@ -75,36 +75,41 @@ class _EventMarkerState extends State<EventMarker> {
       },
       child: Column(
         children: [
-          SvgPicture.string(
-            widget.isAttending ? orangePinStringSVG : redPinStringSVG,
-            width: 44.5, //feel free to change this
-            height: 44.5, //feel free to change this
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 3, 0, 0),
-            //TODO: Make more concise
-            child: FutureBuilder(
-              //you can probably make this more consise
-              future: profilePicUrl,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print('snapshot had error!');
-                  return defaultAvatar;
-                }
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (wasError) {
-                    return defaultAvatar;
-                  } else {
-                    return CircleAvatar(
-                      backgroundImage: NetworkImage(snapshot.data!),
-                      radius: 15,
-                    );
-                  }
-                } else {
-                  return defaultAvatar;
-                }
-              },
-            ),
+          Stack(
+            alignment: AlignmentDirectional.topCenter,
+            children: [
+              SvgPicture.string(
+                widget.isAttending ? orangePinStringSVG : redPinStringSVG,
+                width: 44.5, //feel free to change this
+                height: 44.5, //feel free to change this
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 3, 0, 0),
+                //TODO: Make more concise
+                child: FutureBuilder(
+                  //you can probably make this more consise
+                  future: profilePicUrl,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      print('snapshot had error!');
+                      return defaultAvatar;
+                    }
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (wasError) {
+                        return defaultAvatar;
+                      } else {
+                        return CircleAvatar(
+                          backgroundImage: NetworkImage(snapshot.data!),
+                          radius: 15,
+                        );
+                      }
+                    } else {
+                      return defaultAvatar;
+                    }
+                  },
+                ),
+              )
+            ],
           ),
           Text(
             textAlign: TextAlign.center,
