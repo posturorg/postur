@@ -2,13 +2,16 @@ import 'package:auth_test/src/places/places_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
-
-import '../components/modals/event_create_modal.dart';
 import '../components/modals/event_details_modal.dart';
+import '../components/modals/event_create_modal.dart';
 import '../src/colors.dart';
 import '../src/map_style_string.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart' as latlong2;
+import 'package:url_launcher/url_launcher.dart';
 
 /* Need to make the map 2d for performance improvement*/
 
@@ -33,7 +36,7 @@ class _MapPageState extends State<MapPage> {
 
   int uniqueId = 0;
   late GoogleMapController mapController;
-  final LatLng _center = const LatLng(42.3732, -71.1202);
+  final latlong2.LatLng _center = const latlong2.LatLng(42.3732, -71.1202);
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -132,61 +135,90 @@ class _MapPageState extends State<MapPage> {
                       // Success
                     } else if (snapshot.hasData) {
                       //
-                      Set<Marker> markers = snapshot.data!.docs
-                          .where((event) =>
-                              eventIdToIsAttendingMap.containsKey(event.id))
-                          .map((event) {
-                        // Retrieve GeoPoint location from backend
-                        GeoPoint location = event['where'] as GeoPoint;
-                        // Convert to LatLng
-                        LatLng position =
-                            LatLng(location.latitude, location.longitude);
-                        // Return each marker
-                        return Marker(
-                          // Set marker ID equal to eventId
-                          markerId: MarkerId(event.id),
-                          position: position,
-                          onTap: () {
-                            //THIS FUNCTION SHOWS THE MODAL
-                            showModalBottomSheet<void>(
-                              // context and builder are
-                              // required properties in this widget
-                              context: context,
-                              isScrollControlled: true,
-                              elevation: 0.0,
-                              backgroundColor: Colors.white,
-                              clipBehavior: Clip.antiAlias,
-                              showDragHandle: true,
-                              builder: (BuildContext context) {
-                                //Marker details MODAL START (IT IS THE SIZED BOX)
-                                return EventDetailsModal(
-                                  //Change this if you made it...
-                                  eventId: event['eventId'],
-                                  eventTitle: event['eventTitle'],
-                                  creator: event['creator'],
-                                  isCreator: eventIdToIsCreator[event.id],
-                                  isAttending:
-                                      eventIdToIsAttendingMap[event.id],
-                                );
-                              },
-                            );
-                          },
-                        );
-                      }).toSet();
+                      // Set<Marker> markers = snapshot.data!.docs
+                      //     .where((event) =>
+                      //         eventIdToIsAttendingMap.containsKey(event.id))
+                      //     .map((event) {
+                      //   // Retrieve GeoPoint location from backend
+                      //   GeoPoint location = event['where'] as GeoPoint;
+                      //   // Convert to LatLng
+                      //   LatLng position =
+                      //       LatLng(location.latitude, location.longitude);
+                      //   // Return each marker
+                      //   return Marker(
+                      //     // Set marker ID equal to eventId
+                      //     markerId: MarkerId(event.id),
+                      //     position: position,
+                      //     onTap: () {
+                      //       //THIS FUNCTION SHOWS THE MODAL
+                      //       showModalBottomSheet<void>(
+                      //         // context and builder are
+                      //         // required properties in this widget
+                      //         context: context,
+                      //         isScrollControlled: true,
+                      //         elevation: 0.0,
+                      //         backgroundColor: Colors.white,
+                      //         clipBehavior: Clip.antiAlias,
+                      //         showDragHandle: true,
+                      //         builder: (BuildContext context) {
+                      //           //Marker details MODAL START (IT IS THE SIZED BOX)
+                      //           return EventDetailsModal(
+                      //             //Change this if you made it...
+                      //             eventId: event['eventId'],
+                      //             eventTitle: event['eventTitle'],
+                      //             creator: event['creator'],
+                      //             isCreator: eventIdToIsCreator[event.id],
+                      //             isAttending:
+                      //                 eventIdToIsAttendingMap[event.id],
+                      //           );
+                      //         },
+                      //       );
+                      //     },
+                      //   );
+                      // }).toSet();
 
-                      return GoogleMap(
-                        myLocationButtonEnabled: true,
-                        myLocationEnabled: true,
-                        compassEnabled: false,
-                        onLongPress: _onMapHold,
-                        onMapCreated: _onMapCreated,
-                        initialCameraPosition: CameraPosition(
-                          //should be user position if user has shared position, else harvard square.
-                          target: _center,
-                          zoom: 15.0,
+                      return FlutterMap(
+                        options: MapOptions(
+                          maxZoom: 18.42, //seems to work well
+                          center: latlong2.LatLng(42.3732, -71.1202),
+                          zoom: 18,
                         ),
-                        markers: markers,
+                        nonRotatedChildren: [
+                          RichAttributionWidget(
+                            //update these...
+                            attributions: [
+                              TextSourceAttribution(
+                                'OpenStreetMap contributors',
+                                onTap: () => launchUrl(Uri.parse(
+                                    'https://openstreetmap.org/copyright')),
+                              ),
+                            ],
+                          ),
+                        ],
+                        children: [
+                          TileLayer(
+                            urlTemplate:
+                                'https://api.mapbox.com/styles/v1/posturmain/clllpwx6u02d001qlcplz2u3e/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicG9zdHVybWFpbiIsImEiOiJjbGxscGFmeGkyOGhwM2Rwa2loMDdrMWFjIn0.C5alCHxZEODxaSeGMq9oxA',
+                            userAgentPackageName:
+                                'com.example.app', //change this...
+                          ),
+                        ],
                       );
+                      ;
+
+                      // GoogleMap(
+                      //   myLocationButtonEnabled: true,
+                      //   myLocationEnabled: true,
+                      //   compassEnabled: false,
+                      //   onLongPress: _onMapHold,
+                      //   onMapCreated: _onMapCreated,
+                      //   initialCameraPosition: CameraPosition(
+                      //     //should be user position if user has shared position, else harvard square.
+                      //     target: _center,
+                      //     zoom: 15.0,
+                      //   ),
+                      //   markers: markers,
+                      // );
                     }
                   }
                   return const Center(child: Text("No Data Received"));
