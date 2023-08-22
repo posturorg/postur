@@ -4,6 +4,7 @@ import 'package:auth_test/components/modals/event_create_modal.dart';
 import 'package:auth_test/components/my_inline_button.dart';
 import 'package:auth_test/src/event_info_services.dart';
 import 'package:auth_test/src/places/places_repository.dart';
+import 'package:auth_test/src/user_info_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -66,8 +67,24 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
     }
   }
 
+  final Widget defaultAvatar = const CircleAvatar(
+    backgroundImage: AssetImage('lib/assets/thumbtack.png'),
+    radius: 21,
+  );
+
+  late Future<String> profilePicUrl;
+  bool wasErrorLoadingPic = false;
+
   @override
   void initState() {
+    profilePicUrl = getProfilePicUrl(
+      widget.eventCreator,
+      () {
+        setState(() {
+          wasErrorLoadingPic = true; //hopefully this works
+        });
+      },
+    );
     super.initState();
     _getCreatorInfo();
   }
@@ -215,9 +232,42 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
                   padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
                   child: Row(
                     children: [
-                      const Icon(
-                        Icons.circle,
-                        size: 50,
+                      Stack(
+                        alignment: Alignment.centerLeft,
+                        children: [
+                          const Icon(
+                            //Profile goes here!
+                            Icons.circle,
+                            size: 50,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(4.5, 0, 0, 0),
+                            child: FutureBuilder(
+                              //you can probably make this more consise
+                              future: profilePicUrl,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasError) {
+                                  print('snapshot had error!');
+                                  return defaultAvatar;
+                                }
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  if (wasErrorLoadingPic) {
+                                    return defaultAvatar;
+                                  } else {
+                                    return CircleAvatar(
+                                      backgroundImage:
+                                          NetworkImage(snapshot.data!),
+                                      radius: 21,
+                                    );
+                                  }
+                                } else {
+                                  return defaultAvatar;
+                                }
+                              },
+                            ),
+                          )
+                        ],
                       ),
                       Container(
                         padding: const EdgeInsets.fromLTRB(7, 0, 20, 0),
@@ -271,9 +321,6 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
                                             .collection('Events')
                                             .doc(widget.eventId)
                                             .get();
-
-                                    String initialTitle =
-                                        eventSnapshot['eventTitle'];
 
                                     String initialDescription =
                                         eventSnapshot['description'];
