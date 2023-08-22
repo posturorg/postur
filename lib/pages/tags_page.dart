@@ -1,4 +1,5 @@
 import 'package:auth_test/components/modals/create_tag_modal.dart';
+import 'package:auth_test/components/your_tags.dart';
 import 'package:flutter/material.dart';
 import '../src/colors.dart';
 import '../components/tag_widget.dart';
@@ -25,7 +26,7 @@ class _TagsPageState extends State<TagsPage> {
       );
     }
 
-    Widget yourTags = Container(
+    Widget yourTagsTitle = Container(
         decoration: sectionBoxDecoration(),
         padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),
         child: Row(children: [
@@ -57,7 +58,7 @@ class _TagsPageState extends State<TagsPage> {
                   showDragHandle: true,
                   builder: (BuildContext context) {
                     //Marker details MODAL START (IT IS THE SIZED BOX)
-                    return CreateTagModal(
+                    return const CreateTagModal(
                       exists: false,
                     );
                   },
@@ -94,30 +95,9 @@ class _TagsPageState extends State<TagsPage> {
               searchController: TextEditingController(), //should make this an
               //object initialized in the widget instead.
             ),
-            Column(
-              children: [
-                yourTags,
-                const TagWidget(
-                  tagTitle: 'Harvard2024',
-                  tagCreator: 'Me',
-                  isCreator: true,
-                  isMember: true,
-                ),
-                const TagWidget(
-                  tagTitle: 'HarvardHeraldry',
-                  tagCreator: 'Ben Dupont',
-                  isCreator: false,
-                  isMember: true,
-                ),
-                suggestedTitle,
-                const TagWidget(
-                  tagTitle: 'Yale2024',
-                  tagCreator: 'YaleAdmins',
-                  isCreator: false,
-                  isMember: false,
-                ),
-              ],
-            )
+            yourTagsTitle,
+            const YourTags(isMember: true),
+            suggestedTitle,
           ],
         ),
       ],
