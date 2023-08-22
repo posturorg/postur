@@ -3,7 +3,6 @@ import 'package:auth_test/src/places/places_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
-import '../components/modals/event_details_modal.dart';
 import '../components/modals/event_create_modal.dart';
 import '../src/colors.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +36,6 @@ class _MapPageState extends State<MapPage> {
 
   int uniqueId = 0;
   //late GoogleMapController mapController;
-  final latlong2.LatLng _center = const latlong2.LatLng(42.3732, -71.1202);
 
   // void _onMapCreated(GoogleMapController controller) {
   //   mapController = controller;
@@ -157,31 +155,6 @@ class _MapPageState extends State<MapPage> {
                           creator: event['creator'],
                           isCreator: eventIdToIsCreator[event.id]!,
                         ),
-                        // onTap: () {
-                        //   //THIS FUNCTION SHOWS THE MODAL
-                        //   showModalBottomSheet<void>(
-                        //     // context and builder are
-                        //     // required properties in this widget
-                        //     context: context,
-                        //     isScrollControlled: true,
-                        //     elevation: 0.0,
-                        //     backgroundColor: Colors.white,
-                        //     clipBehavior: Clip.antiAlias,
-                        //     showDragHandle: true,
-                        //     builder: (BuildContext context) {
-                        //       //Marker details MODAL START (IT IS THE SIZED BOX)
-                        //       return EventDetailsModal(
-                        //         //Change this if you made it...
-                        //         eventId: event['eventId'],
-                        //         eventTitle: event['eventTitle'],
-                        //         creator: event['creator'],
-                        //         isCreator: eventIdToIsCreator[event.id],
-                        //         isAttending:
-                        //             eventIdToIsAttendingMap[event.id],
-                        //       );
-                        //     },
-                        //   );
-                        // },
                       );
                     }).toSet();
 
@@ -189,6 +162,7 @@ class _MapPageState extends State<MapPage> {
                       //add a button to go to user location
                       //show user location
                       options: MapOptions(
+                        onLongPress: (tapPosition, point) => _onMapHold(point),
                         maxZoom: 18.42, //seems to work well
                         center: const latlong2.LatLng(42.3732,
                             -71.1202), //ideally this is the user's location.
