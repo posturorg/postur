@@ -1,10 +1,11 @@
 import 'package:auth_test/components/modals/event_details_modal.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:auth_test/src/pin_svg_strings.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class EventMarker extends StatelessWidget {
+class EventMarker extends StatefulWidget {
   final bool isAttending;
   final String eventTitle;
   final String eventId;
@@ -20,8 +21,39 @@ class EventMarker extends StatelessWidget {
   });
 
   @override
+  State<EventMarker> createState() => _EventMarkerState();
+}
+
+class _EventMarkerState extends State<EventMarker> {
+  bool wasError = false;
+  late Future<String> profilePicUrl;
+  final Widget defaultAvatar = const CircleAvatar(
+    backgroundImage: AssetImage('lib/assets/thumbtack.png'),
+    radius: 15,
+  );
+  Future<String> getProfilePicUrl() async {
+    try {
+      DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance.doc('Users/${widget.creator}').get();
+      return userDoc.get('profile_pic');
+    } catch (e) {
+      setState(() {
+        wasError = true;
+      });
+      print('profilePicture loading error!');
+      return '';
+    }
+  }
+
+  @override
+  void initState() {
+    profilePicUrl = getProfilePicUrl();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Color primaryColor = isAttending ? attendingOrange : absentRed;
+    Color primaryColor = widget.isAttending ? attendingOrange : absentRed;
     print('Marker build');
     return GestureDetector(
       onTap: () {
@@ -39,11 +71,11 @@ class EventMarker extends StatelessWidget {
             //Marker details MODAL START (IT IS THE SIZED BOX)
             return EventDetailsModal(
               //Change this if you made it...
-              eventId: eventId,
-              eventTitle: eventTitle,
-              creator: creator,
-              isCreator: isCreator,
-              isAttending: isAttending,
+              eventId: widget.eventId,
+              eventTitle: widget.eventTitle,
+              creator: widget.creator,
+              isCreator: widget.isCreator,
+              isAttending: widget.isAttending,
             );
           },
         );
@@ -54,20 +86,50 @@ class EventMarker extends StatelessWidget {
             alignment: AlignmentDirectional.topCenter,
             children: [
               SvgPicture.string(
-                isAttending ? orangePinStringSVG : redPinStringSVG,
+                widget.isAttending ? orangePinStringSVG : redPinStringSVG,
                 width: 44.5, //feel free to change this
                 height: 44.5, //feel free to change this
               ),
-              const Icon(
-                Icons.circle,
+              Icon(
+                Icons.circle, // profile picture goes here.
                 size: 35,
-                color: Colors.black,
+                color: Colors.grey.shade300,
               ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 3, 0, 0),
+                //TODO: Make more concise
+                child: FutureBuilder(
+                  //you can probably make this more consise
+                  future: profilePicUrl,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      print('snapshot had error!');
+                      return defaultAvatar;
+                    }
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (wasError) {
+                        return defaultAvatar;
+                      } else {
+                        return CircleAvatar(
+                          backgroundImage: NetworkImage(snapshot.data!),
+                          radius: 15,
+                        );
+                      }
+                    } else {
+                      return defaultAvatar;
+                    }
+                  },
+                  // child: CircleAvatar(
+                  //   backgroundImage: AssetImage('lib/assets/thumbtack.png'),
+                  //   radius: 15,
+                  // ),
+                ),
+              )
             ],
           ),
           Text(
             textAlign: TextAlign.center,
-            eventTitle,
+            widget.eventTitle,
             style: TextStyle(
               color: primaryColor,
               fontWeight: FontWeight.bold,
@@ -79,29 +141,3 @@ class EventMarker extends StatelessWidget {
     );
   }
 }
-
-// onTap: () {
-//                           //THIS FUNCTION SHOWS THE MODAL
-//                           showModalBottomSheet<void>(
-//                             // context and builder are
-//                             // required properties in this widget
-//                             context: context,
-//                             isScrollControlled: true,
-//                             elevation: 0.0,
-//                             backgroundColor: Colors.white,
-//                             clipBehavior: Clip.antiAlias,
-//                             showDragHandle: true,
-//                             builder: (BuildContext context) {
-//                               //Marker details MODAL START (IT IS THE SIZED BOX)
-//                               return EventDetailsModal(
-//                                 //Change this if you made it...
-//                                 eventId: event['eventId'],
-//                                 eventTitle: event['eventTitle'],
-//                                 creator: event['creator'],
-//                                 isCreator: eventIdToIsCreator[event.id],
-//                                 isAttending:
-//                                     eventIdToIsAttendingMap[event.id],
-//                               );
-//                             },
-//                           );
-//                         },

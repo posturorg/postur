@@ -166,7 +166,6 @@ class _MapPageState extends State<MapPage> {
                       options: MapOptions(
                         onLongPress: (tapPosition, point) => {
                           _onMapHold(point),
-                          _center = point,
                         },
                         maxZoom: 18.42, //seems to work well
                         center: _center, //ideally this is the user's location.
