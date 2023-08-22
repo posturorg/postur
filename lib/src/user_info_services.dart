@@ -90,3 +90,16 @@ Future<Set<String>> extractPhoneNumbers(List<Contact> contacts) async {
 
   return phoneNumberSet;
 }
+
+Future<String> getProfilePicUrl(
+    String uid, void Function() wasErrorSetter) async {
+  try {
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.doc('Users/$uid').get();
+    return userDoc.get('profile_pic');
+  } catch (e) {
+    wasErrorSetter(); // hopefully this works
+    print('profilePicture loading error!');
+    return '';
+  }
+}
