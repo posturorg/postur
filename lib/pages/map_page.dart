@@ -26,6 +26,9 @@ class _MapPageState extends State<MapPage> {
   // Retrieve current user's uid
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
+  MapController _mapController =
+      MapController(); // Initialize the map's controller
+
   // Retrieve current user's "EventMembers" document
   DocumentReference currentUserEvents = FirebaseFirestore.instance
       .collection('EventMembers')
@@ -163,6 +166,8 @@ class _MapPageState extends State<MapPage> {
                     return FlutterMap(
                       //add a button to go to user location
                       //show user location
+                      mapController:
+                          _mapController, // Initialize the controller,
                       options: MapOptions(
                         onLongPress: (tapPosition, point) => {
                           _onMapHold(point),
