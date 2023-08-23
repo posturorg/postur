@@ -232,42 +232,31 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
                   padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
                   child: Row(
                     children: [
-                      Stack(
-                        alignment: Alignment.centerLeft,
-                        children: [
-                          const Icon(
-                            //Profile goes here!
-                            Icons.circle,
-                            size: 50,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(4.5, 0, 0, 0),
-                            child: FutureBuilder(
-                              //you can probably make this more consise
-                              future: profilePicUrl,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasError) {
-                                  print('snapshot had error!');
-                                  return defaultAvatar;
-                                }
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  if (wasErrorLoadingPic) {
-                                    return defaultAvatar;
-                                  } else {
-                                    return CircleAvatar(
-                                      backgroundImage:
-                                          NetworkImage(snapshot.data!),
-                                      radius: 21,
-                                    );
-                                  }
-                                } else {
-                                  return defaultAvatar;
-                                }
-                              },
-                            ),
-                          )
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(4.5, 0, 0, 0),
+                        child: FutureBuilder(
+                          //you can probably make this more consise
+                          future: profilePicUrl,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              print('snapshot had error!');
+                              return defaultAvatar;
+                            }
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              if (wasErrorLoadingPic) {
+                                return defaultAvatar;
+                              } else {
+                                return CircleAvatar(
+                                  backgroundImage: NetworkImage(snapshot.data!),
+                                  radius: 21,
+                                );
+                              }
+                            } else {
+                              return defaultAvatar;
+                            }
+                          },
+                        ),
                       ),
                       Container(
                         padding: const EdgeInsets.fromLTRB(7, 0, 20, 0),
