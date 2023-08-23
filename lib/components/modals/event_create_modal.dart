@@ -592,7 +592,8 @@ class _EventCreateModalState extends State<EventCreateModal> {
                       ),
                     ),
                     const Flexible(
-                        child: Text('#DunsterHaus, Alvin Adjei, & 20 others')),
+                      child: Text('#DunsterHaus, Alvin Adjei, & 20 others'),
+                    ),
                   ],
                 ),
               ),
