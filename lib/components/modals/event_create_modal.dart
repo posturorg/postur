@@ -5,7 +5,7 @@ import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/event_address_form.dart';
 import 'package:auth_test/components/modal_bottom_button.dart';
-import 'package:auth_test/pages/invite_to_event_page.dart';
+import 'package:auth_test/pages/invite_to_page.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -572,14 +572,16 @@ class _EventCreateModalState extends State<EventCreateModal> {
                           MaterialPageRoute(
                             builder: (context) {
                               return InviteToEventPage(
+                                toEvent: true,
                                 onBottomButtonPress: (Set<String> newSet) {
                                   setState(() {
                                     whoToInvite = newSet;
                                   });
                                   print(whoToInvite);
                                 },
-                                alreadyInvited:
+                                usersAlreadyInvited:
                                     whoToInvite, //get this from the backend
+                                tagsAlreadyInvited: const {}, //get this from the backend
                               );
                             },
                           ),

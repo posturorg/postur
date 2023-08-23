@@ -5,12 +5,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class InviteToEventPage extends StatefulWidget {
-  final Set<String> alreadyInvited; // set of UID's already invited to event
+  final Set<String>
+      usersAlreadyInvited; // set of UID's already invited to event
+  final Set<String> tagsAlreadyInvited;
+  final bool toEvent;
   final void Function(Set<String>) onBottomButtonPress;
   const InviteToEventPage({
     super.key,
-    required this.alreadyInvited, // set of UID's already invited to event
+    required this.usersAlreadyInvited, // set of UID's already invited to event
+    required this.tagsAlreadyInvited, // set of tags already invited to event
     required this.onBottomButtonPress,
+    required this.toEvent,
   });
 
   @override
@@ -19,13 +24,18 @@ class InviteToEventPage extends StatefulWidget {
 
 class _InviteToEventPageState extends State<InviteToEventPage> {
   final TextEditingController searchController = TextEditingController();
-  Set<String> toBeInvited =
+  Set<String> usersToBeInvited =
       {}; //Set of uid strings. (Need to make tag strings too)
+  Set<String> tagsToBeInvited =
+      {}; //Set of tag id strings. (Need to make tag strings too)
 
   @override
   void initState() {
     super.initState();
-    toBeInvited = Set<String>.from(widget.alreadyInvited);
+    usersToBeInvited = Set<String>.from(widget.usersAlreadyInvited);
+    if (widget.toEvent) {
+      tagsToBeInvited = Set<String>.from(widget.tagsAlreadyInvited);
+    }
   }
 
   @override
@@ -85,20 +95,21 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                           String uid = userList[index]['uid'];
                           return InviteToEventEntry(
                             user: userList[index],
-                            selected: toBeInvited.contains(uid),
+                            selected: usersToBeInvited.contains(uid),
                             onSelect: () {
                               setState(() {
-                                toBeInvited.add(uid);
+                                usersToBeInvited.add(uid);
                                 //toBeInvited = toBeInvited;
                               });
-                              print(toBeInvited);
+                              //print(usersToBeInvited);
                             },
                             onDeselect: () {
                               setState(() {
-                                toBeInvited.removeWhere((item) => item == uid);
+                                usersToBeInvited
+                                    .removeWhere((item) => item == uid);
                                 //toBeInvited = toBeInvited;
                               });
-                              print(toBeInvited);
+                              //print(usersToBeInvited);
                             },
                           );
                         },
@@ -116,7 +127,7 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                             backgroundColor: attendingOrange,
                           ),
                           onPressed: () {
-                            widget.onBottomButtonPress(toBeInvited);
+                            widget.onBottomButtonPress(usersToBeInvited);
                             Navigator.pop(context); //goes back to modal.
                           },
                           child: const Text(
