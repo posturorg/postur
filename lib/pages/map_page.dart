@@ -26,8 +26,7 @@ class _MapPageState extends State<MapPage> {
   // Retrieve current user's uid
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
-  MapController _mapController =
-      MapController(); // Initialize the map's controller
+  late MapController _mapController; // Initialize the map's controller
 
   // Retrieve current user's "EventMembers" document
   DocumentReference currentUserEvents = FirebaseFirestore.instance
@@ -75,6 +74,23 @@ class _MapPageState extends State<MapPage> {
   }
 
   @override
+  void initState() {
+    _mapController = MapController();
+    super.initState();
+  }
+
+  // @override
+  // void didUpdateWidget(covariant MapPage oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+
+  //   // Perform actions just before the widget rebuilds
+  //   print("Widget is about to rebuild");
+
+  //   // You can put your custom logic here
+  //   // For example, updating the state, making network requests, etc.
+  // }
+
+  @override
   Widget build(BuildContext context) {
     // Stream current user data to get list of events you're invitd to
     return StreamBuilder<QuerySnapshot>(
@@ -83,9 +99,10 @@ class _MapPageState extends State<MapPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Show Waiting Indicator
           return const Center(
-              child: CircularProgressIndicator(
-            color: absentRed,
-          ));
+            child: CircularProgressIndicator(
+              color: absentRed,
+            ),
+          );
 
           // What to show if data has been received
         } else if (snapshot.connectionState == ConnectionState.active ||
