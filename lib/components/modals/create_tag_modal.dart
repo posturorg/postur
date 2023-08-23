@@ -1,5 +1,5 @@
 import 'package:auth_test/components/modal_bottom_button.dart';
-import 'package:auth_test/pages/invite_to_event_page.dart';
+import 'package:auth_test/pages/invite_to_page.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:auth_test/src/event_box_decoration.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -238,10 +238,12 @@ class _CreateTagModalState extends State<CreateTagModal> {
                           MaterialPageRoute(
                             builder: (context) {
                               return InviteToEventPage(
+                                toEvent: false,
                                 onBottomButtonPress: (Set<String> newSet) {
                                   () {};
                                 },
-                                alreadyInvited: const {}, //get this from the backend
+                                usersAlreadyInvited: const {}, //get this from the backend
+                                tagsAlreadyInvited: const {}, //this will stay this way...
                               );
                             },
                           ),

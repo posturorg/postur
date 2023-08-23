@@ -2,6 +2,7 @@ import 'package:auth_test/components/invite_to_event_entry.dart';
 import 'package:auth_test/components/my_searchbar.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class InviteToEventPage extends StatefulWidget {
@@ -23,6 +24,7 @@ class InviteToEventPage extends StatefulWidget {
 }
 
 class _InviteToEventPageState extends State<InviteToEventPage> {
+  final String currentUid = FirebaseAuth.instance.currentUser!.uid;
   final TextEditingController searchController = TextEditingController();
   Set<String> usersToBeInvited =
       {}; //Set of uid strings. (Need to make tag strings too)
@@ -85,10 +87,11 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                       usersDocs.sort((a, b) => a['name']['first']
                           .toString()
                           .compareTo(b['name']['first'].toString()));
-                      final userList = usersDocs
+                      List<Map<String, dynamic>> userList = usersDocs
                           .map((userDoc) =>
                               userDoc.data() as Map<String, dynamic>)
                           .toList();
+                      userList.removeWhere((user) => user['uid'] == currentUid);
                       return ListView.builder(
                         itemCount: userList.length,
                         itemBuilder: (context, index) {
@@ -130,9 +133,11 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                             widget.onBottomButtonPress(usersToBeInvited);
                             Navigator.pop(context); //goes back to modal.
                           },
-                          child: const Text(
-                            'Add to event',
-                            style: TextStyle(
+                          child: Text(
+                            widget.toEvent
+                                ? 'Invite to event'
+                                : 'Invite to tag',
+                            style: const TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.normal,
                             ),
