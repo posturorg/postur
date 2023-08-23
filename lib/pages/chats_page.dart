@@ -23,8 +23,8 @@ class _ChatsPageState extends State<ChatsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(children: [
-      Column(children: [
+    return Column(
+      children: [
         Container(
           decoration: searchBarDecoration(),
           child: Row(
@@ -38,10 +38,16 @@ class _ChatsPageState extends State<ChatsPage> {
             ],
           ),
         ),
-        ChatWidget(
-          chatTitle: 'Taco Tuesday',
+        Expanded(
+          child: ListView(children: [
+            Column(children: [
+              ChatWidget(
+                chatTitle: 'Taco Tuesday',
+              ),
+            ]),
+          ]),
         ),
-      ]),
-    ]);
+      ],
+    );
   }
 }
