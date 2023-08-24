@@ -1,3 +1,9 @@
+List<Map<String, String>> sortUsersByName(List<Map<String, String>> inputList) {
+  List<Map<String, String>> sortedList = List.from(inputList);
+  sortedList.sort((a, b) => a['name']!.compareTo(b['name']!));
+  return sortedList;
+}
+
 // import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Stream<List<Map<String, dynamic>>> searchUsers(String searchTerm) {

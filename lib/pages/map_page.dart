@@ -37,40 +37,46 @@ class _MapPageState extends State<MapPage> {
     //need to finish this to get markers to display
     final String uid = FirebaseAuth.instance.currentUser!.uid;
 
-    try {
-      // Get a reference to the user's 'MyEvents' subcollection
-      CollectionReference eventsCollection =
-          FirebaseFirestore.instance.collection('Events');
+    // Get a reference to the user's 'MyEvents' subcollection
+    CollectionReference eventsCollection =
+        FirebaseFirestore.instance.collection('Events');
 
-      // Query the events where there is a document with name equal to current user's uid
-      QuerySnapshot attendedEventsSnapshot = await eventsCollection
-          .where('Invited.$uid.isAttending', isNotEqualTo: null)
-          .get(); //also get where its true...
+    // Query the events where there is a document with name equal to current user's uid
+    QuerySnapshot attendedEventsSnapshot = await eventsCollection
+        .where('Invited.$uid.isAttending', isEqualTo: true)
+        .get(); //also get where its true...
 
-      // Fetch all documents in the 'MyEvents' subcollection
+    // Fetch all documents in the 'MyEvents' subcollection
 
-      // Loop through each document and print eventId and eventTitle
-      List<Widget> _internalMarkers = [];
-      for (var eventDoc in attendedEventsSnapshot.docs) {
-        Map<String, dynamic> eventData =
-            eventDoc.data() as Map<String, dynamic>;
-        print("Event ID: ${eventDoc.id}");
-        print("Event Title: ${eventData['eventTitle']}");
-      }
-    } catch (e) {
-      print("Error fetching events: $e");
-      showDialog(
-        context: context,
-        builder: (context) => DefaultOneOptionDialog(
-          title: 'Something went wrong. Please reload your map.',
-          buttonText: 'Ok',
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+    // Loop through each document and print eventId and eventTitle
+    Set<Marker> internalSet = {};
+    for (var eventDoc in attendedEventsSnapshot.docs) {
+      Map<String, dynamic> eventData = eventDoc.data() as Map<String, dynamic>;
+      String eventId = eventDoc.id;
+      String eventTitle = eventData['eventTitle'];
+      GeoPoint eventWhere = eventData['where'];
+      bool isAttending = eventData['isAttending'];
+      String creator = eventData['creator'];
+      latlong2.LatLng position = latlong2.LatLng(
+        eventWhere.latitude,
+        eventWhere.longitude,
       );
-      _markers = [];
+      Marker markerToAdd = Marker(
+        point: position,
+        width: 106,
+        height: 106,
+        builder: (context) => EventMarker(
+            isAttending: isAttending,
+            eventTitle: eventTitle,
+            eventId: eventId,
+            creator: creator,
+            isCreator: uid == creator),
+      );
+      internalSet.add(markerToAdd);
     }
+    setState(() {
+      _markers = internalSet.toList();
+    });
   }
 
   Future<void> _showCreateModal(latlong2.LatLng location) async {
@@ -108,55 +114,7 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    fetchEvents();
-    return FlutterMap(
-      //add a button to go to user location
-      //show user location
-      mapController: _mapController, // Initialize the controller,
-      options: MapOptions(
-        onLongPress: (tapPosition, point) => {
-          _onMapHold(point),
-        },
-        maxZoom: 18.42, //seems to work well
-        center: _center, //ideally this is the user's location.
-        zoom: 18,
-      ),
-      nonRotatedChildren: [
-        RichAttributionWidget(
-          //update these...
-          attributions: [
-            //LogoSourceAttribution(image),
-            TextSourceAttribution(
-              //ensure this is done correctly
-              'Mapbox',
-              onTap: () =>
-                  launchUrl(Uri.parse('https://www.mapbox.com/about/maps/')),
-            ),
-            TextSourceAttribution(
-              'OpenStreetMap',
-              onTap: () =>
-                  launchUrl(Uri.parse('https://www.openstreetmap.org/about/')),
-            ),
-            TextSourceAttribution(
-              'Improve this map',
-              prependCopyright: false,
-              onTap: () => launchUrl(Uri.parse(
-                  'https://www.mapbox.com/contribute/#/?utm_source=https%3A%2F%2Fdocs.mapbox.com%2F&utm_medium=attribution_link&utm_campaign=referrer&l=10%2F40%2F-74.5&q=')),
-            ),
-          ],
-        ),
-      ],
-      children: [
-        TileLayer(
-          urlTemplate:
-              'https://api.mapbox.com/styles/v1/posturmain/clllpwx6u02d001qlcplz2u3e/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicG9zdHVybWFpbiIsImEiOiJjbGxscGFmeGkyOGhwM2Rwa2loMDdrMWFjIn0.C5alCHxZEODxaSeGMq9oxA',
-          userAgentPackageName: 'com.example.app', //change this...
-        ),
-        MarkerLayer(
-          markers: _markers,
-        ),
-      ],
-    );
+    return Scaffold();
     // var TestMap = StreamBuilder<QuerySnapshot>(
     //   stream: currentUserEvents.collection('MyEvents').snapshots(),
     //   builder: (context, snapshot) {
