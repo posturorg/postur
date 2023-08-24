@@ -50,6 +50,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
   late DateTime whenTime;
   late DateTime endTime;
   late DateTime rsvpTime;
+  late String newEventId; 
   Set<String> whoToInvite =
       Set<String>.from({}); //should be pulled from backend if exists
 
@@ -101,6 +102,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
     whenTime = DateTime.now();
     endTime = DateTime.now();
     rsvpTime = DateTime.now();
+    newEventId = '';
     selectedPlace = widget
         .initialSelectedPlace; // Initialize the variable from the parameter
     currentCoords = widget.initialCoords;
@@ -146,6 +148,9 @@ class _EventCreateModalState extends State<EventCreateModal> {
 
     // Get the auto-generated ID as a string
     String eventId = newEventRef.id;
+    setState(() {
+      newEventId = eventId;
+    });
 
     // Convert currentCoords to geopoint
     GeoPoint geoPoint =
@@ -177,7 +182,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
       'isCreator': true,
       'isAttending': true,
       'indivInvite': true,
-      'tagInvites': [],
     };
 
     Map<String, dynamic> invitedList = {
@@ -214,7 +218,83 @@ class _EventCreateModalState extends State<EventCreateModal> {
     // Calculate Added IDs
     Set<String> addedIds = whoToInvite.difference(widget.thoseInvited);
     // Calculate Removed IDs
-    Set<String> removedIDs = widget.thoseInvited.difference(whoToInvite);
+    Set<String> removedIds = widget.thoseInvited.difference(whoToInvite);
+
+    String eventId = widget.eventID ?? newEventId;
+
+    // Invite added IDs
+    Future<void> eventInvite() async {
+
+      // Loop through people to invite
+      for (String userId in addedIds) {
+        print('Invites working!');
+        print(eventId);
+        print(userId);
+
+        // Create user document in Invited subcollection
+        DocumentReference userEventInvited = FirebaseFirestore.instance
+          .collection('Events')
+          .doc(eventId)
+          .collection('Invited')
+          .doc(userId);
+        
+        // Data to be added
+        Map<String, dynamic> invitedList = {
+          'uid': userId,
+          'isAttending': false,
+        };
+
+        // Create event document in user's MyEvents subcollection
+        DocumentReference userMyEvents = FirebaseFirestore.instance
+          .collection('EventMembers')
+          .doc(userId)
+          .collection('MyEvents')
+          .doc(eventId);
+
+        // Data to be added
+        Map<String, dynamic> eventMemberDetails = {
+          'creator': uid,
+          'eventId': eventId,
+          'eventTitle': eventTitleController.text,
+          'isCreator': false,
+          'isAttending': false,
+          'indivInvite': true,
+        };
+
+        // Add data to documents
+        // Create "Invited" doc using "set" function
+        await userEventInvited.set(invitedList);
+        // Create "MyEvents" doc using "set" function
+        await userMyEvents.set(eventMemberDetails);
+
+      }
+    }
+    
+    // Uninvite removed IDs
+    Future<void> eventUninvite() async {
+
+      for (String userId in removedIds) {
+        // Select user document in Invited subcollection
+          DocumentReference userEventInvited = FirebaseFirestore.instance
+            .collection('Events')
+            .doc(eventId)
+            .collection('Invited')
+            .doc(userId);
+          
+          // Select event document in user's MyEvents subcollection
+          DocumentReference userMyEvents = FirebaseFirestore.instance
+            .collection('EventMembers')
+            .doc(userId)
+            .collection('MyEvents')
+            .doc(eventId);
+
+          // Add data to documents
+          // Create "Invited" doc using "set" function
+          await userEventInvited.delete();
+          // Create "MyEvents" doc using "set" function
+          await userMyEvents.delete();
+      }
+    }
 
     late Function() onBottomButtonPress;
     if (widget.exists && widget.eventID != null) {
@@ -306,12 +386,18 @@ class _EventCreateModalState extends State<EventCreateModal> {
                         'where': GeoPoint(
                             currentCoords.latitude, currentCoords.longitude),
                       }); //maybe make this more efficient, only on event changes.
-                      print('Event informaiton updated successfully');
+                      
+                      // Update invitation list
+                      eventInvite();
+                      eventUninvite();
+
+                      print('Event information updated successfully');
+
                       //TODO: change event in the backend
                       Navigator.pop(context); //Closes popup
                       Navigator.pop(context); //Closes modal
                     }
-                  }
+                  };
                 }, //interface with backend to change event...
                 optionTwoText: 'No',
                 onOptionTwo: () =>
@@ -357,6 +443,9 @@ class _EventCreateModalState extends State<EventCreateModal> {
         }
         if (eventTitleController.text != '') {
           createEvent();
+          // Update invitation list
+          eventInvite();
+          eventUninvite();
           Navigator.pop(context);
         } else {
           showCupertinoDialog(
