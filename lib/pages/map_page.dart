@@ -33,6 +33,7 @@ class _MapPageState extends State<MapPage> {
   List<Marker> _markers = [];
 
   Future<void> fetchEvents() async {
+    print('running');
     //need to finish this to get markers to display
     final String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -43,13 +44,19 @@ class _MapPageState extends State<MapPage> {
 
       // Query the events where there is a document with name equal to current user's uid
       QuerySnapshot attendedEventsSnapshot = await eventsCollection
-          .where('Invited.$uid.isAttending', isEqualTo: false)
+          .where('Invited.$uid.isAttending', isNotEqualTo: null)
           .get(); //also get where its true...
 
       // Fetch all documents in the 'MyEvents' subcollection
 
       // Loop through each document and print eventId and eventTitle
       List<Widget> _internalMarkers = [];
+      for (var eventDoc in attendedEventsSnapshot.docs) {
+        Map<String, dynamic> eventData =
+            eventDoc.data() as Map<String, dynamic>;
+        print("Event ID: ${eventDoc.id}");
+        print("Event Title: ${eventData['eventTitle']}");
+      }
     } catch (e) {
       print("Error fetching events: $e");
       showDialog(
