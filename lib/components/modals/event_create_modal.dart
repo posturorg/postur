@@ -7,6 +7,7 @@ import 'package:auth_test/components/event_address_form.dart';
 import 'package:auth_test/components/modal_bottom_button.dart';
 import 'package:auth_test/pages/invite_to_page.dart';
 import 'package:auth_test/src/places/places_repository.dart';
+import 'package:auth_test/src/user_info_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -215,87 +216,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
 
   @override
   Widget build(BuildContext context) {
-    // Calculate Added IDs
-    Set<String> addedIds = whoToInvite.difference(widget.thoseInvited);
-    // Calculate Removed IDs
-    Set<String> removedIds = widget.thoseInvited.difference(whoToInvite);
-
-    String eventId = widget.eventID ?? newEventId;
-
-    // Invite added IDs
-    Future<void> eventInvite() async {
-
-      // Loop through people to invite
-      for (String userId in addedIds) {
-        print('Invites working!');
-        print(eventId);
-        print(userId);
-
-        // Create user document in Invited subcollection
-        DocumentReference userEventInvited = FirebaseFirestore.instance
-          .collection('Events')
-          .doc(eventId)
-          .collection('Invited')
-          .doc(userId);
-        
-        // Data to be added
-        Map<String, dynamic> invitedList = {
-          'uid': userId,
-          'isAttending': false,
-        };
-
-        // Create event document in user's MyEvents subcollection
-        DocumentReference userMyEvents = FirebaseFirestore.instance
-          .collection('EventMembers')
-          .doc(userId)
-          .collection('MyEvents')
-          .doc(eventId);
-
-        // Data to be added
-        Map<String, dynamic> eventMemberDetails = {
-          'creator': uid,
-          'eventId': eventId,
-          'eventTitle': eventTitleController.text,
-          'isCreator': false,
-          'isAttending': false,
-          'indivInvite': true,
-        };
-
-        // Add data to documents
-        // Create "Invited" doc using "set" function
-        await userEventInvited.set(invitedList);
-        // Create "MyEvents" doc using "set" function
-        await userMyEvents.set(eventMemberDetails);
-
-      }
-    }
-    
-    // Uninvite removed IDs
-    Future<void> eventUninvite() async {
-
-      for (String userId in removedIds) {
-        // Select user document in Invited subcollection
-          DocumentReference userEventInvited = FirebaseFirestore.instance
-            .collection('Events')
-            .doc(eventId)
-            .collection('Invited')
-            .doc(userId);
-          
-          // Select event document in user's MyEvents subcollection
-          DocumentReference userMyEvents = FirebaseFirestore.instance
-            .collection('EventMembers')
-            .doc(userId)
-            .collection('MyEvents')
-            .doc(eventId);
-
-          // Add data to documents
-          // Create "Invited" doc using "set" function
-          await userEventInvited.delete();
-          // Create "MyEvents" doc using "set" function
-          await userMyEvents.delete();
-      }
-    }
-
     late Function() onBottomButtonPress;
     if (widget.exists && widget.eventID != null) {
       //This is the case we need to fix...
@@ -388,8 +308,14 @@ class _EventCreateModalState extends State<EventCreateModal> {
                       }); //maybe make this more efficient, only on event changes.
                       
                       // Update invitation list
-                      eventInvite();
-                      eventUninvite();
+                      updateInvites(
+                        uid,
+                        widget.eventID,
+                        newEventId,
+                        eventTitleController.text,
+                        whoToInvite,
+                        widget.thoseInvited,
+                      );
 
                       print('Event information updated successfully');
 
@@ -442,10 +368,17 @@ class _EventCreateModalState extends State<EventCreateModal> {
           }
         }
         if (eventTitleController.text != '') {
+          // Create Event
           createEvent();
           // Update invitation list
-          eventInvite();
-          eventUninvite();
+          updateInvites(
+            uid,
+            widget.eventID,
+            newEventId,
+            eventTitleController.text,
+            whoToInvite,
+            widget.thoseInvited,
+          );
           Navigator.pop(context);
         } else {
           showCupertinoDialog(

@@ -103,3 +103,202 @@ Future<String> getProfilePicUrl(
     return '';
   }
 }
+
+// Update event invitation list
+Future<void> updateInvites(String uid, String? existingEventID, String newEventId, 
+    String eventTitle, Set<String> whoToInvite, Set<String> thoseInvited) async {
+
+  // Calculate Added IDs
+  Set<String> addedIds = whoToInvite.difference(thoseInvited);
+  // Calculate Removed IDs
+  Set<String> removedIds = thoseInvited.difference(whoToInvite);
+
+  // Set eventId for new or existing events
+  String eventId = existingEventID ?? newEventId;
+
+  // Send invitations
+  // If no new invites, do nothing
+  if (addedIds.isEmpty) {
+    print('No new invitations');
+  } else { // Loop through people to invite
+    print('Invites working!');
+    for (String userId in addedIds) {
+      try {
+        print(eventId);
+        print(userId);
+
+        // Create user document in Invited subcollection
+        DocumentReference userEventInvited = FirebaseFirestore.instance
+          .collection('Events')
+          .doc(eventId)
+          .collection('Invited')
+          .doc(userId);
+        
+        // Data to be added
+        Map<String, dynamic> invitedList = {
+          'uid': userId,
+          'isAttending': false,
+        };
+
+        // Create event document in user's MyEvents subcollection
+        DocumentReference userMyEvents = FirebaseFirestore.instance
+          .collection('EventMembers')
+          .doc(userId)
+          .collection('MyEvents')
+          .doc(eventId);
+
+        // Data to be added
+        Map<String, dynamic> eventMemberDetails = {
+          'creator': uid,
+          'eventId': eventId,
+          'eventTitle': eventTitle,
+          'isCreator': false,
+          'isAttending': false,
+          'indivInvite': true,
+        };
+
+        // Add data to documents
+        // Create "Invited" doc using "set" function
+        await userEventInvited.set(invitedList);
+        // Create "MyEvents" doc using "set" function
+        await userMyEvents.set(eventMemberDetails);
+
+      } catch (e) {
+        print('There was an error sending invitations: $e');
+      }
+    }
+  }
+
+  // Revoke invitations
+  // If no new uninvites, do nothing
+  if (removedIds.isEmpty) {
+    print('No new uninvites');
+
+  } else { // Loop through people to uninvite
+    print('Uninvites working!');
+    for (String userId in removedIds) {
+      // Select user document in Invited subcollection
+      try {
+        DocumentReference userEventInvited = FirebaseFirestore.instance
+          .collection('Events')
+          .doc(eventId)
+          .collection('Invited')
+          .doc(userId);
+        
+        // Select event document in user's MyEvents subcollection
+        DocumentReference userMyEvents = FirebaseFirestore.instance
+          .collection('EventMembers')
+          .doc(userId)
+          .collection('MyEvents')
+          .doc(eventId);
+
+        // Add data to documents
+        // Create "Invited" doc using "set" function
+        await userEventInvited.delete();
+        // Create "MyEvents" doc using "set" function
+        await userMyEvents.delete();
+      } catch (e) {
+        print('There was an error revoking invitations: $e');
+      }
+    }
+  }
+}
+
+// Cancel event, uninviting all invitees
+void cancelEvent(String eventId) async {
+  try {
+    // Step 1: Delete Invited Users and MyEvents Documents
+    final eventRef =
+        FirebaseFirestore.instance.collection('Events').doc(eventId);
+    final invitedQuery = eventRef.collection('Invited');
+    final invitedSnapshot = await invitedQuery.get();
+
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (QueryDocumentSnapshot invitedDoc in invitedSnapshot.docs) {
+      final userId = invitedDoc.id;
+      final myEventsRef = FirebaseFirestore.instance
+          .collection('EventMembers')
+          .doc(userId)
+          .collection('MyEvents')
+          .doc(eventId);
+
+      batch.delete(
+          myEventsRef); // Delete MyEvents document for each invited user
+      batch.delete(invitedQuery.doc(
+          userId)); // Delete document in the Invited subcollection corresponding to each invited user
+    }
+
+    // Step 2: Delete Event Document
+    batch.delete(eventRef);
+
+    // Commit the batch delete
+    await batch.commit();
+  } catch (e) {
+    print("Error canceling event: $e");
+  }
+}
+
+// Leave event
+void leaveEvent(String eventId) async {
+
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+
+  try {
+    // Update event doc from "MyEvents"
+    FirebaseFirestore.instance
+      .collection('EventMembers')
+      .doc(uid)
+      .collection('MyEvents')
+      .doc(eventId)
+      .update({
+        'isAttending': false
+      });
+
+
+    // Update list entry from "Invited"
+    FirebaseFirestore.instance
+      .collection('Events')
+      .doc(eventId)
+      .collection('Invited')
+      .doc(uid)
+      .update({
+        'isAttending': false
+      });
+
+  } catch (e) {
+    print("Error canceling event: $e");
+  }
+}
+
+// Leave event
+void rsvpToEvent(String eventId) async {
+
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+
+  try {
+    // Update event doc from "MyEvents"
+    FirebaseFirestore.instance
+      .collection('EventMembers')
+      .doc(uid)
+      .collection('MyEvents')
+      .doc(eventId)
+      .update({
+        'isAttending': true
+      });
+
+
+    // Update list entry from "Invited"
+    FirebaseFirestore.instance
+      .collection('Events')
+      .doc(eventId)
+      .collection('Invited')
+      .doc(uid)
+      .update({
+        'isAttending': true
+      });
+
+  } catch (e) {
+    print("Error canceling event: $e");
+  }
+}

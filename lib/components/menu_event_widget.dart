@@ -89,43 +89,20 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
     _getCreatorInfo();
   }
 
-  void cancelEvent() async {
-    try {
-      // Step 1: Delete Invited Users and MyEvents Documents
-      final eventRef =
-          FirebaseFirestore.instance.collection('Events').doc(widget.eventId);
-      final invitedQuery = eventRef.collection('Invited');
-      final invitedSnapshot = await invitedQuery.get();
-
-      final batch = FirebaseFirestore.instance.batch();
-
-      for (QueryDocumentSnapshot invitedDoc in invitedSnapshot.docs) {
-        final userId = invitedDoc.id;
-        final myEventsRef = FirebaseFirestore.instance
-            .collection('EventMembers')
-            .doc(userId)
-            .collection('MyEvents')
-            .doc(widget.eventId);
-
-        batch.delete(
-            myEventsRef); // Delete MyEvents document for each invited user
-        batch.delete(invitedQuery.doc(
-            userId)); // Delete document in the Invited subcollection corresponding to each invited user
-      }
-
-      // Step 2: Delete Event Document
-      batch.delete(eventRef);
-
-      // Commit the batch delete
-      await batch.commit();
-    } catch (e) {
-      print("Error canceling event: $e");
-    }
-  }
 
   // Call this function when the "Cancel Event" button is pressed
   void onPressedCancelButton() {
-    cancelEvent();
+    cancelEvent(widget.eventId);
+  }
+
+  // Call this function when the "Leave Event" button is pressed
+  void onPressedLeaveButton() {
+    leaveEvent(widget.eventId);
+  }
+
+  // Call this function when the "RSVP" button is pressed
+  void onPressedRSVPButton() {
+    rsvpToEvent(widget.eventId);
   }
 
   @override
@@ -146,7 +123,6 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
                 onOptionOne: () => {
                   // Delete relevant documents from backend
                   onPressedCancelButton(),
-
                   // Close alert
                   Navigator.pop(context),
                 },
@@ -166,7 +142,12 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
                 content: 'Are you sure you want to leave the event?',
                 optionOneText: 'Yes, leave.',
                 optionTwoText: 'No, stay.',
-                onOptionOne: () {},
+                onOptionOne: () {
+                  // Leave event
+                  onPressedLeaveButton();
+                  // Close alert
+                  Navigator.pop(context);
+                },
                 onOptionTwo: () {
                   Navigator.pop(context);
                 },
@@ -175,7 +156,10 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
           };
     } else {
       mainButtonText = 'RSVP';
-      onMainButtonPress = () {};
+      onMainButtonPress = () {
+        // Leave event
+        onPressedRSVPButton();
+      };
     }
 
     return StreamBuilder<DocumentSnapshot>(
