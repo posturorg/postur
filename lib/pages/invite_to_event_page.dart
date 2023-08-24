@@ -2,6 +2,7 @@ import 'package:auth_test/components/invite_to_event_entry.dart';
 import 'package:auth_test/components/my_searchbar.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class InviteToEventPage extends StatefulWidget {
@@ -21,6 +22,8 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
   final TextEditingController searchController = TextEditingController();
   Set<String> toBeInvited =
       {}; //Set of uid strings. (Need to make tag strings too)
+ 
+  String uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
@@ -60,6 +63,7 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                 StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
                         .collection('Users')
+                        .where('uid', isNotEqualTo: uid)
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
