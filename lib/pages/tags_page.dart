@@ -2,7 +2,6 @@ import 'package:auth_test/components/modals/create_tag_modal.dart';
 import 'package:auth_test/components/your_tags.dart';
 import 'package:flutter/material.dart';
 import '../src/colors.dart';
-import '../components/tag_widget.dart';
 import '../components/my_searchbar.dart';
 
 class TagsPage extends StatefulWidget {
@@ -27,19 +26,23 @@ class _TagsPageState extends State<TagsPage> {
     }
 
     Widget yourTagsTitle = Container(
-        decoration: sectionBoxDecoration(),
-        padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),
-        child: Row(children: [
+      padding: const EdgeInsets.fromLTRB(20, 0, 25, 0),
+      child: Row(
+        children: [
           const Expanded(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Your Tags:',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Your Tags:',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: attendingOrange,
-                  )),
-            ]),
+                  ),
+                ),
+              ],
+            ),
           ),
           GestureDetector(
             onTap: () {
@@ -71,7 +74,9 @@ class _TagsPageState extends State<TagsPage> {
               ),
             ),
           ),
-        ]));
+        ],
+      ),
+    );
 
     Widget suggestedTitle = Container(
         decoration: sectionBoxDecoration(),
@@ -87,18 +92,28 @@ class _TagsPageState extends State<TagsPage> {
           ]),
         ]));
 
-    return ListView(
+    return Column(
       children: [
-        Column(
-          children: [
-            MySearchBar(
-              searchController: TextEditingController(), //should make this an
-              //object initialized in the widget instead.
-            ),
-            yourTagsTitle,
-            const YourTags(isMember: true),
-            suggestedTitle,
-          ],
+        MySearchBar(
+          searchController: TextEditingController(), //should make this an
+          //object initialized in the widget instead.
+        ),
+        const Divider(
+          color: backgroundWhite,
+          thickness: 1.0,
+        ),
+        Expanded(
+          child: ListView(
+            children: [
+              Column(
+                children: [
+                  yourTagsTitle,
+                  const YourTags(isMember: true),
+                  suggestedTitle,
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     );

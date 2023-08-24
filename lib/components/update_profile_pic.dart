@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -26,24 +27,33 @@ class UpdateProfilePic extends StatefulWidget {
 }
 
 class _UpdateProfilePicState extends State<UpdateProfilePic> {
-
   // Retrieve user ID
   String uid = FirebaseAuth.instance.currentUser!.uid;
-  
+
   // Initialize imageURL
   String imageURL = '';
 
   // This function allows the user to choose a profile pic to upload to Firebase Storage
   Future uploadProfilePic(context) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(absentRed),
+          ),
+        );
+      },
+    );
     ImagePicker imagePicker = ImagePicker();
     XFile? file = await imagePicker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 200,
-      maxHeight: 200,
-      imageQuality: 75
-    );
-    
-    if (file==null) {
+        source: ImageSource.gallery,
+        maxWidth: 200,
+        maxHeight: 200,
+        imageQuality: 75);
+
+    if (file == null) {
+      Navigator.pop(context);
       return;
     }
 
@@ -60,12 +70,12 @@ class _UpdateProfilePicState extends State<UpdateProfilePic> {
 
     // Handle successes/errors
     try {
-      
       // Store the image file
       await referenceImageToUpload.putFile(File(file.path));
 
       // Success
       imageURL = await referenceImageToUpload.getDownloadURL();
+      Navigator.pop(context);
 
       // Summon confirmation modal
       showDialog(
@@ -76,39 +86,46 @@ class _UpdateProfilePicState extends State<UpdateProfilePic> {
         ),
         barrierDismissible: false,
       );
-
-    } catch(error) {
-        // If an error occurs
-        return;
+    } catch (error) {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (context) => DefaultOneOptionDialog(
+          title: error.toString(),
+          buttonText: 'Ok',
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      );
+      // If an error occurs
+      return;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: AlignmentDirectional.center,
-      children: [
-        Icon(
-          Icons.circle_outlined,
-          color: absentRed,
-          size: widget.borderRadius,
-        ),
-        IconButton(
-          onPressed: () async {
-            uploadProfilePic(context);
-          },
-          // If no profile image is set, display stock image
-          icon: widget.reference == '' ? 
-            CircleAvatar(
-              backgroundImage: const AssetImage('lib/assets/thumbtack.png'),
-              radius: widget.radius,
-              // Else, show profile picture
-            ) : CircleAvatar(
-              radius: widget.radius,
-              backgroundImage: NetworkImage(widget.reference)
-            ),
-        ),
-      ]
-    );
+    return Stack(alignment: AlignmentDirectional.center, children: [
+      Icon(
+        Icons.circle_outlined,
+        color: absentRed,
+        size: widget.borderRadius,
+      ),
+      IconButton(
+        onPressed: () async {
+          uploadProfilePic(context);
+        },
+        // If no profile image is set, display stock image
+        icon: widget.reference == ''
+            ? CircleAvatar(
+                backgroundImage: const AssetImage('lib/assets/thumbtack.png'),
+                radius: widget.radius,
+                // Else, show profile picture
+              )
+            : CircleAvatar(
+                radius: widget.radius,
+                backgroundImage: NetworkImage(widget.reference)),
+      ),
+    ]);
   }
 }

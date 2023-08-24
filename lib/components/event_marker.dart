@@ -1,7 +1,7 @@
 import 'package:auth_test/components/modals/event_details_modal.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:auth_test/src/pin_svg_strings.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:auth_test/src/user_info_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -31,30 +31,23 @@ class _EventMarkerState extends State<EventMarker> {
     backgroundImage: AssetImage('lib/assets/thumbtack.png'),
     radius: 15,
   );
-  Future<String> getProfilePicUrl() async {
-    try {
-      DocumentSnapshot userDoc =
-          await FirebaseFirestore.instance.doc('Users/${widget.creator}').get();
-      return userDoc.get('profile_pic');
-    } catch (e) {
-      setState(() {
-        wasError = true;
-      });
-      print('profilePicture loading error!');
-      return '';
-    }
-  }
 
   @override
   void initState() {
-    profilePicUrl = getProfilePicUrl();
+    profilePicUrl = getProfilePicUrl(
+      widget.creator,
+      () {
+        setState(() {
+          wasError = true; //hopefully this works
+        });
+      },
+    );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     Color primaryColor = widget.isAttending ? attendingOrange : absentRed;
-    print('Marker build');
     return GestureDetector(
       onTap: () {
         //THIS FUNCTION SHOWS THE MODAL
@@ -89,11 +82,6 @@ class _EventMarkerState extends State<EventMarker> {
                 widget.isAttending ? orangePinStringSVG : redPinStringSVG,
                 width: 44.5, //feel free to change this
                 height: 44.5, //feel free to change this
-              ),
-              Icon(
-                Icons.circle, // profile picture goes here.
-                size: 35,
-                color: Colors.grey.shade300,
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 3, 0, 0),

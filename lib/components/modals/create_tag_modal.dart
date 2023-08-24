@@ -1,4 +1,5 @@
 import 'package:auth_test/components/modal_bottom_button.dart';
+import 'package:auth_test/pages/invite_to_page.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:auth_test/src/event_box_decoration.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -125,6 +126,7 @@ class _CreateTagModalState extends State<CreateTagModal> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             const Icon(
+              //your profile pick goes here...
               Icons.circle,
               size: 85,
             ),
@@ -225,20 +227,36 @@ class _CreateTagModalState extends State<CreateTagModal> {
                   //wont be constant, but whatever.
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    RichText(
-                      text: TextSpan(
-                        style: DefaultTextStyle.of(context).style,
-                        children: [
-                          TextSpan(
-                            text: 'Invite: ',
-                            style: defaultBold,
+                    Text(
+                      'Invite:',
+                      style: defaultBold,
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return InviteToEventPage(
+                                toEvent: false,
+                                onBottomButtonPress: (Set<String> newSet) {
+                                  () {};
+                                },
+                                usersAlreadyInvited: const {}, //get this from the backend
+                                tagsAlreadyInvited: const {}, //this will stay this way...
+                              );
+                            },
                           ),
-                          TextSpan(
-                            text: 'Function of peeps invited! Invite more...',
-                            style: defaultBody,
-                          ),
-                        ],
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.add,
+                        color: attendingOrange,
+                        size: 30,
                       ),
+                    ),
+                    const Flexible(
+                      child: Text('Alvin Adjei, @benfdup & 20 others'),
                     ),
                   ],
                 ),
