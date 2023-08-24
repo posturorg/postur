@@ -210,43 +210,19 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
     });
   }
 
-  void cancelEvent() async {
-    try {
-      // Step 1: Delete Invited Users and MyEvents Documents
-      final eventRef =
-          FirebaseFirestore.instance.collection('Events').doc(widget.eventId);
-      final invitedQuery = eventRef.collection('Invited');
-      final invitedSnapshot = await invitedQuery.get();
-
-      final batch = FirebaseFirestore.instance.batch();
-
-      for (QueryDocumentSnapshot invitedDoc in invitedSnapshot.docs) {
-        final userId = invitedDoc.id;
-        final myEventsRef = FirebaseFirestore.instance
-            .collection('EventMembers')
-            .doc(userId)
-            .collection('MyEvents')
-            .doc(widget.eventId);
-
-        batch.delete(
-            myEventsRef); // Delete MyEvents document for each invited user
-        batch.delete(invitedQuery.doc(
-            userId)); // Delete document in the Invited subcollection corresponding to each invited user
-      }
-
-      // Step 2: Delete Event Document
-      batch.delete(eventRef);
-
-      // Commit the batch delete
-      await batch.commit();
-    } catch (e) {
-      print("Error canceling event: $e");
-    }
-  }
 
   // Call this function when the "Cancel Event" button is pressed
   void onPressedCancelButton() {
-    cancelEvent();
+    cancelEvent(widget.eventId);
+  }
+
+  // Call this function when the "Leave" button is pressed
+  void onPressedLeaveButton() {
+    leaveEvent(widget.eventId);
+  }
+
+  void onPressedRSVPButton(){
+    rsvpToEvent(widget.eventId);
   }
 
   @override
@@ -266,10 +242,8 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                 onOptionOne: () => {
                   // Delete relevant documents from backend
                   onPressedCancelButton(),
-
                   // Close alert
                   Navigator.pop(context),
-
                   // Close modal
                   Navigator.pop(context),
                 }, //Should cancel event, and pop both modals
@@ -280,21 +254,33 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
     } else if (widget.isAttending!) {
       bottomButtonText = 'Leave';
       onMainBottomTap = () => {
-            showCupertinoDialog(
-              context: context,
-              builder: (context) => DefaultTwoOptionDialog(
-                title: 'Are you sure?',
-                content: 'Are you sure you want to leave this event?',
-                optionOneText: 'Yes',
-                optionTwoText: 'No',
-                onOptionOne: () {}, //Should leave event, and pop both modals
-                onOptionTwo: () => {Navigator.pop(context)},
-              ),
-            )
-          };
+        showCupertinoDialog(
+          context: context,
+          builder: (context) => DefaultTwoOptionDialog(
+            title: 'Are you sure?',
+            content: 'Are you sure you want to leave this event?',
+            optionOneText: 'Yes',
+            optionTwoText: 'No',
+            onOptionOne: () => {
+              // Delete relevant documents from backend
+              onPressedLeaveButton(),
+              // Close alert
+              Navigator.pop(context),
+              // Close modal
+              Navigator.pop(context),
+            }, //Should leave event, and pop both modals
+            onOptionTwo: () => {Navigator.pop(context)},
+          ),
+        )
+      };
     } else {
       bottomButtonText = 'RSVP';
-      onMainBottomTap = () {};
+      onMainBottomTap = () {
+        // Update relevant documents from backend
+        onPressedRSVPButton();
+        // Close modal
+        Navigator.pop(context);
+      };
     }
     return SizedBox(
       height: 670,
