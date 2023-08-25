@@ -121,7 +121,7 @@ class _MapPageState extends State<MapPage> {
     standardReloader = () async {
       //print('about to delay!');
       Future.delayed(
-        const Duration(milliseconds: 200),
+        const Duration(milliseconds: 250),
         () {
           setState(() {
             eventDataList = fetchEventData(); //must re set this on set state...
@@ -185,8 +185,6 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    //Pulls event data
-
     return FutureBuilder(
       future: Future.wait([eventDataList, myEventsMap]),
       builder: (context, snapshot) {
