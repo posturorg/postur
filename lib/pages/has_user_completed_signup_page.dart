@@ -15,68 +15,44 @@ class HasUserCompletedSignupPage extends StatefulWidget {
 
 class _HasUserCompletedSignupPageState
     extends State<HasUserCompletedSignupPage> {
-  bool hasName = false;
-  bool hasUsername = false;
-  bool emailVerified = false;
-  bool hasCompletedFetch = false;
+  Future<bool> hasAllRequirements() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
 
-  Future<void> fetchRelevantInfo() async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const InternalSplashScreen();
-      },
-    );
-    try {
-      final currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser != null) {
-        final userDoc = await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(currentUser.uid)
-            .get();
+    CollectionReference users = FirebaseFirestore.instance.collection('Users');
 
-        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-        setState(() {
-          hasName = userData['hasAllowedContacts'];
-          hasUsername = userData['hasUsername'];
-          emailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
-          hasCompletedFetch = true;
-        });
-      } else {
-        await FirebaseAuth.instance.signOut();
-        setState(() {
-          hasCompletedFetch = true;
-        });
-      }
-      Navigator.pop(context);
-    } catch (e) {
-      await FirebaseAuth.instance.signOut(); //this might not really work
-      print(e.toString());
-      Navigator.pop(context);
-      setState(() {
-        hasCompletedFetch = true;
-      });
-    }
+    DocumentSnapshot yourUserReference = await users.doc(uid).get();
+
+    Map<String, dynamic> yourUserMap =
+        yourUserReference.data() as Map<String, dynamic>;
+
+    return yourUserMap['hasAllowedContacts'] &&
+        yourUserMap['hasName'] &&
+        yourUserMap['hasUsername'];
   }
+
+  late Future<bool> hasSignupRequirements;
 
   @override
   void initState() {
+    hasSignupRequirements = hasAllRequirements();
     super.initState();
-    // TODO: implement initState
-    Future.delayed(Duration.zero, () {
-      //might be unneccessary tbh
-      this.fetchRelevantInfo();
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!hasCompletedFetch) {
-      return const InternalSplashScreen();
-    } else if (hasName && hasUsername && emailVerified) {
-      return const HomePage();
-    } else {
-      return const VerifyEmailPage();
-    }
+    return FutureBuilder(
+      future: hasSignupRequirements,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const InternalSplashScreen();
+        } else if (snapshot.hasError) {
+          return const Center(
+            child: Text('An Error Occured. Please try reloading the app'),
+          );
+        } else {
+          return snapshot.data! ? const HomePage() : const VerifyEmailPage();
+        }
+      },
+    );
   }
 }

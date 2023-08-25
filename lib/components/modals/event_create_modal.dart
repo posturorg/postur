@@ -30,6 +30,7 @@ class EventCreateModal extends StatefulWidget {
   final String? initialTitle;
   final String? initialDescription;
   final Set<String> thoseInvited;
+  final void Function()? reloader;
 
   const EventCreateModal({
     super.key,
@@ -41,6 +42,7 @@ class EventCreateModal extends StatefulWidget {
     this.initialTitle,
     this.initialDescription,
     required this.thoseInvited,
+    this.reloader,
   });
 
   @override
@@ -51,7 +53,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
   late DateTime whenTime;
   late DateTime endTime;
   late DateTime rsvpTime;
-  late String newEventId; 
+  late String newEventId;
   Set<String> whoToInvite =
       Set<String>.from({}); //should be pulled from backend if exists
 
@@ -216,7 +218,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
 
   @override
   Widget build(BuildContext context) {
-    late Function() onBottomButtonPress;
+    late Function() onBottomButtonPress; //ideally dont do this in build...
     if (widget.exists && widget.eventID != null) {
       //This is the case we need to fix...
       onBottomButtonPress = () => {
@@ -306,7 +308,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
                         'where': GeoPoint(
                             currentCoords.latitude, currentCoords.longitude),
                       }); //maybe make this more efficient, only on event changes.
-                      
+
                       // Update invitation list
                       updateInvites(
                         uid,
@@ -323,7 +325,12 @@ class _EventCreateModalState extends State<EventCreateModal> {
                       Navigator.pop(context); //Closes popup
                       Navigator.pop(context); //Closes modal
                     }
-                  };
+                  }
+                  try {
+                    widget.reloader!();
+                  } catch (e) {
+                    print('no reloader!');
+                  }
                 }, //interface with backend to change event...
                 optionTwoText: 'No',
                 onOptionTwo: () =>
@@ -333,14 +340,15 @@ class _EventCreateModalState extends State<EventCreateModal> {
           };
     } else if (widget.exists && widget.eventID == null) {
       showDialog(
-          context: context,
-          builder: (context) => DefaultOneOptionDialog(
-                title: 'Oops, something went wrong. Please try again.',
-                buttonText: 'Ok',
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ));
+        context: context,
+        builder: (context) => DefaultOneOptionDialog(
+          title: 'Oops, something went wrong. Please try again.',
+          buttonText: 'Ok',
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      );
     } else {
       onBottomButtonPress = () async {
         if (changedAddress) {
@@ -379,6 +387,11 @@ class _EventCreateModalState extends State<EventCreateModal> {
             whoToInvite,
             widget.thoseInvited,
           );
+          try {
+            widget.reloader!();
+          } catch (e) {
+            print('no reloader!');
+          }
           Navigator.pop(context);
         } else {
           showCupertinoDialog(

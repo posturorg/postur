@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
     // Start a new debounce timer
     _debounceTimer = Timer(const Duration(milliseconds: 100), () {
       setState(() {
-      selectedIndex = index;
+        selectedIndex = index;
       });
     });
   }
@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var topTextString = 'Postur';
+    String topTextString = 'Postur';
 
     Widget page;
     switch (selectedIndex) {
@@ -72,13 +72,11 @@ class _HomePageState extends State<HomePage> {
         throw UnimplementedError('no widget for $selectedIndex');
     }
 
-    var topText = Text(
-      topTextString,
-      style: const TextStyle(
-        color: absentRed,
-        fontWeight: FontWeight.bold,
-      )
-    );
+    var topText = Text(topTextString,
+        style: const TextStyle(
+          color: absentRed,
+          fontWeight: FontWeight.bold,
+        ));
 
     // The container for the current page, with its background color
     // and subtle switching animation.
@@ -91,15 +89,12 @@ class _HomePageState extends State<HomePage> {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: topText,
-        actions: [
-          // Logout button on the profile page
-          LogOutButton(
-            isOnProfilePage: isOnProfilePage,
-          )
-        ]
-      ),
+      appBar: AppBar(title: topText, actions: [
+        // Logout button on the profile page
+        LogOutButton(
+          isOnProfilePage: isOnProfilePage,
+        )
+      ]),
       body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth < 450) {
@@ -114,9 +109,7 @@ class _HomePageState extends State<HomePage> {
                     type: BottomNavigationBarType.fixed,
                     items: const [
                       BottomNavigationBarItem(
-                        icon: Icon(
-                          Icons.place_outlined,
-                            color: absentRed),
+                        icon: Icon(Icons.place_outlined, color: absentRed),
                         activeIcon: Icon(
                           Icons.place,
                           color: absentRed,
@@ -124,10 +117,7 @@ class _HomePageState extends State<HomePage> {
                         label: '',
                       ),
                       BottomNavigationBarItem(
-                        icon: Icon(
-                          Icons.bookmark_outline,
-                          color: absentRed
-                        ),
+                        icon: Icon(Icons.bookmark_outline, color: absentRed),
                         activeIcon: Icon(
                           Icons.bookmark,
                           color: absentRed,

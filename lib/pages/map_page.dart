@@ -1,5 +1,5 @@
-import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/event_marker.dart';
+import 'package:auth_test/src/colors.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +19,8 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  late void Function() standardReloader;
+
   // Retrieve current user's uid
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -28,56 +30,7 @@ class _MapPageState extends State<MapPage> {
   // Retrieve events to be shown on the map
   final Query events = FirebaseFirestore.instance.collection('Events');
 
-  final latlong2.LatLng _center = latlong2.LatLng(42.3732, -71.1202);
-
-  List<Marker> _markers = [];
-
-  Future<void> fetchEvents() async {
-    print('running');
-    //need to finish this to get markers to display
-    final String uid = FirebaseAuth.instance.currentUser!.uid;
-
-    // Get a reference to the user's 'MyEvents' subcollection
-    CollectionReference eventsCollection =
-        FirebaseFirestore.instance.collection('Events');
-
-    // Query the events where there is a document with name equal to current user's uid
-    QuerySnapshot attendedEventsSnapshot = await eventsCollection
-        .where('Invited.$uid.isAttending', isEqualTo: true)
-        .get(); //also get where its true...
-
-    // Fetch all documents in the 'MyEvents' subcollection
-
-    // Loop through each document and print eventId and eventTitle
-    Set<Marker> internalSet = {};
-    for (var eventDoc in attendedEventsSnapshot.docs) {
-      Map<String, dynamic> eventData = eventDoc.data() as Map<String, dynamic>;
-      String eventId = eventDoc.id;
-      String eventTitle = eventData['eventTitle'];
-      GeoPoint eventWhere = eventData['where'];
-      bool isAttending = eventData['isAttending'];
-      String creator = eventData['creator'];
-      latlong2.LatLng position = latlong2.LatLng(
-        eventWhere.latitude,
-        eventWhere.longitude,
-      );
-      Marker markerToAdd = Marker(
-        point: position,
-        width: 106,
-        height: 106,
-        builder: (context) => EventMarker(
-            isAttending: isAttending,
-            eventTitle: eventTitle,
-            eventId: eventId,
-            creator: creator,
-            isCreator: uid == creator),
-      );
-      internalSet.add(markerToAdd);
-    }
-    setState(() {
-      _markers = internalSet.toList();
-    });
-  }
+  final latlong2.LatLng _center = const latlong2.LatLng(42.3732, -71.1202);
 
   Future<void> _showCreateModal(latlong2.LatLng location) async {
     PlaceAutoComplete locationToPlaceAutoComplete =
@@ -92,6 +45,7 @@ class _MapPageState extends State<MapPage> {
       showDragHandle: true,
       builder: (BuildContext context) {
         return EventCreateModal(
+          reloader: standardReloader,
           thoseInvited: {},
           exists: false,
           initialSelectedPlace: locationToPlaceAutoComplete,
@@ -106,175 +60,198 @@ class _MapPageState extends State<MapPage> {
     _showCreateModal(location);
   }
 
+  Future<List<Map<String, dynamic>>> fetchEventData() async {
+    final String uid = FirebaseAuth.instance.currentUser!.uid;
+
+    CollectionReference eventsCollection =
+        FirebaseFirestore.instance.collection('Events');
+
+    QuerySnapshot eventSnapshot =
+        await eventsCollection.where('Invited.$uid', isNotEqualTo: null).get();
+
+    List<Map<String, dynamic>> eventDataList = eventSnapshot.docs
+        .map((eventDoc) => eventDoc.data() as Map<String, dynamic>)
+        .toList();
+
+    return eventDataList;
+  }
+
+  Future<Map<String, Map<String, dynamic>>> fetchMyEvents() async {
+    final String uid =
+        FirebaseAuth.instance.currentUser!.uid; //may be unnecessary
+    //this might be a costly method
+
+    // Straightforeward, eventMembersCollection
+    CollectionReference eventMembersCollection =
+        FirebaseFirestore.instance.collection('EventMembers');
+
+    // Events you are attending, stored within the EventMembers collection
+
+    CollectionReference myEventsSubcollection =
+        eventMembersCollection.doc(uid).collection('MyEvents');
+
+    QuerySnapshot myEventsQuery = await myEventsSubcollection.get();
+    List<QueryDocumentSnapshot<Object?>> myEventsListOfDocs =
+        myEventsQuery.docs;
+
+    Map<String, Map<String, dynamic>> myEventsMap = {};
+
+    for (QueryDocumentSnapshot<Object?> event in myEventsListOfDocs) {
+      Map<String, dynamic> eventMap = event.data() as Map<String, dynamic>;
+      String eventId = eventMap['eventId'];
+      //print('Event Id: $eventId');
+      //print('keys: ${eventMap.keys}');
+      myEventsMap[eventId] = eventMap;
+      //print(myEventsMap[eventId]!['isAttending']);
+    }
+
+    return myEventsMap;
+  }
+
+  late Future<List<Map<String, dynamic>>> eventDataList;
+  late Future<Map<String, Map<String, dynamic>>> myEventsMap;
+
   @override
   void initState() {
     _mapController = MapController();
     super.initState();
+    eventDataList = fetchEventData(); //must re set this on set state...
+    myEventsMap = fetchMyEvents(); //must re set this on set state...
+    standardReloader = () async {
+      //print('about to delay!');
+      Future.delayed(
+        const Duration(milliseconds: 250),
+        () {
+          setState(() {
+            eventDataList = fetchEventData(); //must re set this on set state...
+            myEventsMap = fetchMyEvents();
+          });
+        },
+      );
+    };
+  }
+
+  Widget myMap(List<Marker> markers) {
+    return FlutterMap(
+      //add a button to go to user location
+      //show user location
+      mapController: _mapController, // Initialize the controller,
+      options: MapOptions(
+        onLongPress: (tapPosition, point) => {
+          _onMapHold(point),
+        },
+        maxZoom: 18.42, //seems to work well
+        center: _center, //ideally this is the user's location.
+        zoom: 18,
+      ),
+      nonRotatedChildren: [
+        RichAttributionWidget(
+          //update these...
+          attributions: [
+            //LogoSourceAttribution(image),
+            TextSourceAttribution(
+              //ensure this is done correctly
+              'Mapbox',
+              onTap: () =>
+                  launchUrl(Uri.parse('https://www.mapbox.com/about/maps/')),
+            ),
+            TextSourceAttribution(
+              'OpenStreetMap',
+              onTap: () =>
+                  launchUrl(Uri.parse('https://www.openstreetmap.org/about/')),
+            ),
+            TextSourceAttribution(
+              'Improve this map',
+              prependCopyright: false,
+              onTap: () => launchUrl(Uri.parse(
+                  'https://www.mapbox.com/contribute/#/?utm_source=https%3A%2F%2Fdocs.mapbox.com%2F&utm_medium=attribution_link&utm_campaign=referrer&l=10%2F40%2F-74.5&q=')),
+            ),
+          ],
+        ),
+      ],
+      children: [
+        TileLayer(
+          urlTemplate:
+              'https://api.mapbox.com/styles/v1/posturmain/clllpwx6u02d001qlcplz2u3e/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicG9zdHVybWFpbiIsImEiOiJjbGxscGFmeGkyOGhwM2Rwa2loMDdrMWFjIn0.C5alCHxZEODxaSeGMq9oxA',
+          userAgentPackageName: 'com.example.app', //change this...
+        ),
+        MarkerLayer(
+          markers: markers,
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
-    // var TestMap = StreamBuilder<QuerySnapshot>(
-    //   stream: currentUserEvents.collection('MyEvents').snapshots(),
-    //   builder: (context, snapshot) {
-    //     if (snapshot.connectionState == ConnectionState.waiting) {
-    //       // Show Waiting Indicator
-    //       return const Center(
-    //         child: CircularProgressIndicator(
-    //           color: absentRed,
-    //         ),
-    //       );
+    //Pulls event data
 
-    //       // What to show if data has been received
-    //     } else if (snapshot.connectionState == ConnectionState.active ||
-    //         snapshot.connectionState == ConnectionState.done) {
-    //       // Potenital error message
-    //       if (snapshot.hasError) {
-    //         return const Center(child: Text("Error Occured"));
-    //         // Success
-    //       } else if (snapshot.hasData) {
-    //         // Save sets of events user is either invited to or attending (every element in attending should be inside of invited)
-    //         List<QueryDocumentSnapshot> myEventDocs = snapshot.data!.docs;
+    return FutureBuilder(
+      future: Future.wait([eventDataList, myEventsMap]),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return myMap([]);
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              "Error: ${snapshot.error}",
+            ),
+          ); //maybe style this, lol
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return myMap([]);
+        } else {
+          // Cast snapshot.data to the correct type
+          List<Object?> dataList = snapshot.data as List<Object?>;
 
-    //         // Initialize an empty map matching eventId's to isAttending
-    //         Map<String, bool> eventIdToIsAttendingMap = {};
-    //         // Initialize an empty map matching eventId's to isCreator
-    //         Map<String, bool> eventIdToIsCreator = {};
+          // Assuming dataList[0] is a List<Map<String, dynamic>>
+          List<Map<String, dynamic>> eventDataListInternal =
+              dataList[0] as List<Map<String, dynamic>>;
 
-    //         // Iterate through myEventDocs and populate the map
-    //         for (var myEventDoc in myEventDocs) {
-    //           // Get the data from the snapshot
-    //           Map<String, dynamic> data =
-    //               myEventDoc.data() as Map<String, dynamic>;
+          // Assuming dataList[1] is a Map<String, dynamic>
+          Map<String, Map<String, dynamic>> eventsMap =
+              dataList[1] as Map<String, Map<String, dynamic>>;
 
-    //           // Extract the 'eventId' and 'isAttending' fields
-    //           String eventId = data['eventId'] as String;
-    //           bool isAttending = data['isAttending'] as bool;
-    //           bool isCreator = data['isCreator'] as bool;
+          List<Marker> markers = [];
+          //print(eventsMap.keys);
 
-    //           // Add the entry to the map
-    //           eventIdToIsAttendingMap[eventId] = isAttending;
-    //           eventIdToIsCreator[eventId] = isCreator;
-    //         }
+          for (var eventData in eventDataListInternal) {
+            try {
+              //there's some weird error occasionally going on,
+              //where eventDataList has an event with an event Id that is not a
+              //key in eventsMap... address later, but try loop is a good safety
+              //measure.
+              String eventId = eventData['eventId'];
+              String eventTitle = eventData['eventTitle'];
+              print(eventId);
+              print(eventTitle);
+              bool isAttending = eventsMap[eventId]!['isAttending'];
+              String creator = eventData['creator'];
+              bool isCreator = eventsMap[eventId]!['isCreator'];
+              GeoPoint where = eventData['where'];
+              latlong2.LatLng position =
+                  latlong2.LatLng(where.latitude, where.longitude);
+              Marker markerToBeAdded = Marker(
+                point: position,
+                width: 106,
+                height: 106,
+                builder: (context) => EventMarker(
+                  reloader: standardReloader,
+                  isAttending: isAttending,
+                  eventId: eventId,
+                  eventTitle: eventTitle,
+                  creator: creator,
+                  isCreator: isCreator,
+                ),
+              );
+              markers.add(markerToBeAdded);
+            } catch (e) {
+              print(e.toString());
+            }
+          }
 
-    //         return StreamBuilder<QuerySnapshot>(
-    //           stream: events.snapshots(),
-    //           builder: (context, snapshot) {
-    //             if (snapshot.connectionState == ConnectionState.waiting) {
-    //               // Show Waiting Indicator
-    //               return const Center(
-    //                   child: CircularProgressIndicator(
-    //                 color: absentRed,
-    //               ));
-
-    //               // What to show if data has been received
-    //             } else if (snapshot.connectionState == ConnectionState.active ||
-    //                 snapshot.connectionState == ConnectionState.done) {
-    //               // Potenital error message
-    //               if (snapshot.hasError) {
-    //                 return const Center(child: Text("Error Occured"));
-    //                 // Success
-    //               } else if (snapshot.hasData) {
-    //                 // get only markers close to user.
-    //                 Set<Marker> markers = snapshot.data!.docs
-    //                     .where((event) =>
-    //                         eventIdToIsAttendingMap.containsKey(event.id))
-    //                     .map((event) {
-    //                   // Retrieve GeoPoint location from backend
-    //                   GeoPoint location = event['where'] as GeoPoint;
-    //                   // Convert to LatLng
-    //                   latlong2.LatLng position = latlong2.LatLng(
-    //                       location.latitude, location.longitude);
-    //                   // Return each marker
-    //                   return Marker(
-    //                     // Set marker ID equal to eventId
-    //                     point: position,
-    //                     width: 106,
-    //                     height: 106,
-    //                     builder: (context) => EventMarker(
-    //                       isAttending: eventIdToIsAttendingMap[event.id]!,
-    //                       eventId: event['eventId'],
-    //                       eventTitle: event['eventTitle'],
-    //                       creator: event['creator'],
-    //                       isCreator: eventIdToIsCreator[event.id]!,
-    //                     ),
-    //                   );
-    //                 }).toSet();
-
-    //                 return FlutterMap(
-    //                   //add a button to go to user location
-    //                   //show user location
-    //                   mapController:
-    //                       _mapController, // Initialize the controller,
-    //                   options: MapOptions(
-    //                     onLongPress: (tapPosition, point) => {
-    //                       _onMapHold(point),
-    //                     },
-    //                     maxZoom: 18.42, //seems to work well
-    //                     center: _center, //ideally this is the user's location.
-    //                     zoom: 18,
-    //                   ),
-    //                   nonRotatedChildren: [
-    //                     RichAttributionWidget(
-    //                       //update these...
-    //                       attributions: [
-    //                         //LogoSourceAttribution(image),
-    //                         TextSourceAttribution(
-    //                           //ensure this is done correctly
-    //                           'Mapbox',
-    //                           onTap: () => launchUrl(Uri.parse(
-    //                               'https://www.mapbox.com/about/maps/')),
-    //                         ),
-    //                         TextSourceAttribution(
-    //                           'OpenStreetMap',
-    //                           onTap: () => launchUrl(Uri.parse(
-    //                               'https://www.openstreetmap.org/about/')),
-    //                         ),
-    //                         TextSourceAttribution(
-    //                           'Improve this map',
-    //                           prependCopyright: false,
-    //                           onTap: () => launchUrl(Uri.parse(
-    //                               'https://www.mapbox.com/contribute/#/?utm_source=https%3A%2F%2Fdocs.mapbox.com%2F&utm_medium=attribution_link&utm_campaign=referrer&l=10%2F40%2F-74.5&q=')),
-    //                         ),
-    //                       ],
-    //                     ),
-    //                   ],
-    //                   children: [
-    //                     TileLayer(
-    //                       urlTemplate:
-    //                           'https://api.mapbox.com/styles/v1/posturmain/clllpwx6u02d001qlcplz2u3e/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicG9zdHVybWFpbiIsImEiOiJjbGxscGFmeGkyOGhwM2Rwa2loMDdrMWFjIn0.C5alCHxZEODxaSeGMq9oxA',
-    //                       userAgentPackageName:
-    //                           'com.example.app', //change this...
-    //                     ),
-    //                     MarkerLayer(
-    //                       markers: markers.toList(),
-    //                     ),
-    //                   ],
-    //                 );
-
-    //                 // GoogleMap(
-    //                 //   myLocationButtonEnabled: true,
-    //                 //   myLocationEnabled: true,
-    //                 //   compassEnabled: false,
-    //                 //   onLongPress: _onMapHold,
-    //                 //   onMapCreated: _onMapCreated,
-    //                 //   initialCameraPosition: CameraPosition(
-    //                 //     //should be user position if user has shared position, else harvard square.
-    //                 //     target: _center,
-    //                 //     zoom: 15.0,
-    //                 //   ),
-    //                 //   markers: markers,
-    //                 // );
-    //               }
-    //             }
-    //             return const Center(child: Text("No Data Received"));
-    //           },
-    //         );
-    //       }
-    //     }
-    //     return const Center(child: Text("No Data Received"));
-    //   },
-    // );
+          return myMap(markers);
+        }
+      },
+    );
   }
 }

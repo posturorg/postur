@@ -11,6 +11,7 @@ class EventMarker extends StatefulWidget {
   final String eventId;
   final String creator;
   final bool isCreator;
+  final void Function() reloader;
   const EventMarker({
     super.key,
     required this.isAttending,
@@ -18,6 +19,7 @@ class EventMarker extends StatefulWidget {
     required this.eventId,
     required this.creator,
     required this.isCreator,
+    required this.reloader,
   });
 
   @override
@@ -69,6 +71,7 @@ class _EventMarkerState extends State<EventMarker> {
               creator: widget.creator,
               isCreator: widget.isCreator,
               isAttending: widget.isAttending,
+              reloader: widget.reloader,
             );
           },
         );

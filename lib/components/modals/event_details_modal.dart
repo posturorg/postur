@@ -22,6 +22,7 @@ class EventDetailsModal extends StatefulWidget {
   //NOT BY DEFAULT THE EVENT CREATOR PRIOR TO LOADING.
   final bool? isCreator;
   final bool? isAttending;
+  final void Function()? reloader;
 
   const EventDetailsModal({
     super.key,
@@ -30,6 +31,7 @@ class EventDetailsModal extends StatefulWidget {
     required this.creator,
     required this.isCreator,
     required this.isAttending,
+    this.reloader,
   });
 
   @override
@@ -210,19 +212,33 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
     });
   }
 
-
   // Call this function when the "Cancel Event" button is pressed
   void onPressedCancelButton() {
     cancelEvent(widget.eventId);
+    try {
+      widget.reloader!();
+    } catch (e) {
+      print('No reloader for details modal!');
+    }
   }
 
   // Call this function when the "Leave" button is pressed
   void onPressedLeaveButton() {
     leaveEvent(widget.eventId);
+    try {
+      widget.reloader!();
+    } catch (e) {
+      print('No reloader for details modal!');
+    }
   }
 
-  void onPressedRSVPButton(){
+  void onPressedRSVPButton() {
     rsvpToEvent(widget.eventId);
+    try {
+      widget.reloader!();
+    } catch (e) {
+      print('No reloader for details modal!');
+    }
   }
 
   @override
@@ -254,25 +270,25 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
     } else if (widget.isAttending!) {
       bottomButtonText = 'Leave';
       onMainBottomTap = () => {
-        showCupertinoDialog(
-          context: context,
-          builder: (context) => DefaultTwoOptionDialog(
-            title: 'Are you sure?',
-            content: 'Are you sure you want to leave this event?',
-            optionOneText: 'Yes',
-            optionTwoText: 'No',
-            onOptionOne: () => {
-              // Delete relevant documents from backend
-              onPressedLeaveButton(),
-              // Close alert
-              Navigator.pop(context),
-              // Close modal
-              Navigator.pop(context),
-            }, //Should leave event, and pop both modals
-            onOptionTwo: () => {Navigator.pop(context)},
-          ),
-        )
-      };
+            showCupertinoDialog(
+              context: context,
+              builder: (context) => DefaultTwoOptionDialog(
+                title: 'Are you sure?',
+                content: 'Are you sure you want to leave this event?',
+                optionOneText: 'Yes',
+                optionTwoText: 'No',
+                onOptionOne: () => {
+                  // Delete relevant documents from backend
+                  onPressedLeaveButton(),
+                  // Close alert
+                  Navigator.pop(context),
+                  // Close modal
+                  Navigator.pop(context),
+                }, //Should leave event, and pop both modals
+                onOptionTwo: () => {Navigator.pop(context)},
+              ),
+            )
+          };
     } else {
       bottomButtonText = 'RSVP';
       onMainBottomTap = () {
@@ -530,8 +546,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                             ? () async {}
                             : () async {
                                 //first close this existing modal.
-                                Navigator.pop(
-                                    context); //first close this existing modal.
+                                Navigator.pop(context);
                                 showModalBottomSheet<void>(
                                   //then, open new one
                                   context: context,
