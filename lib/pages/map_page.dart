@@ -1,3 +1,4 @@
+import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/event_marker.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:auth_test/src/places/places_repository.dart';
@@ -120,7 +121,7 @@ class _MapPageState extends State<MapPage> {
     standardReloader = () async {
       //print('about to delay!');
       Future.delayed(
-        const Duration(milliseconds: 250),
+        const Duration(milliseconds: 200),
         () {
           setState(() {
             eventDataList = fetchEventData(); //must re set this on set state...
