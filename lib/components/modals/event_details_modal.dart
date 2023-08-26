@@ -243,345 +243,362 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
 
   @override
   Widget build(BuildContext context) {
-    late String bottomButtonText;
+    late String bottomButtonText; // move all of this out of build
     late Function()? onMainBottomTap;
     if (widget.isCreator!) {
       bottomButtonText = 'Cancel';
-      onMainBottomTap = () => {
-            showCupertinoDialog(
-              context: context,
-              builder: (context) => DefaultTwoOptionDialog(
-                title: 'Are you sure?',
-                content: 'Are you sure you want to cancel this event?',
-                optionOneText: 'Yes, poop the party.',
-                optionTwoText: 'No, party on!',
-                onOptionOne: () => {
-                  // Delete relevant documents from backend
-                  onPressedCancelButton(),
-                  // Close alert
-                  Navigator.pop(context),
-                  // Close modal
-                  Navigator.pop(context),
-                }, //Should cancel event, and pop both modals
-                onOptionTwo: () => Navigator.pop(context),
-              ),
-            )
-          };
+      onMainBottomTap = !hasFullyLoaded
+          ? () {}
+          : () => {
+                showCupertinoDialog(
+                  context: context,
+                  builder: (context) => DefaultTwoOptionDialog(
+                    title: 'Are you sure?',
+                    content: 'Are you sure you want to cancel this event?',
+                    optionOneText: 'Yes, poop the party.',
+                    optionTwoText: 'No, party on!',
+                    onOptionOne: () => {
+                      // Delete relevant documents from backend
+                      onPressedCancelButton(),
+                      // Close alert
+                      Navigator.pop(context),
+                      // Close modal
+                      Navigator.pop(context),
+                    }, //Should cancel event, and pop both modals
+                    onOptionTwo: () => Navigator.pop(context),
+                  ),
+                )
+              };
     } else if (widget.isAttending!) {
       bottomButtonText = 'Leave';
-      onMainBottomTap = () => {
-            showCupertinoDialog(
-              context: context,
-              builder: (context) => DefaultTwoOptionDialog(
-                title: 'Are you sure?',
-                content: 'Are you sure you want to leave this event?',
-                optionOneText: 'Yes',
-                optionTwoText: 'No',
-                onOptionOne: () => {
-                  // Delete relevant documents from backend
-                  onPressedLeaveButton(),
-                  // Close alert
-                  Navigator.pop(context),
-                  // Close modal
-                  Navigator.pop(context),
-                }, //Should leave event, and pop both modals
-                onOptionTwo: () => {Navigator.pop(context)},
-              ),
-            )
-          };
+      onMainBottomTap = !hasFullyLoaded
+          ? () {}
+          : () => {
+                showCupertinoDialog(
+                  context: context,
+                  builder: (context) => DefaultTwoOptionDialog(
+                    title: 'Are you sure?',
+                    content: 'Are you sure you want to leave this event?',
+                    optionOneText: 'Yes',
+                    optionTwoText: 'No',
+                    onOptionOne: () => {
+                      // Delete relevant documents from backend
+                      onPressedLeaveButton(),
+                      // Close alert
+                      Navigator.pop(context),
+                      // Close modal
+                      Navigator.pop(context),
+                    }, //Should leave event, and pop both modals
+                    onOptionTwo: () => {Navigator.pop(context)},
+                  ),
+                )
+              };
     } else {
       bottomButtonText = 'RSVP';
-      onMainBottomTap = () {
-        // Update relevant documents from backend
-        onPressedRSVPButton();
-        // Close modal
-        Navigator.pop(context);
-      };
+      onMainBottomTap = !hasFullyLoaded
+          ? () {}
+          : () {
+              // Update relevant documents from backend
+              onPressedRSVPButton();
+              // Close modal
+              Navigator.pop(context);
+            };
     }
     return SizedBox(
       height: 670,
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            FutureBuilder(
-              //you can probably make this more consise
-              future: profilePicUrl,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print('snapshot had error!');
-                  return defaultAvatar;
-                }
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (wasErrorLoadingPic) {
-                    return defaultAvatar;
-                  } else {
-                    return CircleAvatar(
-                      backgroundImage: NetworkImage(snapshot.data!),
-                      radius: 37,
-                    );
-                  }
-                } else {
-                  return defaultAvatar;
-                }
-              },
-            ),
-            Text(
-              widget.eventTitle,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: widget.isAttending! ? attendingOrange : absentRed,
-              ),
-            ),
-            Container(
-              decoration: eventBoxDecoration(),
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+        child: !hasFullyLoaded
+            ? const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(absentRed),
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  FutureBuilder(
+                    //you can probably make this more consise
+                    future: profilePicUrl,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        print('snapshot had error!');
+                        return defaultAvatar;
+                      }
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (wasErrorLoadingPic) {
+                          return defaultAvatar;
+                        } else {
+                          return CircleAvatar(
+                            backgroundImage: NetworkImage(snapshot.data!),
+                            radius: 37,
+                          );
+                        }
+                      } else {
+                        return defaultAvatar;
+                      }
+                    },
+                  ),
                   Text(
-                    'Creator: ${widget.isCreator! ? 'Me' : creatorName}',
-                    style: const TextStyle(
-                      fontSize: 17,
+                    widget.eventTitle,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: widget.isAttending! ? attendingOrange : absentRed,
+                    ),
+                  ),
+                  Container(
+                    decoration: eventBoxDecoration(),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Creator: ${widget.isCreator! ? 'Me' : creatorName}',
+                          style: const TextStyle(
+                            fontSize: 17,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              style: DefaultTextStyle.of(context)
+                                  .style, // Use the default text style from the context
+                              children: [
+                                TextSpan(
+                                  text: 'When: ',
+                                  style: defaultBold,
+                                ),
+                                TextSpan(
+                                  text: _formatTimestamp(whenTime),
+                                  style: defaultBody,
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              style: DefaultTextStyle.of(context)
+                                  .style, // Use the default text style from the context
+                              children: [
+                                TextSpan(
+                                  text: 'Ends: ',
+                                  style: defaultBold,
+                                ),
+                                TextSpan(
+                                  text: _formatTimestamp(endTime),
+                                  style: defaultBody,
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              style: DefaultTextStyle.of(context)
+                                  .style, // Use the default text style from the context
+                              children: [
+                                TextSpan(
+                                  text: 'RSVP by: ',
+                                  style: defaultBold,
+                                ),
+                                TextSpan(
+                                  text: _formatTimestamp(rsvpTime),
+                                  style: defaultBody,
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              style: DefaultTextStyle.of(context)
+                                  .style, // Use the default text style from the context
+                              children: [
+                                TextSpan(
+                                  text: 'Where: ',
+                                  style: defaultBold,
+                                ),
+                                TextSpan(
+                                  text: wherePlaceInfo.address,
+                                  style: defaultBody,
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              style: DefaultTextStyle.of(context)
+                                  .style, // Use the default text style from the context
+                              children: [
+                                TextSpan(
+                                  text: 'Attending: ',
+                                  style: defaultBold,
+                                ),
+                                TextSpan(
+                                  text:
+                                      'Thomas Kowalski, William Gödeler, & 24 others...', //This shall be a function of who is actually attending.
+                                  style: defaultBody,
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AttendingEventList(
+                                                  eventId: widget.eventId,
+                                                  isAttending:
+                                                      widget.isAttending!,
+                                                  namesAttending: const [
+                                                    {
+                                                      'name': 'Ben duPont',
+                                                      'userID': 'bjb8ou91bkj',
+                                                      'imageUrl':
+                                                          'https://www.gradeinflation.com',
+                                                    },
+                                                    {
+                                                      'name': 'Alvin Adjei',
+                                                      'userID':
+                                                          'iwhefujbc98392',
+                                                      'imageUrl':
+                                                          'https://www.gradeinflation.com',
+                                                    },
+                                                    {
+                                                      'name':
+                                                          'I go to yale12345',
+                                                      'userID':
+                                                          'iwhefujbc98392',
+                                                      'imageUrl':
+                                                          'https://www.gradeinflation.com',
+                                                    },
+                                                  ], //Get this from the backend!
+                                                ))),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              style: DefaultTextStyle.of(context)
+                                  .style, // Use the default text style from the context
+                              children: [
+                                TextSpan(
+                                  text: 'Description: ',
+                                  style: defaultBold,
+                                ),
+                                TextSpan(
+                                  text: description,
+                                  style: defaultBody,
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: SafeArea(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Visibility(
+                            visible: widget.isCreator!,
+                            child: ModalBottomButton(
+                              onTap: !hasFullyLoaded
+                                  ? () async {}
+                                  : () async {
+                                      //first close this existing modal.
+                                      Navigator.pop(context);
+                                      showModalBottomSheet<void>(
+                                        //then, open new one
+                                        context: context,
+                                        isScrollControlled: true,
+                                        elevation: 0.0,
+                                        backgroundColor: Colors.white,
+                                        clipBehavior: Clip.antiAlias,
+                                        showDragHandle: true,
+                                        builder: (context) => EventCreateModal(
+                                          eventID: widget.eventId,
+                                          initialTitle: eventTitle,
+                                          initialDescription: description,
+                                          initialCoords: whereLatLng,
+                                          thoseInvited: thoseInvited,
+                                          exists:
+                                              true, //also, toggles creator, Me
+                                          initialSelectedPlace: wherePlaceInfo,
+                                        ),
+                                      );
+                                    },
+                              text: 'Edit',
+                              backgroundColor: neutralGrey,
+                            ),
+                          ),
+                          ModalBottomButton(
+                            onTap: onMainBottomTap,
+                            text: bottomButtonText,
+                            backgroundColor: widget.isAttending!
+                                ? attendingOrange
+                                : absentRed,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        style: DefaultTextStyle.of(context)
-                            .style, // Use the default text style from the context
-                        children: [
-                          TextSpan(
-                            text: 'When: ',
-                            style: defaultBold,
-                          ),
-                          TextSpan(
-                            text: _formatTimestamp(whenTime),
-                            style: defaultBody,
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        style: DefaultTextStyle.of(context)
-                            .style, // Use the default text style from the context
-                        children: [
-                          TextSpan(
-                            text: 'Ends: ',
-                            style: defaultBold,
-                          ),
-                          TextSpan(
-                            text: _formatTimestamp(endTime),
-                            style: defaultBody,
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        style: DefaultTextStyle.of(context)
-                            .style, // Use the default text style from the context
-                        children: [
-                          TextSpan(
-                            text: 'RSVP by: ',
-                            style: defaultBold,
-                          ),
-                          TextSpan(
-                            text: _formatTimestamp(rsvpTime),
-                            style: defaultBody,
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        style: DefaultTextStyle.of(context)
-                            .style, // Use the default text style from the context
-                        children: [
-                          TextSpan(
-                            text: 'Where: ',
-                            style: defaultBold,
-                          ),
-                          TextSpan(
-                            text: wherePlaceInfo.address,
-                            style: defaultBody,
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        style: DefaultTextStyle.of(context)
-                            .style, // Use the default text style from the context
-                        children: [
-                          TextSpan(
-                            text: 'Attending: ',
-                            style: defaultBold,
-                          ),
-                          TextSpan(
-                            text:
-                                'Thomas Kowalski, William Gödeler, & 24 others...', //This shall be a function of who is actually attending.
-                            style: defaultBody,
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => AttendingEventList(
-                                            eventId: widget.eventId,
-                                            isAttending: widget.isAttending!,
-                                            namesAttending: const [
-                                              {
-                                                'name': 'Ben duPont',
-                                                'userID': 'bjb8ou91bkj',
-                                                'imageUrl':
-                                                    'https://www.gradeinflation.com',
-                                              },
-                                              {
-                                                'name': 'Alvin Adjei',
-                                                'userID': 'iwhefujbc98392',
-                                                'imageUrl':
-                                                    'https://www.gradeinflation.com',
-                                              },
-                                              {
-                                                'name': 'I go to yale12345',
-                                                'userID': 'iwhefujbc98392',
-                                                'imageUrl':
-                                                    'https://www.gradeinflation.com',
-                                              },
-                                            ], //Get this from the backend!
-                                          ))),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        style: DefaultTextStyle.of(context)
-                            .style, // Use the default text style from the context
-                        children: [
-                          TextSpan(
-                            text: 'Description: ',
-                            style: defaultBold,
-                          ),
-                          TextSpan(
-                            text: description,
-                            style: defaultBody,
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Expanded(
-              child: SafeArea(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Visibility(
-                      visible: widget.isCreator!,
-                      child: ModalBottomButton(
-                        onTap: !hasFullyLoaded
-                            ? () async {}
-                            : () async {
-                                //first close this existing modal.
-                                Navigator.pop(context);
-                                showModalBottomSheet<void>(
-                                  //then, open new one
-                                  context: context,
-                                  isScrollControlled: true,
-                                  elevation: 0.0,
-                                  backgroundColor: Colors.white,
-                                  clipBehavior: Clip.antiAlias,
-                                  showDragHandle: true,
-                                  builder: (context) => EventCreateModal(
-                                    eventID: widget.eventId,
-                                    initialTitle: eventTitle,
-                                    initialDescription: description,
-                                    initialCoords: whereLatLng,
-                                    thoseInvited: thoseInvited,
-                                    exists: true, //also, toggles creator, Me
-                                    initialSelectedPlace: wherePlaceInfo,
-                                  ),
-                                );
-                              },
-                        text: 'Edit',
-                        backgroundColor: neutralGrey,
-                      ),
-                    ),
-                    ModalBottomButton(
-                      onTap: onMainBottomTap,
-                      text: bottomButtonText,
-                      backgroundColor:
-                          widget.isAttending! ? attendingOrange : absentRed,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
