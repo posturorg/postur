@@ -571,6 +571,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                                         clipBehavior: Clip.antiAlias,
                                         showDragHandle: true,
                                         builder: (context) => EventCreateModal(
+                                          reloader: widget.reloader,
                                           eventID: widget.eventId,
                                           initialTitle: eventTitle,
                                           initialDescription: description,
