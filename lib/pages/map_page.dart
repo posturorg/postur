@@ -117,7 +117,7 @@ class _MapPageState extends State<MapPage> {
     eventDataList = fetchEventData(); //must re set this on set state...
     myEventsMap = fetchMyEvents(); //must re set this on set state...
     standardReloader = () async {
-      //print('about to delay!');
+      //add loading circle here.
       Future.delayed(
         const Duration(milliseconds: 250),
         () {
