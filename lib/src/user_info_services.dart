@@ -105,9 +105,13 @@ Future<String> getProfilePicUrl(
 }
 
 // Update event invitation list
-Future<void> updateInvites(String uid, String? existingEventID, String newEventId, 
-    String eventTitle, Set<String> whoToInvite, Set<String> thoseInvited) async {
-
+Future<void> updateInvites(
+    String uid,
+    String? existingEventID,
+    String newEventId,
+    String eventTitle,
+    Set<String> whoToInvite,
+    Set<String> thoseInvited) async {
   // Calculate Added IDs
   Set<String> addedIds = whoToInvite.difference(thoseInvited);
   // Calculate Removed IDs
@@ -120,7 +124,8 @@ Future<void> updateInvites(String uid, String? existingEventID, String newEventI
   // If no new invites, do nothing
   if (addedIds.isEmpty) {
     print('No new invitations');
-  } else { // Loop through people to invite
+  } else {
+    // Loop through people to invite
     print('Invites working!');
     for (String userId in addedIds) {
       try {
@@ -129,11 +134,11 @@ Future<void> updateInvites(String uid, String? existingEventID, String newEventI
 
         // Create user document in Invited subcollection
         DocumentReference userEventInvited = FirebaseFirestore.instance
-          .collection('Events')
-          .doc(eventId)
-          .collection('Invited')
-          .doc(userId);
-        
+            .collection('Events')
+            .doc(eventId)
+            .collection('Invited')
+            .doc(userId);
+
         // Data to be added
         Map<String, dynamic> invitedList = {
           'uid': userId,
@@ -142,10 +147,10 @@ Future<void> updateInvites(String uid, String? existingEventID, String newEventI
 
         // Create event document in user's MyEvents subcollection
         DocumentReference userMyEvents = FirebaseFirestore.instance
-          .collection('EventMembers')
-          .doc(userId)
-          .collection('MyEvents')
-          .doc(eventId);
+            .collection('EventMembers')
+            .doc(userId)
+            .collection('MyEvents')
+            .doc(eventId);
 
         // Data to be added
         Map<String, dynamic> eventMemberDetails = {
@@ -162,7 +167,6 @@ Future<void> updateInvites(String uid, String? existingEventID, String newEventI
         await userEventInvited.set(invitedList);
         // Create "MyEvents" doc using "set" function
         await userMyEvents.set(eventMemberDetails);
-
       } catch (e) {
         print('There was an error sending invitations: $e');
       }
@@ -173,24 +177,24 @@ Future<void> updateInvites(String uid, String? existingEventID, String newEventI
   // If no new uninvites, do nothing
   if (removedIds.isEmpty) {
     print('No new uninvites');
-
-  } else { // Loop through people to uninvite
+  } else {
+    // Loop through people to uninvite
     print('Uninvites working!');
     for (String userId in removedIds) {
       // Select user document in Invited subcollection
       try {
         DocumentReference userEventInvited = FirebaseFirestore.instance
-          .collection('Events')
-          .doc(eventId)
-          .collection('Invited')
-          .doc(userId);
-        
+            .collection('Events')
+            .doc(eventId)
+            .collection('Invited')
+            .doc(userId);
+
         // Select event document in user's MyEvents subcollection
         DocumentReference userMyEvents = FirebaseFirestore.instance
-          .collection('EventMembers')
-          .doc(userId)
-          .collection('MyEvents')
-          .doc(eventId);
+            .collection('EventMembers')
+            .doc(userId)
+            .collection('MyEvents')
+            .doc(eventId);
 
         // Add data to documents
         // Create "Invited" doc using "set" function
@@ -241,31 +245,24 @@ void cancelEvent(String eventId) async {
 
 // Leave event
 void leaveEvent(String eventId) async {
-
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
   try {
     // Update event doc from "MyEvents"
     FirebaseFirestore.instance
-      .collection('EventMembers')
-      .doc(uid)
-      .collection('MyEvents')
-      .doc(eventId)
-      .update({
-        'isAttending': false
-      });
-
+        .collection('EventMembers')
+        .doc(uid)
+        .collection('MyEvents')
+        .doc(eventId)
+        .update({'isAttending': false});
 
     // Update list entry from "Invited"
     FirebaseFirestore.instance
-      .collection('Events')
-      .doc(eventId)
-      .collection('Invited')
-      .doc(uid)
-      .update({
-        'isAttending': false
-      });
-
+        .collection('Events')
+        .doc(eventId)
+        .collection('Invited')
+        .doc(uid)
+        .update({'isAttending': false});
   } catch (e) {
     print("Error canceling event: $e");
   }
@@ -273,32 +270,43 @@ void leaveEvent(String eventId) async {
 
 // Leave event
 void rsvpToEvent(String eventId) async {
-
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
   try {
     // Update event doc from "MyEvents"
     FirebaseFirestore.instance
-      .collection('EventMembers')
-      .doc(uid)
-      .collection('MyEvents')
-      .doc(eventId)
-      .update({
-        'isAttending': true
-      });
-
+        .collection('EventMembers')
+        .doc(uid)
+        .collection('MyEvents')
+        .doc(eventId)
+        .update({'isAttending': true});
 
     // Update list entry from "Invited"
     FirebaseFirestore.instance
-      .collection('Events')
-      .doc(eventId)
-      .collection('Invited')
-      .doc(uid)
-      .update({
-        'isAttending': true
-      });
-
+        .collection('Events')
+        .doc(eventId)
+        .collection('Invited')
+        .doc(uid)
+        .update({'isAttending': true});
   } catch (e) {
     print("Error canceling event: $e");
+  }
+}
+
+Future<String> getFullNameFromId(String creator) async {
+  try {
+    DocumentSnapshot snapshot =
+        await FirebaseFirestore.instance.collection('Users').doc(creator).get();
+    if (snapshot.exists) {
+      final String creatorName =
+          '${snapshot['name']['first']} ${snapshot['name']['last']}';
+      return creatorName;
+    } else {
+      print('snapshot does not exist');
+      return 'Error getting name...';
+    }
+  } catch (e) {
+    print("Error getting user's full name: $e");
+    return 'Error getting name...';
   }
 }
