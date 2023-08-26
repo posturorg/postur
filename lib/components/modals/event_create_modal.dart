@@ -99,6 +99,8 @@ class _EventCreateModalState extends State<EventCreateModal> {
     print(changedAddress);
   }
 
+  late Function() onBottomButtonPress; //was in build
+
   @override
   void initState() {
     super.initState();
@@ -117,108 +119,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
       eventDescriptionController.text = widget.initialDescription!;
     }
     whoToInvite = Set<String>.from(widget.thoseInvited);
-  }
-
-  @override
-  void dispose() {
-    //might not really be necessary tbh
-    addressSearchController.dispose();
-    super.dispose(); //Might need to go back and check that this is implemented
-    //more broadly, that way we dont get errors with controllers being filled
-    //from prior instances when they shouldn't be.
-  }
-
-  final TextStyle defaultBold = const TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: 15,
-  );
-
-  // Retrieve current user ID
-  String uid = FirebaseAuth.instance.currentUser!.uid;
-
-  // Retrieve current user document
-  DocumentReference<Map<String, dynamic>> currentUser = FirebaseFirestore
-      .instance
-      .collection('Users')
-      .doc(FirebaseAuth.instance.currentUser!.uid);
-
-  // Retrieve events data in order to update it in Firestore
-  CollectionReference events = FirebaseFirestore.instance.collection('Events');
-
-  Future<void> createEvent() async {
-    // Create a new document reference with an auto-generated ID
-    DocumentReference newEventRef = events.doc();
-
-    // Get the auto-generated ID as a string
-    String eventId = newEventRef.id;
-    setState(() {
-      newEventId = eventId;
-    });
-
-    // Convert currentCoords to geopoint
-    GeoPoint geoPoint =
-        GeoPoint(currentCoords.latitude, currentCoords.longitude);
-
-    // Retrieve creator's profile picture
-    DocumentSnapshot documentSnapshot = await currentUser.get();
-    Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
-    String profilePic = data['profile_pic'];
-
-    Map<String, dynamic> eventDetails = {
-      'creator': uid,
-      'profile_pic': profilePic,
-      'eventId': eventId,
-      'eventTitle': eventTitleController.text,
-      'whenTime': whenTime,
-      'endTime': endTime,
-      'rsvpTime': rsvpTime,
-      'where': geoPoint,
-      'description': eventDescriptionController.text,
-      'isPrivate': true,
-    };
-
-    // Add event to current user's "MyEvents" subcollection in "EventMembers"
-    Map<String, dynamic> eventMemberDetails = {
-      'creator': uid,
-      'eventId': eventId,
-      'eventTitle': eventTitleController.text,
-      'isCreator': true,
-      'isAttending': true,
-      'indivInvite': true,
-    };
-
-    Map<String, dynamic> invitedList = {
-      'uid': uid,
-      'isAttending': true,
-    };
-
-    // Create new document in "MyEvents" subcollection with eventId
-    DocumentReference newMyEventRef = FirebaseFirestore.instance
-        .collection('EventMembers')
-        .doc(uid)
-        .collection('MyEvents')
-        .doc(eventId);
-
-    // Create new document in "Invited" subcollection with eventId
-    DocumentReference newInvitedRef = FirebaseFirestore.instance
-        .collection('Events')
-        .doc(eventId)
-        .collection('Invited')
-        .doc(uid);
-
-    // Create "Events" doc using "set" function
-    await newEventRef.set(eventDetails);
-    // Create "MyEvents" doc using "set" function
-    await newMyEventRef.set(eventMemberDetails);
-    // Create "Invited" doc using "set" function
-    await newInvitedRef.set(invitedList);
-
-    print('Event added with ID: ${newEventRef.id}');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    late Function() onBottomButtonPress; //ideally dont do this in build...
     if (widget.exists && widget.eventID != null) {
       //This is the case we need to fix...
       onBottomButtonPress = () => {
@@ -411,6 +311,107 @@ class _EventCreateModalState extends State<EventCreateModal> {
       }; //This should be where code for
       //event creation and pin placement go
     }
+  }
+
+  @override
+  void dispose() {
+    //might not really be necessary tbh
+    addressSearchController.dispose();
+    super.dispose(); //Might need to go back and check that this is implemented
+    //more broadly, that way we dont get errors with controllers being filled
+    //from prior instances when they shouldn't be.
+  }
+
+  final TextStyle defaultBold = const TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 15,
+  );
+
+  // Retrieve current user ID
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+
+  // Retrieve current user document
+  DocumentReference<Map<String, dynamic>> currentUser = FirebaseFirestore
+      .instance
+      .collection('Users')
+      .doc(FirebaseAuth.instance.currentUser!.uid);
+
+  // Retrieve events data in order to update it in Firestore
+  CollectionReference events = FirebaseFirestore.instance.collection('Events');
+
+  Future<void> createEvent() async {
+    // Create a new document reference with an auto-generated ID
+    DocumentReference newEventRef = events.doc();
+
+    // Get the auto-generated ID as a string
+    String eventId = newEventRef.id;
+    setState(() {
+      newEventId = eventId;
+    });
+
+    // Convert currentCoords to geopoint
+    GeoPoint geoPoint =
+        GeoPoint(currentCoords.latitude, currentCoords.longitude);
+
+    // Retrieve creator's profile picture
+    DocumentSnapshot documentSnapshot = await currentUser.get();
+    Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+    String profilePic = data['profile_pic'];
+
+    Map<String, dynamic> eventDetails = {
+      'creator': uid,
+      'profile_pic': profilePic,
+      'eventId': eventId,
+      'eventTitle': eventTitleController.text,
+      'whenTime': whenTime,
+      'endTime': endTime,
+      'rsvpTime': rsvpTime,
+      'where': geoPoint,
+      'description': eventDescriptionController.text,
+      'isPrivate': true,
+    };
+
+    // Add event to current user's "MyEvents" subcollection in "EventMembers"
+    Map<String, dynamic> eventMemberDetails = {
+      'creator': uid,
+      'eventId': eventId,
+      'eventTitle': eventTitleController.text,
+      'isCreator': true,
+      'isAttending': true,
+      'indivInvite': true,
+    };
+
+    Map<String, dynamic> invitedList = {
+      'uid': uid,
+      'isAttending': true,
+    };
+
+    // Create new document in "MyEvents" subcollection with eventId
+    DocumentReference newMyEventRef = FirebaseFirestore.instance
+        .collection('EventMembers')
+        .doc(uid)
+        .collection('MyEvents')
+        .doc(eventId);
+
+    // Create new document in "Invited" subcollection with eventId
+    DocumentReference newInvitedRef = FirebaseFirestore.instance
+        .collection('Events')
+        .doc(eventId)
+        .collection('Invited')
+        .doc(uid);
+
+    // Create "Events" doc using "set" function
+    await newEventRef.set(eventDetails);
+    // Create "MyEvents" doc using "set" function
+    await newMyEventRef.set(eventMemberDetails);
+    // Create "Invited" doc using "set" function
+    await newInvitedRef.set(invitedList);
+
+    print('Event added with ID: ${newEventRef.id}');
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
       height: 745, //Make this some fraction of the size of the safe area
       // also make this by default a function on whether or not you are

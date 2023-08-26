@@ -137,7 +137,7 @@ class _MapPageState extends State<MapPage> {
       mapController: _mapController, // Initialize the controller,
       options: MapOptions(
         onLongPress: (tapPosition, point) => {
-          _onMapHold(point),
+          _onMapHold(point), //TODO: Speed this up
         },
         maxZoom: 18.42, //seems to work well
         center: _center, //ideally this is the user's location.
