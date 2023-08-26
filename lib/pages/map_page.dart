@@ -1,6 +1,4 @@
-import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
 import 'package:auth_test/components/event_marker.dart';
-import 'package:auth_test/src/colors.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
