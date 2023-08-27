@@ -35,15 +35,21 @@ Stream<QuerySnapshot<Object?>> streamUsersWithMatchingUsername(
 Stream<QuerySnapshot<Object?>> completeSearch(String inputText) {
   late String strippedPrefix =
       inputText.trim() == '' ? '' : inputText.trim().substring(1);
-  if (inputText[0] == '@' && strippedPrefix != "") {
+  if (strippedPrefix == '') {
+    return FirebaseFirestore.instance
+        .collection('Users')
+        .orderBy('username')
+        .limit(40)
+        .snapshots(); //should order by full name
+  } else if (inputText[0] == '@') {
     return streamUsersWithMatchingUsername(strippedPrefix);
-  } else if (inputText[0] == '#' && strippedPrefix != "") {
+  } else if (inputText[0] == '#') {
     //search tags here
-    return FirebaseFirestore.instance.collection('Users').snapshots();
+    return FirebaseFirestore.instance.collection('Users').limit(40).snapshots();
     //this return is a placeholder
   } else {
     //search users by their first name here
-    return FirebaseFirestore.instance.collection('Users').snapshots();
+    return FirebaseFirestore.instance.collection('Users').limit(40).snapshots();
     //this return is a placeholder
   }
 }
