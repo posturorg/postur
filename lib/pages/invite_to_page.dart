@@ -51,24 +51,23 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
     if (widget.toEvent) {
       tagsToBeInvited = Set<String>.from(widget.tagsAlreadyInvited);
     }
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     onSearchChange = (queryText) {
       //declaring onSearchChange
       if (debounceSearch?.isActive ?? false) debounceSearch?.cancel();
       debounceSearch = Timer(const Duration(milliseconds: 500), () {
         if (searchText != queryText) {
           setState(() {
-            print('stateSet');
             stream = completeSearch(queryText);
             searchText = queryText;
           });
         } //TODO: finish this
       });
     };
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
