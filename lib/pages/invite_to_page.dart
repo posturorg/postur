@@ -1,6 +1,7 @@
 import 'package:auth_test/components/invite_to_event_entry.dart';
 import 'package:auth_test/components/my_searchbar.dart';
 import 'package:auth_test/src/colors.dart';
+import 'package:auth_test/src/search_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,10 +14,10 @@ class InviteToEventPage extends StatefulWidget {
   final void Function(Set<String>) onBottomButtonPress;
   const InviteToEventPage({
     super.key,
-    required this.usersAlreadyInvited, // set of UID's already invited to event
-    required this.tagsAlreadyInvited, // set of tags already invited to event
+    required this.usersAlreadyInvited, // set of UID's already invited to event or tag
+    required this.tagsAlreadyInvited, // set of tags already invited to event or tag
     required this.onBottomButtonPress,
-    required this.toEvent,
+    required this.toEvent, // if true, to event. false, to tag.
   });
 
   @override
@@ -31,13 +32,17 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
   Set<String> tagsToBeInvited =
       {}; //Set of tag id strings. (Need to make tag strings too)
 
+  Stream<QuerySnapshot<Map<String, dynamic>>>
+      stream = //set this to what it needs to be according to search bar
+      FirebaseFirestore.instance.collection('Users').limit(40).snapshots();
+
   @override
   void initState() {
-    super.initState();
     usersToBeInvited = Set<String>.from(widget.usersAlreadyInvited);
     if (widget.toEvent) {
       tagsToBeInvited = Set<String>.from(widget.tagsAlreadyInvited);
     }
+    super.initState();
   }
 
   @override
@@ -72,7 +77,7 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                 StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
                         .collection('Users')
-                        .snapshots(),
+                        .snapshots(), //function of search bar
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');

@@ -8,7 +8,8 @@ List<Map<String, String>> sortUsersByName(List<Map<String, String>> inputList) {
 
 //Want to get all users with a username greater than or equal to input string.
 
-getUsersWithMatchingUsername(String inputUsername) async {
+Stream<QuerySnapshot<Object?>> streamUsersWithMatchingUsername(
+    String inputUsername) {
   //in progress...
   inputUsername = inputUsername.toLowerCase();
   final String firstLetter = inputUsername[0];
@@ -19,22 +20,12 @@ getUsersWithMatchingUsername(String inputUsername) async {
   CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('Users');
 
-  var querySnapshot = await usersCollection
+  var querySnapshot = usersCollection
       .where('username',
           isGreaterThanOrEqualTo: inputUsername, isLessThan: nextLetter)
       .orderBy('username')
-      .limit(1)
-      .get();
+      .limit(40)
+      .snapshots();
 
-  List<QueryDocumentSnapshot<Map<String, dynamic>>> matchingUsers = [];
-
-  // querySnapshot.docs.forEach((doc) {
-  //   String username = doc['username'];
-  //   if (username.length == inputUsername.length &&
-  //       username.toLowerCase() == inputUsername.toLowerCase()) {
-  //     matchingUsers.add(doc);
-  //   }
-  // });
-
-  return matchingUsers;
+  return querySnapshot;
 }

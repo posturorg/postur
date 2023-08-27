@@ -49,6 +49,7 @@ Future<void> setUsername(
 }
 
 Future<void> setName(
+  //need to set full name field here...
   dynamic stateSetter,
   TextEditingController firstNameController,
   TextEditingController lastNameController,
