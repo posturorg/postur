@@ -26,9 +26,10 @@ class InviteToEventEntry extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         child: Row(
           children: [
-            const Icon(
-              Icons.circle,
-              size: 50,
+            CircleAvatar(
+              //fix this...
+              radius: 24,
+              backgroundImage: NetworkImage(user['profile_pic']),
             ), //Profile pic goes here
             const SizedBox(
               width: 7,

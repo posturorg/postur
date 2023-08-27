@@ -60,7 +60,7 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
             stream = completeSearch(queryText);
             searchText = queryText;
           });
-        } //TODO: finish this
+        }
       });
     };
     super.initState();
