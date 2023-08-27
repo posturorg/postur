@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auth_test/components/invite_to_event_entry.dart';
 import 'package:auth_test/components/my_searchbar.dart';
 import 'package:auth_test/src/colors.dart';
@@ -32,9 +34,16 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
   Set<String> tagsToBeInvited =
       {}; //Set of tag id strings. (Need to make tag strings too)
 
-  Stream<QuerySnapshot<Map<String, dynamic>>>
+  Stream<QuerySnapshot<Object?>>
       stream = //set this to what it needs to be according to search bar
       FirebaseFirestore.instance.collection('Users').limit(40).snapshots();
+
+  Timer? debounceSearch; //search bar debouncer
+
+  late void Function(String queryText)
+      onSearchChange; //to be called when searchbar changes
+
+  String searchText = '';
 
   @override
   void initState() {
@@ -47,6 +56,19 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
 
   @override
   Widget build(BuildContext context) {
+    onSearchChange = (queryText) {
+      //declaring onSearchChange
+      if (debounceSearch?.isActive ?? false) debounceSearch?.cancel();
+      debounceSearch = Timer(const Duration(milliseconds: 500), () {
+        if (searchText != queryText) {
+          setState(() {
+            print('stateSet');
+            stream = completeSearch(queryText);
+            searchText = queryText;
+          });
+        } //TODO: finish this
+      });
+    };
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -69,15 +91,16 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
       ),
       body: Column(
         children: [
-          MySearchBar(searchController: searchController),
+          MySearchBar(
+            searchController: searchController,
+            onChanged: onSearchChange,
+          ),
           const Divider(color: Color.fromARGB(255, 230, 230, 229)),
           Expanded(
             child: Stack(
               children: [
                 StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('Users')
-                        .snapshots(), //function of search bar
+                    stream: stream,
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
@@ -89,9 +112,10 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                       }
                       final usersDocs = snapshot.data!.docs;
                       // Sort the documents by a specific field (e.g., 'name') alphabetically
-                      usersDocs.sort((a, b) => a['name']['first']
-                          .toString()
-                          .compareTo(b['name']['first'].toString()));
+                      usersDocs.sort(
+                          (a, b) => a['name']['first'] //maybe dont do this...
+                              .toString()
+                              .compareTo(b['name']['first'].toString()));
                       List<Map<String, dynamic>> userList = usersDocs
                           .map((userDoc) =>
                               userDoc.data() as Map<String, dynamic>)

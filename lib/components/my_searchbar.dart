@@ -2,10 +2,13 @@ import 'package:auth_test/src/colors.dart';
 import 'package:flutter/material.dart';
 
 class MySearchBar extends StatelessWidget {
+  //add character restrictions
   final TextEditingController searchController;
+  final void Function(String)? onChanged;
   const MySearchBar({
     super.key,
     required this.searchController,
+    this.onChanged,
   });
 
   @override
@@ -14,6 +17,7 @@ class MySearchBar extends StatelessWidget {
         child: Column(
           children: [
             SearchBar(
+              onChanged: onChanged,
               backgroundColor: MaterialStateProperty.resolveWith(
                   (states) => backgroundWhite),
               hintText: 'Search...',

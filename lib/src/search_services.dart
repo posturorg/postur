@@ -10,15 +10,17 @@ List<Map<String, String>> sortUsersByName(List<Map<String, String>> inputList) {
 
 Stream<QuerySnapshot<Object?>> streamUsersWithMatchingUsername(
     String inputUsername) {
-  //in progress...
   inputUsername = inputUsername.toLowerCase();
+
+  CollectionReference usersCollection =
+      FirebaseFirestore.instance.collection('Users');
+  if (inputUsername == '') {
+    return usersCollection.limit(40).snapshots();
+  }
   final String firstLetter = inputUsername[0];
   final int charCode = firstLetter.codeUnitAt(0);
   final int nextCharCode = charCode + 1;
   final String nextLetter = String.fromCharCode(nextCharCode);
-
-  CollectionReference usersCollection =
-      FirebaseFirestore.instance.collection('Users');
 
   var querySnapshot = usersCollection
       .where('username',
@@ -28,4 +30,20 @@ Stream<QuerySnapshot<Object?>> streamUsersWithMatchingUsername(
       .snapshots();
 
   return querySnapshot;
+}
+
+Stream<QuerySnapshot<Object?>> completeSearch(String inputText) {
+  late String strippedPrefix =
+      inputText.trim() == '' ? '' : inputText.trim().substring(1);
+  if (inputText[0] == '@' && strippedPrefix != "") {
+    return streamUsersWithMatchingUsername(strippedPrefix);
+  } else if (inputText[0] == '#' && strippedPrefix != "") {
+    //search tags here
+    return FirebaseFirestore.instance.collection('Users').snapshots();
+    //this return is a placeholder
+  } else {
+    //search users by their first name here
+    return FirebaseFirestore.instance.collection('Users').snapshots();
+    //this return is a placeholder
+  }
 }
