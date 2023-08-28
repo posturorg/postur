@@ -10,7 +10,7 @@ List<Map<String, String>> sortUsersByName(List<Map<String, String>> inputList) {
 
 Stream<QuerySnapshot<Object?>> streamUsersWithMatchingUsername(
     String inputUsername) {
-  inputUsername = inputUsername.toLowerCase();
+  inputUsername = inputUsername.toLowerCase().trim();
 
   CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('Users');
@@ -32,25 +32,67 @@ Stream<QuerySnapshot<Object?>> streamUsersWithMatchingUsername(
   return querySnapshot;
 }
 
-Stream<QuerySnapshot<Object?>> completeSearch(String inputText) {
+Stream<QuerySnapshot<Object?>> streamTagsWithMatchingTagTitle(
+    String inputTagTitle) {
+  inputTagTitle = inputTagTitle.toLowerCase().trim();
+
+  CollectionReference tagsCollection =
+      FirebaseFirestore.instance.collection('Tags');
+
+  if (inputTagTitle == '') {
+    return tagsCollection.limit(40).snapshots();
+  }
+  final String firstLetter = inputTagTitle[0];
+  final int charCode = firstLetter.codeUnitAt(0);
+  final int nextCharCode = charCode + 1;
+  final String nextLetter = String.fromCharCode(nextCharCode);
+
+  var querySnapshot = tagsCollection
+      .where('tagTitle',
+          isGreaterThanOrEqualTo: inputTagTitle, isLessThan: nextLetter)
+      .orderBy('tagTitle')
+      .limit(40)
+      .snapshots();
+
+  return querySnapshot;
+}
+
+List<Stream<QuerySnapshot<Object?>>> completeSearch(String inputText) {
   //should be a list of two streams
   late String strippedPrefix =
       inputText.trim() == '' ? '' : inputText.trim().substring(1);
   if (strippedPrefix == '') {
-    return FirebaseFirestore.instance
-        .collection('Users')
-        .orderBy('username')
-        .limit(40)
-        .snapshots(); //should order by full name
+    return [
+      FirebaseFirestore.instance
+          .collection('Users')
+          .orderBy('username')
+          .limit(40)
+          .snapshots(),
+      FirebaseFirestore.instance.collection('Tags').limit(40).snapshots()
+    ]; //should order by full name
   } else if (inputText[0] == '@') {
-    return streamUsersWithMatchingUsername(strippedPrefix);
+    //searching users
+    return [
+      streamUsersWithMatchingUsername(strippedPrefix),
+      FirebaseFirestore.instance.collection('Tags').limit(1).snapshots(),
+    ];
   } else if (inputText[0] == '#') {
+    //searching tags
     //search tags here
-    return FirebaseFirestore.instance.collection('Users').limit(40).snapshots();
+    return [
+      FirebaseFirestore.instance.collection('Users').limit(1).snapshots(),
+      streamTagsWithMatchingTagTitle(strippedPrefix),
+    ];
     //this return is a placeholder
   } else {
-    //search users by their first name here & tags
-    return FirebaseFirestore.instance.collection('Users').limit(40).snapshots();
+    //search users by their fullName here & tags
+    return [
+      FirebaseFirestore.instance
+          .collection('Users')
+          .limit(40)
+          .snapshots(), //Search by fullname here
+      streamTagsWithMatchingTagTitle(strippedPrefix),
+    ];
     //this return is a placeholder
   }
 }

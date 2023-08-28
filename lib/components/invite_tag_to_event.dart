@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class InviteTagToEventEntry extends StatelessWidget {
-  final Map<String, dynamic>
-      tag; //must have keys 'name' and 'tagId' or equivalents
+  final Map<String, dynamic> tag; //must have keys 'tagTitle' and 'tagId';
   final void Function() onSelect; // should be a function that accepts no args!
   final void Function()
       onDeselect; // should be a function that accepts no args!
@@ -36,7 +35,7 @@ class InviteTagToEventEntry extends StatelessWidget {
               width: 7,
             ),
             Text(
-              "#${tag['name']}",
+              "#${tag['tagTitle']}",
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,

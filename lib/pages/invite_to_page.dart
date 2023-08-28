@@ -34,10 +34,7 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
   Set<String> tagsToBeInvited =
       {}; //Set of tag id strings. (Need to make tag strings too)
 
-  Stream<QuerySnapshot<Object?>>
-      streams = //set this to what it needs to be according to search bar
-      FirebaseFirestore.instance.collection('Users').limit(40).snapshots();
-
+  late List<Stream<QuerySnapshot<Object?>>> streams;
   Timer? debounceSearch; //search bar debouncer
 
   late void Function(String queryText)
@@ -50,6 +47,15 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
     usersToBeInvited = Set<String>.from(widget.usersAlreadyInvited);
     if (widget.toEvent) {
       tagsToBeInvited = Set<String>.from(widget.tagsAlreadyInvited);
+      streams = [
+        FirebaseFirestore.instance.collection('Users').limit(40).snapshots(),
+        FirebaseFirestore.instance.collection('Tags').limit(40).snapshots(),
+      ];
+    } else {
+      streams = [
+        FirebaseFirestore.instance.collection('Users').limit(40).snapshots(),
+        FirebaseFirestore.instance.collection('Tags').limit(1).snapshots(),
+      ];
     }
     onSearchChange = (queryText) {
       //declaring onSearchChange
@@ -99,7 +105,7 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
             child: Stack(
               children: [
                 StreamBuilder<QuerySnapshot>(
-                    stream: streams,
+                    stream: streams[0],
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
@@ -120,27 +126,53 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                               userDoc.data() as Map<String, dynamic>)
                           .toList();
                       userList.removeWhere((user) => user['uid'] == currentUid);
-                      return ListView.builder(
-                        itemCount: userList.length,
-                        itemBuilder: (context, index) {
-                          String uid = userList[index]['uid'];
-                          return InviteToEventEntry(
-                            user: userList[index],
-                            selected: usersToBeInvited.contains(uid),
-                            onSelect: () {
-                              setState(() {
-                                usersToBeInvited.add(uid);
-                                //toBeInvited = toBeInvited;
-                              });
-                              //print(usersToBeInvited);
-                            },
-                            onDeselect: () {
-                              setState(() {
-                                usersToBeInvited
-                                    .removeWhere((item) => item == uid);
-                                //toBeInvited = toBeInvited;
-                              });
-                              //print(usersToBeInvited);
+
+                      return StreamBuilder(
+                        stream: streams[1],
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
+                          if (!snapshot.hasData) {
+                            return const CircularProgressIndicator(
+                              color: attendingOrange,
+                            ); // Loading indicator
+                          }
+                          final tagsDocs = snapshot.data!.docs;
+                          late List<Map<String, dynamic>> tagsList;
+
+                          if (widget.toEvent) {
+                            tagsList = tagsDocs
+                                .map((tagDoc) =>
+                                    tagDoc.data() as Map<String, dynamic>)
+                                .toList();
+                          } else {
+                            tagsList = [];
+                          }
+
+                          return ListView.builder(
+                            itemCount: userList.length,
+                            itemBuilder: (context, index) {
+                              String uid = userList[index]['uid'];
+                              return InviteToEventEntry(
+                                user: userList[index],
+                                selected: usersToBeInvited.contains(uid),
+                                onSelect: () {
+                                  setState(() {
+                                    usersToBeInvited.add(uid);
+                                    //toBeInvited = toBeInvited;
+                                  });
+                                  //print(usersToBeInvited);
+                                },
+                                onDeselect: () {
+                                  setState(() {
+                                    usersToBeInvited
+                                        .removeWhere((item) => item == uid);
+                                    //toBeInvited = toBeInvited;
+                                  });
+                                  //print(usersToBeInvited);
+                                },
+                              );
                             },
                           );
                         },
