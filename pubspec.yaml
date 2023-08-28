@@ -31,10 +31,11 @@ dependencies:
   get: ^4.6.5
   http: any
 
-  geolocator: ^9.0.2
-  geocoding: ^2.1.0
+  geolocator: ^9.0.2 #use this!
+  geocoding: ^2.1.0 #consider making placeAutcomplete use this instead
   flutter_typeahead: ^4.6.2
   flutter_contacts: ^1.1.7+1 #reconsider this dependency... pehaps better swapped out.
+  flutter_map_location_marker: ^7.0.4
 
 dev_dependencies:
   flutter_test:

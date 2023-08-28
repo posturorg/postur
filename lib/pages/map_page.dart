@@ -2,6 +2,7 @@ import 'package:auth_test/components/event_marker.dart';
 import 'package:auth_test/src/places/places_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'dart:async';
 import '../components/modals/event_create_modal.dart';
 import 'package:flutter/material.dart';
@@ -98,10 +99,7 @@ class _MapPageState extends State<MapPage> {
     for (QueryDocumentSnapshot<Object?> event in myEventsListOfDocs) {
       Map<String, dynamic> eventMap = event.data() as Map<String, dynamic>;
       String eventId = eventMap['eventId'];
-      //print('Event Id: $eventId');
-      //print('keys: ${eventMap.keys}');
       myEventsMap[eventId] = eventMap;
-      //print(myEventsMap[eventId]!['isAttending']);
     }
 
     return myEventsMap;
@@ -174,6 +172,7 @@ class _MapPageState extends State<MapPage> {
               'https://api.mapbox.com/styles/v1/posturmain/clllpwx6u02d001qlcplz2u3e/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicG9zdHVybWFpbiIsImEiOiJjbGxscGFmeGkyOGhwM2Rwa2loMDdrMWFjIn0.C5alCHxZEODxaSeGMq9oxA',
           userAgentPackageName: 'com.example.app', //change this...
         ),
+        CurrentLocationLayer(),
         MarkerLayer(
           markers: markers,
         ),

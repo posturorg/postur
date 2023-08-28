@@ -33,6 +33,7 @@ Stream<QuerySnapshot<Object?>> streamUsersWithMatchingUsername(
 }
 
 Stream<QuerySnapshot<Object?>> completeSearch(String inputText) {
+  //should be a list of two streams
   late String strippedPrefix =
       inputText.trim() == '' ? '' : inputText.trim().substring(1);
   if (strippedPrefix == '') {
@@ -48,7 +49,7 @@ Stream<QuerySnapshot<Object?>> completeSearch(String inputText) {
     return FirebaseFirestore.instance.collection('Users').limit(40).snapshots();
     //this return is a placeholder
   } else {
-    //search users by their first name here
+    //search users by their first name here &
     return FirebaseFirestore.instance.collection('Users').limit(40).snapshots();
     //this return is a placeholder
   }
