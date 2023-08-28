@@ -153,6 +153,7 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                         List<Map<String, dynamic>> renderList =
                             List.from(userList)
                               ..addAll(tagsList); //maybe make final?
+                        //print(renderList);
 
                         return ListView.builder(
                           itemCount: renderList.length,
@@ -173,9 +174,7 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                                   setState(() {
                                     usersToBeInvited
                                         .removeWhere((item) => item == uid);
-                                    //toBeInvited = toBeInvited;
                                   });
-                                  //print(usersToBeInvited);
                                 },
                               );
                             } else {
@@ -202,7 +201,6 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                     );
                   },
                 ),
-                //SHOULD NOT!!! PULL ALL USERS, JUST MAX OF LIKE 40 OF THEM
                 SafeArea(
                   child: Center(
                     child: Column(
