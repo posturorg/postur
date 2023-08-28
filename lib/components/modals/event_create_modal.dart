@@ -195,10 +195,11 @@ class _EventCreateModalState extends State<EventCreateModal> {
                                 },
                               ));
                     } else {
-                      CollectionReference eventsCollection =
-                          FirebaseFirestore.instance.collection('Events');
                       DocumentReference eventDoc =
-                          eventsCollection.doc(widget.eventID);
+                          FirebaseFirestore.instance
+                          .collection('Events')
+                          .doc(widget.eventID);
+                          
                       await eventDoc.update({
                         'eventTitle': eventTitleController.text,
                         'description': eventDescriptionController.text,
@@ -210,7 +211,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
                       }); //maybe make this more efficient, only on event changes.
 
                       // Update invitation list
-                      updateInvites(
+                      updateEventInvites(
                         uid,
                         widget.eventID,
                         newEventId,
@@ -279,7 +280,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
           // Create Event
           createEvent();
           // Update invitation list
-          updateInvites(
+          updateEventInvites(
             uid,
             widget.eventID,
             newEventId,
@@ -615,8 +616,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
                                   });
                                   print(whoToInvite);
                                 },
-                                usersAlreadyInvited:
-                                    whoToInvite, //get this from the backend
+                                usersAlreadyInvited: whoToInvite, //get this from the backend
                                 tagsAlreadyInvited: const {}, //get this from the backend
                               );
                             },

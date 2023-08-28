@@ -62,7 +62,9 @@ class _TagsPageState extends State<TagsPage> {
                   builder: (BuildContext context) {
                     //Marker details MODAL START (IT IS THE SIZED BOX)
                     return const CreateTagModal(
+                      tagId: null,
                       exists: false,
+                      thoseInvited: {},
                     );
                   },
                 );

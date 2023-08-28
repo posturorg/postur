@@ -105,8 +105,12 @@ Future<String> getProfilePicUrl(
   }
 }
 
+//////////////////////////////////////////////////////////////////////
+
+/* Event Functions */
+
 // Update event invitation list
-Future<void> updateInvites(
+Future<void> updateEventInvites(
     String uid,
     String? existingEventID,
     String newEventId,
@@ -309,5 +313,111 @@ Future<String> getFullNameFromId(String creator) async {
   } catch (e) {
     print("Error getting user's full name: $e");
     return 'Error getting name...';
+  }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+/* Tag Functions */
+
+Future<void> updateTagInvites(
+    String uid,
+    String? existingTagID,
+    String newTagId,
+    String tagTitle,
+    Set<String> whoToInvite,
+    Set<String> thoseInvited) async {
+  // Calculate Added IDs
+  Set<String> addedIds = whoToInvite.difference(thoseInvited);
+  // Calculate Removed IDs
+  Set<String> removedIds = thoseInvited.difference(whoToInvite);
+
+  // Set eventId for new or existing events
+  String tagId = existingTagID ?? newTagId;
+
+  // Send invitations
+  // If no new invites, do nothing
+  if (addedIds.isEmpty) {
+    print('No new invitations');
+  } else {
+    // Loop through people to invite
+    print('Invites working!');
+    for (String userId in addedIds) {
+      try {
+        print(tagId);
+        print(userId);
+
+        // Create user document in Invited subcollection
+        DocumentReference userTagInvited = FirebaseFirestore.instance
+            .collection('Tags')
+            .doc(tagId)
+            .collection('Members')
+            .doc(userId);
+
+        // Data to be added
+        Map<String, dynamic> invitedList = {
+          'uid': userId,
+          'isMember': false,
+        };
+
+        // Create event document in user's MyEvents subcollection
+        DocumentReference userMyTags = FirebaseFirestore.instance
+            .collection('TagMembers')
+            .doc(userId)
+            .collection('MyTags')
+            .doc(tagId);
+
+        // Data to be added
+        Map<String, dynamic> tagMemberDetails = {
+          'creator': uid,
+          'tagId': tagId,
+          'tagTitle': tagTitle,
+          'isCreator': false,
+          'isMember': false,
+        };
+
+        // Add data to documents
+        // Create "Invited" doc using "set" function
+        await userTagInvited.set(invitedList);
+        // Create "MyEvents" doc using "set" function
+        await userMyTags.set(tagMemberDetails);
+      } catch (e) {
+        print('There was an error sending invitations: $e');
+      }
+    }
+  }
+
+  // Revoke invitations
+  // If no new uninvites, do nothing
+  if (removedIds.isEmpty) {
+    print('No new uninvites');
+  } else {
+    // Loop through people to uninvite
+    print('Uninvites working!');
+    for (String userId in removedIds) {
+      // Select user document in Invited subcollection
+      try {
+        DocumentReference userTagInvited = FirebaseFirestore.instance
+            .collection('Tags')
+            .doc(tagId)
+            .collection('Members')
+            .doc(userId);
+
+        // Select event document in user's Mytags subcollection
+        DocumentReference userMyTags = FirebaseFirestore.instance
+            .collection('TagMembers')
+            .doc(userId)
+            .collection('MyTags')
+            .doc(tagId);
+
+        // Add data to documents
+        // Create "Invited" doc using "set" function
+        await userTagInvited.delete();
+        // Create "MyEvents" doc using "set" function
+        await userMyTags.delete();
+      } catch (e) {
+        print('There was an error revoking invitations: $e');
+      }
+    }
   }
 }

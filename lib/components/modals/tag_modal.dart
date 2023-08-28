@@ -1,4 +1,5 @@
 import 'package:auth_test/components/modal_bottom_button.dart';
+import 'package:auth_test/src/event_info_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../src/colors.dart';
@@ -35,6 +36,24 @@ class _TagModalState extends State<TagModal> {
   // Initialize description string
   String description = '';
 
+  // Initialize set of people invited to tag
+  Set<String> thoseInvited = {};
+
+  // Function that fetches invite list
+  Future<void> fetchThoseInvited() async {
+    CollectionReference<Map<String, dynamic>> relevantCollection =
+        FirebaseFirestore.instance
+            .collection('Tags')
+            .doc(widget.tagId)
+            .collection('Members');
+    Set<String> thoseInvitedInternal =
+        await getUidsFromCollection(relevantCollection);
+    setState(() {
+      thoseInvited = thoseInvitedInternal;
+    });
+  }
+
+
   // Get Event Data Name
   Future<void> _getTagData() async {
     try {
@@ -56,6 +75,9 @@ class _TagModalState extends State<TagModal> {
   void initState() {
     super.initState();
     _getTagData();
+    Future.delayed(Duration.zero, () {
+      this.fetchThoseInvited();
+    });
   }
 
   @override
@@ -169,9 +191,11 @@ class _TagModalState extends State<TagModal> {
                             clipBehavior: Clip.antiAlias,
                             showDragHandle: true,
                             builder: (BuildContext context) => CreateTagModal(
+                              tagId: widget.tagId,
                               preEnteredTitle: widget.tagTitle,
                               preEnteredDescription: description,
-                              exists: true, //also, toggles creator, Me
+                              exists: true,
+                              thoseInvited: thoseInvited, //also, toggles creator, Me
                             ),
                           );
                           },

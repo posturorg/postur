@@ -2,20 +2,25 @@ import 'package:auth_test/components/modal_bottom_button.dart';
 import 'package:auth_test/pages/invite_to_page.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:auth_test/src/event_box_decoration.dart';
+import 'package:auth_test/src/user_info_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class CreateTagModal extends StatefulWidget {
+  final String? tagId;
   final bool exists;
   final String? preEnteredTitle;
   final String? preEnteredDescription;
+  final Set<String> thoseInvited;
 
   const CreateTagModal({
     super.key,
     required this.exists,
+    required this.tagId,
     this.preEnteredTitle,
     this.preEnteredDescription,
+    required this.thoseInvited,
   });
 
   @override
@@ -23,10 +28,15 @@ class CreateTagModal extends StatefulWidget {
 }
 
 class _CreateTagModalState extends State<CreateTagModal> {
+  late String newTagId;
+
   final TextEditingController tagTitleController = TextEditingController();
 
   final TextEditingController tagDescriptionController =
       TextEditingController();
+
+  Set<String> whoToInvite =
+      Set<String>.from({});
 
   // text style... maybe put this in one central file.
   final TextStyle defaultBold = const TextStyle(
@@ -60,6 +70,9 @@ class _CreateTagModalState extends State<CreateTagModal> {
 
     // Get the auto-generated ID as a string
     String tagId = newTagRef.id;
+    setState(() {
+      newTagId = tagId;
+    });
 
     // Collect Tag info
     Map<String, dynamic> tagDetails = {
@@ -105,6 +118,13 @@ class _CreateTagModalState extends State<CreateTagModal> {
     await newMemberRef.set(tagMemberList);
 
     print('Tag added with ID: ${newTagRef.id}');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    newTagId = '';
+    whoToInvite = Set<String>.from(widget.thoseInvited);
   }
 
   @override
@@ -240,9 +260,12 @@ class _CreateTagModalState extends State<CreateTagModal> {
                               return InviteToEventPage(
                                 toEvent: false,
                                 onBottomButtonPress: (Set<String> newSet) {
-                                  () {};
+                                  setState(() {
+                                    whoToInvite = newSet;
+                                  });
+                                  print(whoToInvite);
                                 },
-                                usersAlreadyInvited: const {}, //get this from the backend
+                                usersAlreadyInvited: whoToInvite, //get this from the backend
                                 tagsAlreadyInvited: const {}, //this will stay this way...
                               );
                             },
@@ -268,16 +291,50 @@ class _CreateTagModalState extends State<CreateTagModal> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ModalBottomButton(
-                      onTap: () {
+                      onTap: () async {
                         // Create new tag
                         if (widget.exists) {
-                          // TODO: Insert update tag function
+                      
+                          // Update existing tag
+                          DocumentReference tagDoc =
+                              FirebaseFirestore.instance
+                              .collection('Tags')
+                              .doc(widget.tagId);
+
+                          await tagDoc.update({
+                            'tagTitle': tagTitleController.text,
+                            'description': tagDescriptionController.text,
+                          }); //maybe make this more efficient, only on tag changes
+
+                          // Update tag invitee list
+                          updateTagInvites(
+                            uid,
+                            widget.tagId,
+                            newTagId,
+                            tagTitleController.text,
+                            whoToInvite,
+                            widget.thoseInvited,                            
+                          );
+
                         } else {
+
+                          // Create Tag
                           createTag();
+
+                          // Update tag invitee list
+                          updateTagInvites(
+                            uid,
+                            widget.tagId,
+                            newTagId,
+                            tagTitleController.text,
+                            whoToInvite,
+                            widget.thoseInvited,                            
+                          );
                         }
                         // Close modal
                         Navigator.pop(context);
                       }, //need to properly populate this...
+
                       text: widget.exists ? 'Confirm Changes' : 'Create',
                       backgroundColor: attendingOrange,
                     )
