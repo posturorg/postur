@@ -105,6 +105,25 @@ Future<String> getProfilePicUrl(
   }
 }
 
+Future<String> getFullNameFromId(String creator) async {
+  try {
+    DocumentSnapshot snapshot =
+        await FirebaseFirestore.instance.collection('Users').doc(creator).get();
+    if (snapshot.exists) {
+      final String creatorName =
+          '${snapshot['name']['first']} ${snapshot['name']['last']}';
+      return creatorName;
+    } else {
+      print('snapshot does not exist');
+      return 'Error getting name...';
+    }
+  } catch (e) {
+    print("Error getting user's full name: $e");
+    return 'Error getting name...';
+  }
+}
+
+
 //////////////////////////////////////////////////////////////////////
 
 /* Event Functions */
@@ -225,17 +244,20 @@ void cancelEvent(String eventId) async {
     final batch = FirebaseFirestore.instance.batch();
 
     for (QueryDocumentSnapshot invitedDoc in invitedSnapshot.docs) {
-      final userId = invitedDoc.id;
-      final myEventsRef = FirebaseFirestore.instance
-          .collection('EventMembers')
-          .doc(userId)
-          .collection('MyEvents')
-          .doc(eventId);
+      try {final userId = invitedDoc.id;
+        final myEventsRef = FirebaseFirestore.instance
+            .collection('EventMembers')
+            .doc(userId)
+            .collection('MyEvents')
+            .doc(eventId);
 
-      batch.delete(
-          myEventsRef); // Delete MyEvents document for each invited user
-      batch.delete(invitedQuery.doc(
-          userId)); // Delete document in the Invited subcollection corresponding to each invited user
+        batch.delete(
+            myEventsRef); // Delete MyEvents document for each invited user
+        batch.delete(invitedQuery.doc(
+            userId));
+      } catch (e) {
+        print("Error uninviting members: $e");
+      } // Delete document in the Invited subcollection corresponding to each invited user
     }
 
     // Step 2: Delete Event Document
@@ -269,7 +291,7 @@ void leaveEvent(String eventId) async {
         .doc(uid)
         .update({'isAttending': false});
   } catch (e) {
-    print("Error canceling event: $e");
+    print("Error leaving event: $e");
   }
 }
 
@@ -294,25 +316,7 @@ void rsvpToEvent(String eventId) async {
         .doc(uid)
         .update({'isAttending': true});
   } catch (e) {
-    print("Error canceling event: $e");
-  }
-}
-
-Future<String> getFullNameFromId(String creator) async {
-  try {
-    DocumentSnapshot snapshot =
-        await FirebaseFirestore.instance.collection('Users').doc(creator).get();
-    if (snapshot.exists) {
-      final String creatorName =
-          '${snapshot['name']['first']} ${snapshot['name']['last']}';
-      return creatorName;
-    } else {
-      print('snapshot does not exist');
-      return 'Error getting name...';
-    }
-  } catch (e) {
-    print("Error getting user's full name: $e");
-    return 'Error getting name...';
+    print("Error RSVP'ing to event: $e");
   }
 }
 
@@ -419,5 +423,91 @@ Future<void> updateTagInvites(
         print('There was an error revoking invitations: $e');
       }
     }
+  }
+}
+
+// Disband tag, uninviting all invitees
+void disbandTag(String tagId) async {
+  try {
+    // Step 1: Delete Invited Users and MyEvents Documents
+    final tagRef =
+        FirebaseFirestore.instance.collection('Tags').doc(tagId);
+    final invitedQuery = tagRef.collection('Members');
+    final invitedSnapshot = await invitedQuery.get();
+
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (QueryDocumentSnapshot invitedDoc in invitedSnapshot.docs) {
+      try {final userId = invitedDoc.id;
+        final myTagsRef = FirebaseFirestore.instance
+            .collection('TagMembers')
+            .doc(userId)
+            .collection('MyTags')
+            .doc(tagId);
+
+        batch.delete(myTagsRef); // Delete MyTags document for each invited user
+        batch.delete(invitedQuery.doc(userId));
+      } catch (e) { // Delete document in the Members subcollection corresponding to each invited user
+        print("Error uninviting members: $e");
+      }
+    }
+
+    // Step 2: Delete Tag Document
+    batch.delete(tagRef);
+
+    // Commit the batch delete
+    await batch.commit();
+  } catch (e) {
+    print("Error disbanding tag: $e");
+  }
+}
+
+// Leave event
+void leaveTag(String tagId) async {
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+
+  try {
+    // Update tag doc from "MyTags"
+    FirebaseFirestore.instance
+        .collection('TagMembers')
+        .doc(uid)
+        .collection('MyTags')
+        .doc(tagId)
+        .update({'isMember': false});
+
+    // Update list entry from "Members"
+    FirebaseFirestore.instance
+        .collection('Tags')
+        .doc(tagId)
+        .collection('Members')
+        .doc(uid)
+        .update({'isMember': false});
+  } catch (e) {
+    print("Error leaving tag: $e");
+  }
+}
+
+// Leave event
+void joinTag(String tagId) async {
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+
+  try {
+    // Update event doc from "MyEvents"
+    FirebaseFirestore.instance
+        .collection('TagMembers')
+        .doc(uid)
+        .collection('MyTags')
+        .doc(tagId)
+        .update({'isMember': true});
+
+    // Update list entry from "Invited"
+    FirebaseFirestore.instance
+        .collection('Tags')
+        .doc(tagId)
+        .collection('Members')
+        .doc(uid)
+        .update({'isMember': true});
+  } catch (e) {
+    print("Error joining tag: $e");
   }
 }

@@ -1,5 +1,7 @@
 import 'package:auth_test/pages/requests_page.dart';
+import 'package:auth_test/src/user_info_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import './dialogs/default_two_option_dialog.dart';
@@ -114,13 +116,12 @@ class _TagWidgetState extends State<TagWidget> {
             
                         // Returning SizedBox instead of a Container
                         return TagModal(
-                            tagId: widget.tagId,
-                            tagTitle: tagTitle,
-                            isCreator: widget.isCreator,
-                            tagCreator: widget.tagCreator,
-                            isMember: widget.isMember,
-                            onJoin: onJoin,
-                            onLeave: onLeave);
+                          tagId: widget.tagId,
+                          tagTitle: tagTitle,
+                          isCreator: widget.isCreator,
+                          tagCreator: widget.tagCreator,
+                          isMember: widget.isMember,
+                        );
                       },
                     );
                   },
@@ -182,11 +183,47 @@ class _TagWidgetState extends State<TagWidget> {
                         Container(
                           padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                           child: MyInlineButton(
-                            text: widget.isCreator ? 'Disband' : (widget.isMember ? 'Leave' : 'Join'),
+                            text: widget.isCreator ? 'Disband' : widget.isMember ? 'Leave' : 'Join',
                             color: widget.isMember ? attendingOrange : absentRed,
                             //NEED TO REPLACE ONTAP WITH A TERNARY WITH ONE FOR JOINING AND
                             //ONE FOR LEAVING
-                            onTap: widget.isMember ? onLeave : onJoin,
+                            onTap: widget.isCreator ? () { // Disband tag
+                              showCupertinoDialog(
+                                context: context,
+                                builder: (context) => DefaultTwoOptionDialog(
+                                  title: 'Are you sure?',
+                                  content: 'Are you sure you want to disband this tag?',
+                                  optionOneText: 'Yes',
+                                  optionTwoText: 'No',
+                                  onOptionOne: () => {
+                                    // Delete relevant documents from backend
+                                    disbandTag(widget.tagId),                      
+                                    // Close alert
+                                    Navigator.pop(context),
+                                  },
+                                  onOptionTwo: () => Navigator.pop(context),
+                                ),
+                              );
+                            } : widget.isMember ? () { // Leave tag
+                              showCupertinoDialog(
+                                context: context,
+                                builder: (context) => DefaultTwoOptionDialog(
+                                  title: 'Are you sure?',
+                                  content: 'Are you sure you want to leave this tag?',
+                                  optionOneText: 'Yes',
+                                  optionTwoText: 'No',
+                                  onOptionOne: () => {
+                                    // Delete relevant documents from backend
+                                    leaveTag(widget.tagId),                      
+                                    // Close alert
+                                    Navigator.pop(context),
+                                  },
+                                  onOptionTwo: () => Navigator.pop(context),
+                                ),
+                              );
+                            } : () { // Join tag
+                              joinTag(widget.tagId);
+                            },
                           ),
                         ),
                       ],
