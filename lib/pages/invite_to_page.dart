@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auth_test/components/invite_tag_to_event.dart';
 import 'package:auth_test/components/invite_to_event_entry.dart';
 import 'package:auth_test/components/my_searchbar.dart';
 import 'package:auth_test/src/colors.dart';
@@ -105,64 +106,68 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
             child: Stack(
               children: [
                 StreamBuilder<QuerySnapshot>(
-                    stream: streams[0],
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      }
-                      if (!snapshot.hasData) {
-                        return const CircularProgressIndicator(
-                          color: attendingOrange,
-                        ); // Loading indicator
-                      }
-                      final usersDocs = snapshot.data!.docs;
-                      // Sort the documents by a specific field (e.g., 'name') alphabetically
-                      // usersDocs.sort(
-                      //     (a, b) => a['name']['first'] //maybe dont do this...
-                      //         .toString()
-                      //         .compareTo(b['name']['first'].toString()));
-                      List<Map<String, dynamic>> userList = usersDocs
-                          .map((userDoc) =>
-                              userDoc.data() as Map<String, dynamic>)
-                          .toList();
-                      userList.removeWhere((user) => user['uid'] == currentUid);
+                  stream: streams[0],
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+                    if (!snapshot.hasData) {
+                      return const CircularProgressIndicator(
+                        color: attendingOrange,
+                      ); // Loading indicator
+                    }
+                    final usersDocs = snapshot.data!.docs;
+                    // Sort the documents by a specific field (e.g., 'name') alphabetically
+                    // usersDocs.sort(
+                    //     (a, b) => a['name']['first'] //maybe dont do this...
+                    //         .toString()
+                    //         .compareTo(b['name']['first'].toString()));
+                    List<Map<String, dynamic>> userList = usersDocs
+                        .map(
+                            (userDoc) => userDoc.data() as Map<String, dynamic>)
+                        .toList();
+                    userList.removeWhere((user) => user['uid'] == currentUid);
 
-                      return StreamBuilder(
-                        stream: streams[1],
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          }
-                          if (!snapshot.hasData) {
-                            return const CircularProgressIndicator(
-                              color: attendingOrange,
-                            ); // Loading indicator
-                          }
-                          final tagsDocs = snapshot.data!.docs;
-                          late List<Map<String, dynamic>> tagsList;
+                    return StreamBuilder(
+                      stream: streams[1],
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
+                        if (!snapshot.hasData) {
+                          return const CircularProgressIndicator(
+                            color: attendingOrange,
+                          ); // Loading indicator
+                        }
+                        final tagsDocs = snapshot.data!.docs;
+                        late List<Map<String, dynamic>> tagsList;
 
-                          if (widget.toEvent) {
-                            tagsList = tagsDocs
-                                .map((tagDoc) =>
-                                    tagDoc.data() as Map<String, dynamic>)
-                                .toList();
-                          } else {
-                            tagsList = [];
-                          }
+                        if (widget.toEvent) {
+                          tagsList = tagsDocs
+                              .map((tagDoc) =>
+                                  tagDoc.data() as Map<String, dynamic>)
+                              .toList();
+                        } else {
+                          tagsList = [];
+                        }
+                        List<Map<String, dynamic>> renderList =
+                            List.from(userList)
+                              ..addAll(tagsList); //maybe make final?
 
-                          return ListView.builder(
-                            itemCount: userList.length,
-                            itemBuilder: (context, index) {
-                              String uid = userList[index]['uid'];
+                        return ListView.builder(
+                          itemCount: renderList.length,
+                          itemBuilder: (context, index) {
+                            final bool userEntry =
+                                renderList[index].containsKey('uid');
+                            if (userEntry) {
+                              String uid = renderList[index]['uid'];
                               return InviteToEventEntry(
-                                user: userList[index],
+                                user: renderList[index],
                                 selected: usersToBeInvited.contains(uid),
                                 onSelect: () {
                                   setState(() {
                                     usersToBeInvited.add(uid);
-                                    //toBeInvited = toBeInvited;
                                   });
-                                  //print(usersToBeInvited);
                                 },
                                 onDeselect: () {
                                   setState(() {
@@ -173,11 +178,30 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                                   //print(usersToBeInvited);
                                 },
                               );
-                            },
-                          );
-                        },
-                      );
-                    }),
+                            } else {
+                              String tagId = renderList[index]['tagId'];
+                              InviteTagToEventEntry(
+                                tag: renderList[index],
+                                selected: tagsToBeInvited.contains(tagId),
+                                onSelect: () {
+                                  setState(() {
+                                    tagsToBeInvited.add(tagId);
+                                  });
+                                },
+                                onDeselect: () {
+                                  setState(() {
+                                    tagsToBeInvited
+                                        .removeWhere((item) => item == tagId);
+                                  });
+                                },
+                              );
+                            }
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
                 //SHOULD NOT!!! PULL ALL USERS, JUST MAX OF LIKE 40 OF THEM
                 SafeArea(
                   child: Center(
