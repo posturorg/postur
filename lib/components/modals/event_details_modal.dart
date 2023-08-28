@@ -214,30 +214,36 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
 
   // Call this function when the "Cancel Event" button is pressed
   void onPressedCancelButton() {
-    cancelEvent(widget.eventId);
-    try {
-      widget.reloader!();
-    } catch (e) {
-      print('No reloader for details modal!');
+    if (hasFullyLoaded) {
+      cancelEvent(widget.eventId);
+      try {
+        widget.reloader!();
+      } catch (e) {
+        print('No reloader for details modal!');
+      }
     }
   }
 
   // Call this function when the "Leave" button is pressed
   void onPressedLeaveButton() {
-    leaveEvent(widget.eventId);
-    try {
-      widget.reloader!();
-    } catch (e) {
-      print('No reloader for details modal!');
+    if (hasFullyLoaded) {
+      leaveEvent(widget.eventId);
+      try {
+        widget.reloader!();
+      } catch (e) {
+        print('No reloader for details modal!');
+      }
     }
   }
 
   void onPressedRSVPButton() {
-    rsvpToEvent(widget.eventId);
-    try {
-      widget.reloader!();
-    } catch (e) {
-      print('No reloader for details modal!');
+    if (hasFullyLoaded) {
+      rsvpToEvent(widget.eventId);
+      try {
+        widget.reloader!();
+      } catch (e) {
+        print('No reloader for details modal!');
+      }
     }
   }
 

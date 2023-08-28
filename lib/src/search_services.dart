@@ -49,7 +49,7 @@ Stream<QuerySnapshot<Object?>> completeSearch(String inputText) {
     return FirebaseFirestore.instance.collection('Users').limit(40).snapshots();
     //this return is a placeholder
   } else {
-    //search users by their first name here &
+    //search users by their first name here & tags
     return FirebaseFirestore.instance.collection('Users').limit(40).snapshots();
     //this return is a placeholder
   }

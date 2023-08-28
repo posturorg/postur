@@ -35,7 +35,7 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
       {}; //Set of tag id strings. (Need to make tag strings too)
 
   Stream<QuerySnapshot<Object?>>
-      stream = //set this to what it needs to be according to search bar
+      streams = //set this to what it needs to be according to search bar
       FirebaseFirestore.instance.collection('Users').limit(40).snapshots();
 
   Timer? debounceSearch; //search bar debouncer
@@ -57,7 +57,7 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
       debounceSearch = Timer(const Duration(milliseconds: 500), () {
         if (searchText != queryText) {
           setState(() {
-            stream = completeSearch(queryText);
+            streams = completeSearch(queryText);
             searchText = queryText;
           });
         }
@@ -99,7 +99,7 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
             child: Stack(
               children: [
                 StreamBuilder<QuerySnapshot>(
-                    stream: stream,
+                    stream: streams,
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
