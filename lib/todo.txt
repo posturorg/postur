@@ -9,6 +9,7 @@ NEED TO ADD UI TO ADD PEOPLE TO AN EVENT.
 - Show loading circle whenever interacting with an event in a way that sends stuff to the backend
 - Add some form of support for text messaging to remind users of events
 - Ensure uninviting someone works if you've already done it, but they have their map open and then rsvp to the event
+- Finish adding user current location services.
 
 Graphical Errors:
 - Error on iPhone SE (and potentially thinner screens). On messages

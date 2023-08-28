@@ -20,7 +20,8 @@ class _HasUserCompletedSignupPageState
 
     CollectionReference users = FirebaseFirestore.instance.collection('Users');
 
-    DocumentSnapshot yourUserReference = await users.doc(uid).get();
+    DocumentSnapshot yourUserReference =
+        await users.doc(uid).get(); //error was thrown here
 
     Map<String, dynamic> yourUserMap =
         yourUserReference.data() as Map<String, dynamic>;

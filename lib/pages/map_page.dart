@@ -45,6 +45,7 @@ class _MapPageState extends State<MapPage> {
       showDragHandle: true,
       builder: (BuildContext context) {
         return EventCreateModal(
+          tagsInvited: {},
           reloader: standardReloader,
           thoseInvited: {},
           exists: false,
@@ -172,7 +173,10 @@ class _MapPageState extends State<MapPage> {
               'https://api.mapbox.com/styles/v1/posturmain/clllpwx6u02d001qlcplz2u3e/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicG9zdHVybWFpbiIsImEiOiJjbGxscGFmeGkyOGhwM2Rwa2loMDdrMWFjIn0.C5alCHxZEODxaSeGMq9oxA',
           userAgentPackageName: 'com.example.app', //change this...
         ),
-        CurrentLocationLayer(),
+        CurrentLocationLayer(
+            //need to add https://pub.dev/packages/flutter_compass
+            //need to make autofollow and autorotate according to compass heading
+            ),
         MarkerLayer(
           markers: markers,
         ),
@@ -208,7 +212,6 @@ class _MapPageState extends State<MapPage> {
               dataList[1] as Map<String, Map<String, dynamic>>;
 
           List<Marker> markers = [];
-          //print(eventsMap.keys);
 
           for (var eventData in eventDataListInternal) {
             try {
@@ -218,8 +221,6 @@ class _MapPageState extends State<MapPage> {
               //measure.
               String eventId = eventData['eventId'];
               String eventTitle = eventData['eventTitle'];
-              print(eventId);
-              print(eventTitle);
               bool isAttending = eventsMap[eventId]!['isAttending'];
               String creator = eventData['creator'];
               bool isCreator = eventsMap[eventId]!['isCreator'];

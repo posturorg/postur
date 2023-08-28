@@ -34,7 +34,7 @@ Stream<QuerySnapshot<Object?>> streamUsersWithMatchingUsername(
 
 Stream<QuerySnapshot<Object?>> streamTagsWithMatchingTagTitle(
     String inputTagTitle) {
-  inputTagTitle = inputTagTitle.toLowerCase().trim();
+  inputTagTitle = inputTagTitle.trim();
 
   CollectionReference tagsCollection =
       FirebaseFirestore.instance.collection('Tags');

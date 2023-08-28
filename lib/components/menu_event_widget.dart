@@ -89,7 +89,6 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
     _getCreatorInfo();
   }
 
-
   // Call this function when the "Cancel Event" button is pressed
   void onPressedCancelButton() {
     cancelEvent(widget.eventId);
@@ -334,6 +333,7 @@ class _MenuEventWidgetState extends State<MenuEventWidget> {
                                       showDragHandle: true,
                                       builder: (BuildContext context) =>
                                           EventCreateModal(
+                                              tagsInvited: {}, //pull from backend
                                               initialTitle: eventTitle,
                                               initialDescription:
                                                   initialDescription,

@@ -30,6 +30,7 @@ class EventCreateModal extends StatefulWidget {
   final String? initialTitle;
   final String? initialDescription;
   final Set<String> thoseInvited;
+  final Set<String> tagsInvited;
   final void Function()? reloader;
 
   const EventCreateModal({
@@ -42,6 +43,7 @@ class EventCreateModal extends StatefulWidget {
     this.initialTitle,
     this.initialDescription,
     required this.thoseInvited,
+    required this.tagsInvited,
     this.reloader,
   });
 
@@ -56,6 +58,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
   late String newEventId;
   Set<String> whoToInvite =
       Set<String>.from({}); //should be pulled from backend if exists
+  Set<String> tagsToInvite = {}; //should be pulled from backend if exists
 
   void changeWhen(DateTime newTime) {
     setState(() {
@@ -119,6 +122,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
       eventDescriptionController.text = widget.initialDescription!;
     }
     whoToInvite = Set<String>.from(widget.thoseInvited);
+    tagsToInvite = Set<String>.from(widget.tagsInvited);
     if (widget.exists && widget.eventID != null) {
       //This is the case we need to fix...
       onBottomButtonPress = () => {
@@ -195,11 +199,10 @@ class _EventCreateModalState extends State<EventCreateModal> {
                                 },
                               ));
                     } else {
-                      DocumentReference eventDoc =
-                          FirebaseFirestore.instance
+                      DocumentReference eventDoc = FirebaseFirestore.instance
                           .collection('Events')
                           .doc(widget.eventID);
-                          
+
                       await eventDoc.update({
                         'eventTitle': eventTitleController.text,
                         'description': eventDescriptionController.text,
@@ -212,12 +215,15 @@ class _EventCreateModalState extends State<EventCreateModal> {
 
                       // Update invitation list
                       updateEventInvites(
+                        //add our tags to this.
                         uid,
                         widget.eventID,
                         newEventId,
                         eventTitleController.text,
                         whoToInvite,
+                        tagsToInvite,
                         widget.thoseInvited,
+                        widget.tagsInvited,
                       );
 
                       print('Event information updated successfully');
@@ -286,7 +292,9 @@ class _EventCreateModalState extends State<EventCreateModal> {
             newEventId,
             eventTitleController.text,
             whoToInvite,
+            tagsToInvite,
             widget.thoseInvited,
+            widget.tagsInvited,
           );
           try {
             widget.reloader!();
@@ -610,14 +618,21 @@ class _EventCreateModalState extends State<EventCreateModal> {
                             builder: (context) {
                               return InviteToEventPage(
                                 toEvent: true,
-                                onBottomButtonPress: (Set<String> newSet) {
+                                onBottomButtonPress: (Set<String> newUsersSet,
+                                    Set<String> newTagsSet) {
                                   setState(() {
-                                    whoToInvite = newSet;
+                                    whoToInvite = newUsersSet;
+                                    tagsToInvite = newTagsSet;
                                   });
-                                  print(whoToInvite);
+                                  print('inputUsers: $newUsersSet');
+                                  print('inputTags: $newTagsSet');
+                                  print('whoToInvite: $whoToInvite');
+                                  print('tagsToInvite: $tagsToInvite');
                                 },
-                                usersAlreadyInvited: whoToInvite, //get this from the backend
-                                tagsAlreadyInvited: const {}, //get this from the backend
+                                usersAlreadyInvited:
+                                    whoToInvite, //get this from the backend
+                                tagsAlreadyInvited:
+                                    tagsToInvite, //get this from the backend on initialize
                               );
                             },
                           ),
@@ -630,7 +645,8 @@ class _EventCreateModalState extends State<EventCreateModal> {
                       ),
                     ),
                     const Flexible(
-                      child: Text('#DunsterHaus, Alvin Adjei, & 20 others'),
+                      child: Text(
+                          '#DunsterHaus, Alvin Adjei, & 20 others'), //make this update...
                     ),
                   ],
                 ),

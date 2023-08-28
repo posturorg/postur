@@ -35,8 +35,7 @@ class _CreateTagModalState extends State<CreateTagModal> {
   final TextEditingController tagDescriptionController =
       TextEditingController();
 
-  Set<String> whoToInvite =
-      Set<String>.from({});
+  Set<String> whoToInvite = Set<String>.from({});
 
   // text style... maybe put this in one central file.
   final TextStyle defaultBold = const TextStyle(
@@ -259,13 +258,16 @@ class _CreateTagModalState extends State<CreateTagModal> {
                             builder: (context) {
                               return InviteToEventPage(
                                 toEvent: false,
-                                onBottomButtonPress: (Set<String> newSet) {
+                                onBottomButtonPress: (Set<String> newUserSet,
+                                    Set<String> newTagSet) {
+                                  //tgas must not exist
                                   setState(() {
-                                    whoToInvite = newSet;
+                                    whoToInvite = newUserSet;
                                   });
                                   print(whoToInvite);
                                 },
-                                usersAlreadyInvited: whoToInvite, //get this from the backend
+                                usersAlreadyInvited:
+                                    whoToInvite, //get this from the backend
                                 tagsAlreadyInvited: const {}, //this will stay this way...
                               );
                             },
@@ -294,10 +296,8 @@ class _CreateTagModalState extends State<CreateTagModal> {
                       onTap: () async {
                         // Create new tag
                         if (widget.exists) {
-                      
                           // Update existing tag
-                          DocumentReference tagDoc =
-                              FirebaseFirestore.instance
+                          DocumentReference tagDoc = FirebaseFirestore.instance
                               .collection('Tags')
                               .doc(widget.tagId);
 
@@ -313,11 +313,9 @@ class _CreateTagModalState extends State<CreateTagModal> {
                             newTagId,
                             tagTitleController.text,
                             whoToInvite,
-                            widget.thoseInvited,                            
+                            widget.thoseInvited,
                           );
-
                         } else {
-
                           // Create Tag
                           createTag();
 
@@ -328,7 +326,7 @@ class _CreateTagModalState extends State<CreateTagModal> {
                             newTagId,
                             tagTitleController.text,
                             whoToInvite,
-                            widget.thoseInvited,                            
+                            widget.thoseInvited,
                           );
                         }
                         // Close modal

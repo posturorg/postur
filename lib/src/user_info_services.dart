@@ -105,8 +105,6 @@ Future<String> getProfilePicUrl(
   }
 }
 
-//////////////////////////////////////////////////////////////////////
-
 /* Event Functions */
 
 // Update event invitation list
@@ -116,11 +114,17 @@ Future<void> updateEventInvites(
     String newEventId,
     String eventTitle,
     Set<String> whoToInvite,
-    Set<String> thoseInvited) async {
+    Set<String> tagsToInvite,
+    Set<String> thoseInvited,
+    Set<String> tagsInvited) async {
   // Calculate Added IDs
   Set<String> addedIds = whoToInvite.difference(thoseInvited);
+  Set<String> addedTags = tagsToInvite.difference(tagsInvited);
   // Calculate Removed IDs
   Set<String> removedIds = thoseInvited.difference(whoToInvite);
+  Set<String> removedTags = tagsInvited.difference(tagsToInvite);
+
+  //Now, actually interface with the backend to make these changes
 
   // Set eventId for new or existing events
   String eventId = existingEventID ?? newEventId;
