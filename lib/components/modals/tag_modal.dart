@@ -1,6 +1,9 @@
+import 'package:auth_test/components/dialogs/default_two_option_dialog.dart';
 import 'package:auth_test/components/modal_bottom_button.dart';
 import 'package:auth_test/src/event_info_services.dart';
+import 'package:auth_test/src/user_info_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../src/colors.dart';
 import '../tag_box_decoration.dart';
@@ -14,8 +17,6 @@ class TagModal extends StatefulWidget {
   final bool isCreator;
   final String tagCreator;
   final bool isMember;
-  final Function()? onJoin;
-  final Function()? onLeave;
 
   const TagModal({
     super.key,
@@ -24,8 +25,6 @@ class TagModal extends StatefulWidget {
     required this.isCreator,
     required this.tagCreator,
     required this.isMember,
-    required this.onJoin,
-    required this.onLeave,
   });
 
   @override
@@ -203,10 +202,51 @@ class _TagModalState extends State<TagModal> {
                           backgroundColor: neutralGrey,
                         )),
                     ModalBottomButton(
-                        onTap: widget.isMember
-                            ? widget.onLeave
-                            : widget.onJoin, //Replace this with notification if isMember, else nothing
-                        text: widget.isCreator ? 'Disband' : (widget.isMember ? 'Leave' : 'Join'),
+                        onTap: widget.isCreator ? () {
+                          showCupertinoDialog(
+                            context: context,
+                            builder: (context) => DefaultTwoOptionDialog(
+                              title: 'Are you sure?',
+                              content: 'Are you sure you want to disband this tag?',
+                              optionOneText: 'Yes',
+                              optionTwoText: 'No',
+                              onOptionOne: () => {
+                                // Update relevant documents from backend
+                                disbandTag(widget.tagId),                      
+                                // Close alert
+                                Navigator.pop(context),
+                                // Close modal
+                                Navigator.pop(context),
+                              },
+                              onOptionTwo: () => Navigator.pop(context),
+                            ),
+                          );
+                        } : widget.isMember ? () {
+                          showCupertinoDialog(
+                            context: context,
+                            builder: (context) => DefaultTwoOptionDialog(
+                              title: 'Are you sure?',
+                              content: 'Are you sure you want to leave this tag?',
+                              optionOneText: 'Yes',
+                              optionTwoText: 'No',
+                              onOptionOne: () => {
+                                // Update relevant documents from backend
+                                leaveTag(widget.tagId),                      
+                                // Close alert
+                                Navigator.pop(context),
+                                // Close modal
+                                Navigator.pop(context),
+                              },
+                              onOptionTwo: () => Navigator.pop(context),
+                            ),
+                          );
+                        } : () {
+                          // Update relevant documents in backend
+                          joinTag(widget.tagId);
+                          // Close modal
+                          Navigator.pop(context);
+                        }, //Replace this with notification if isMember, else nothing
+                        text: widget.isCreator ? 'Disband' : widget.isMember ? 'Leave' : 'Join',
                         backgroundColor:
                             widget.isMember ? attendingOrange : absentRed),
                   ],
