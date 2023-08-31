@@ -67,10 +67,10 @@ class _EventsProfileState extends State<EventsProfile> {
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(0, 12.5, 0, 12.5),
                   child: Text(
-                    widget.isAttending ? "When you RSVP to events, \nthey'll appear here :)" : "When you are invited to events or \ntags, they'll appear here :)",
+                    widget.isAttending ? "When you RSVP to events,\nthey'll appear here :)" : "When you are invited to events,\nthey'll appear here :)",
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: absentRed,
+                    style: TextStyle(
+                      color: widget.isAttending ? attendingOrange : absentRed,
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
                     ),
@@ -85,12 +85,12 @@ class _EventsProfileState extends State<EventsProfile> {
         }
       );
     } catch (e) {
-      return const Padding(
-        padding: EdgeInsets.fromLTRB(0,10,0,15),
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(0,10,0,15),
         child: Text(
-          "When you are invited to events or tags, they'll appear here :)",
+          widget.isAttending ? "When you RSVP to events,\nthey'll appear here :)" : "When you are invited to events,\nthey'll appear here :)",
           style: TextStyle(
-            color: absentRed,
+            color: widget.isAttending ? attendingOrange : absentRed,
             fontWeight: FontWeight.bold,
             fontSize: 13,
           ),

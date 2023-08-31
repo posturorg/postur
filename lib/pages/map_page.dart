@@ -135,6 +135,7 @@ class _MapPageState extends State<MapPage> {
       //show user location
       mapController: _mapController, // Initialize the controller,
       options: MapOptions(
+        interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate, // Disable rotation
         onLongPress: (tapPosition, point) => {
           _onMapHold(point), //TODO: Speed this up
         },

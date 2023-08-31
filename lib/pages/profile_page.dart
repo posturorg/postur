@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../src/colors.dart';
-import '../components/tag_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -24,11 +23,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final currentUser = FirebaseFirestore.instance
       .collection('Users')
       .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
-
-  // Retrieve all public events from Firestore
-  final publicEvents = FirebaseFirestore.instance
-      .collection('Events')
-      .where('isPrivate', isEqualTo: false);
 
   @override
   Widget build(BuildContext context) {
