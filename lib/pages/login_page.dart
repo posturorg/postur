@@ -1,4 +1,5 @@
 import 'package:auth_test/components/dialogs/default_one_option_dialog.dart';
+import 'package:auth_test/pages/reset_password_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -125,16 +126,28 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 10),
 
                   // forgot password?
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 25),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          'Forgot password?',
-                          style: TextStyle(
-                            color: neutralGrey,
-                            decoration: TextDecoration.underline,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return const ResetPasswordPage();
+                                },
+                              ),
+                            );
+                          }, // go to forgot password
+                          child: const Text(
+                            'Forgot password?',
+                            style: TextStyle(
+                              color: neutralGrey,
+                              decoration: TextDecoration.underline,
+                            ),
                           ),
                         ),
                       ],

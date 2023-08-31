@@ -64,21 +64,18 @@ class _EventCreateModalState extends State<EventCreateModal> {
     setState(() {
       whenTime = newTime;
     });
-    print('WHEN: $whenTime');
   }
 
   void changeEnd(DateTime newTime) {
     setState(() {
       endTime = newTime;
     });
-    print('END: $endTime');
   }
 
   void changeRsvp(DateTime newTime) {
     setState(() {
       rsvpTime = newTime;
     });
-    print('RSVP: $rsvpTime');
   }
 
   final TextEditingController addressSearchController = TextEditingController();
@@ -98,8 +95,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
       selectedPlace = newPlace;
       changedAddress = true;
     });
-    print('CHANGED ADDRESS!');
-    print(changedAddress);
   }
 
   late Function() onBottomButtonPress; //was in build
@@ -136,7 +131,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
                     dynamic newCoords = await PlacesRepository()
                         .getCoordsFromPlaceId(selectedPlace.placeId);
                     if (newCoords == null) {
-                      print('newCoords is null');
                       Navigator.pop(context);
                       showCupertinoDialog(
                         context: context,
@@ -183,7 +177,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
                         // Update event titles in attendees' "MyEvents" docs
                         updateMyEventTitle(widget.eventID,
                             eventTitleController.text, whoToInvite);
-                        print('Event informaiton updated successfully');
                         //TODO: change event in the backend
                         Navigator.pop(context); //closes confirmation popup
                         Navigator.pop(context); //should close our modal
@@ -230,8 +223,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
                         widget.tagsInvited,
                       );
 
-                      print('Event information updated successfully');
-
                       //TODO: change event in the backend
                       Navigator.pop(context); //Closes popup
                       Navigator.pop(context); //Closes modal
@@ -239,9 +230,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
                   }
                   try {
                     widget.reloader!();
-                  } catch (e) {
-                    print('no reloader!');
-                  }
+                  } catch (e) {}
                 }, //interface with backend to change event...
                 optionTwoText: 'No',
                 onOptionTwo: () =>
@@ -267,7 +256,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
               .getCoordsFromPlaceId(selectedPlace.placeId);
           //seriously remove this repeated code...
           if (newCoords == null) {
-            print('newCoords is null');
             Navigator.pop(context); // this is a bad practice, apparently.
             showCupertinoDialog(
               context: context,
@@ -282,8 +270,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
             setState(() {
               currentCoords = newCoords;
             });
-            print('-------NEW COORDS ARE:-------');
-            print('${currentCoords.latitude}, ${currentCoords.longitude}');
           }
         }
         if (eventTitleController.text != '') {
@@ -302,9 +288,7 @@ class _EventCreateModalState extends State<EventCreateModal> {
           );
           try {
             widget.reloader!();
-          } catch (e) {
-            print('no reloader!');
-          }
+          } catch (e) {}
           Navigator.pop(context);
         } else {
           showCupertinoDialog(
@@ -419,8 +403,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
     await newMyEventRef.set(eventMemberDetails);
     // Create "Invited" doc using "set" function
     await newInvitedRef.set(invitedList);
-
-    print('Event added with ID: ${newEventRef.id}');
   }
 
   @override
@@ -628,10 +610,6 @@ class _EventCreateModalState extends State<EventCreateModal> {
                                     whoToInvite = newUsersSet;
                                     tagsToInvite = newTagsSet;
                                   });
-                                  print('inputUsers: $newUsersSet');
-                                  print('inputTags: $newTagsSet');
-                                  print('whoToInvite: $whoToInvite');
-                                  print('tagsToInvite: $tagsToInvite');
                                 },
                                 usersAlreadyInvited:
                                     whoToInvite, //get this from the backend
