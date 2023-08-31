@@ -175,6 +175,9 @@ class _EventCreateModalState extends State<EventCreateModal> {
 
                           //update where here...
                         }); //maybe make this more efficient, only on event changes.
+
+                        // Update event titles in attendees' "MyEvents" docs
+                        updateMyEventTitle(widget.eventID, eventTitleController.text, whoToInvite);
                         print('Event informaiton updated successfully');
                         //TODO: change event in the backend
                         Navigator.pop(context); //closes confirmation popup

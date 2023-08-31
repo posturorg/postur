@@ -276,7 +276,7 @@ void leaveEvent(String eventId) async {
 
   try {
     // Update event doc from "MyEvents"
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('EventMembers')
         .doc(uid)
         .collection('MyEvents')
@@ -284,7 +284,7 @@ void leaveEvent(String eventId) async {
         .update({'isAttending': false});
 
     // Update list entry from "Invited"
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('Events')
         .doc(eventId)
         .collection('Invited')
@@ -301,7 +301,7 @@ void rsvpToEvent(String eventId) async {
 
   try {
     // Update event doc from "MyEvents"
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('EventMembers')
         .doc(uid)
         .collection('MyEvents')
@@ -309,7 +309,7 @@ void rsvpToEvent(String eventId) async {
         .update({'isAttending': true});
 
     // Update list entry from "Invited"
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('Events')
         .doc(eventId)
         .collection('Invited')
@@ -317,6 +317,26 @@ void rsvpToEvent(String eventId) async {
         .update({'isAttending': true});
   } catch (e) {
     print("Error RSVP'ing to event: $e");
+  }
+}
+
+// Update each user's record of their event titles
+void updateMyEventTitle(
+  String? eventId,
+  String eventTitle,
+  Set<String> whoToInvite
+) async {
+  for (String invitedId in whoToInvite) { // Loop through invited guests and update eventTitle
+    try {
+      await FirebaseFirestore.instance
+        .collection('EventMembers')
+        .doc(invitedId)
+        .collection('MyEvents')
+        .doc(eventId)
+        .update({'eventTitle': eventTitle});
+    } catch (e) {
+      print("Error updating eventTitle in MyEvents: $e");
+    }
   }
 }
 
@@ -509,5 +529,25 @@ void joinTag(String tagId) async {
         .update({'isMember': true});
   } catch (e) {
     print("Error joining tag: $e");
+  }
+}
+
+// Update each user's record of their event titles
+void updateMyTagTitle(
+  String? tagId,
+  String tagTitle,
+  Set<String> whoToInvite
+) async {
+  for (String invitedId in whoToInvite) { // Loop through invited guests and update eventTitle
+    try {
+      await FirebaseFirestore.instance
+        .collection('TagMembers')
+        .doc(invitedId)
+        .collection('MyTags')
+        .doc(tagId)
+        .update({'tagTitle': tagTitle});
+    } catch (e) {
+      print("Error updating tagTitle in MyTags: $e");
+    }
   }
 }
