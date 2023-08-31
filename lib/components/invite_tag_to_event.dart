@@ -32,11 +32,6 @@ class InviteTagToEventEntry extends StatelessWidget {
               color: Colors.black,
               size: 50,
             ),
-            // const CircleAvatar(
-            //   radius: 24,
-            //   backgroundImage:
-            //       AssetImage('./assets/thumbtack.png'), //profile pic
-            // ),
             const SizedBox(
               width: 7,
             ),

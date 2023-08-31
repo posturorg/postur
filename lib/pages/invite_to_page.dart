@@ -43,6 +43,24 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
 
   String searchText = '';
 
+  Future<Set<String>> getTagActives(String tagId) async {
+    var membersCollection = FirebaseFirestore.instance
+        .collection('Tags')
+        .doc(tagId)
+        .collection('Members');
+
+    var activeMemberSnapshot = await membersCollection
+        .where(
+          'isMember',
+          isEqualTo: true,
+        )
+        .get();
+
+    var activeMemberUids =
+        activeMemberSnapshot.docs.map((doc) => doc['uid'] as String).toSet();
+    return activeMemberUids;
+  }
+
   @override
   void initState() {
     usersToBeInvited = Set<String>.from(widget.usersAlreadyInvited);
@@ -185,16 +203,37 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                                 child: InviteTagToEventEntry(
                                   tag: renderList[index],
                                   selected: tagsToBeInvited.contains(tagId),
-                                  onSelect: () {
+                                  onSelect: () async {
+                                    var activeMemberUids =
+                                        await getTagActives(tagId);
+
+                                    Set<String> newUsersToBeInvited =
+                                        usersToBeInvited;
+
+                                    for (String uid in activeMemberUids) {
+                                      newUsersToBeInvited.add(uid);
+                                    }
+
                                     //also add all users in the tag to the event
                                     setState(() {
                                       tagsToBeInvited.add(tagId);
+                                      usersToBeInvited = newUsersToBeInvited;
                                     });
                                   },
-                                  onDeselect: () {
+                                  onDeselect: () async {
+                                    var activeMemberUids =
+                                        await getTagActives(tagId);
+                                    Set<String> newUsersToBeInvited =
+                                        usersToBeInvited;
+                                    for (String uid in activeMemberUids) {
+                                      newUsersToBeInvited
+                                          .removeWhere((item) => item == uid);
+                                    }
+
                                     setState(() {
                                       tagsToBeInvited
                                           .removeWhere((item) => item == tagId);
+                                      usersToBeInvited = newUsersToBeInvited;
                                     });
                                   },
                                 ),
