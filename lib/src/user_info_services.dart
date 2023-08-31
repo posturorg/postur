@@ -144,6 +144,15 @@ Future<void> updateEventInvites(
   Set<String> removedIds = thoseInvited.difference(whoToInvite);
   Set<String> removedTags = tagsInvited.difference(tagsToInvite);
 
+  // Remove current user's Id from lists 
+  // (so you don't accidentally uninvite yourself)
+  try {
+    addedIds.remove(uid);
+    removedIds.remove(uid);
+  } catch (e) {
+    // pass
+  }
+
   //Now, actually interface with the backend to make these changes
 
   // Set eventId for new or existing events
@@ -232,6 +241,44 @@ Future<void> updateEventInvites(
         await userMyEvents.delete();
       } catch (e) {
         print('There was an error revoking invitations: $e');
+      }
+    }
+  }
+
+  // Send invitations to tags
+  if (addedTags.isEmpty) {
+    print("No new tags");
+  } else {
+    for (String tagId in addedTags) {
+      try {
+        FirebaseFirestore.instance
+          .collection('Events')
+          .doc(eventId)
+          .collection('InvitedTags')
+          .doc(tagId)
+          .set({
+            'tagId': tagId
+          });
+      } catch (e) {
+        print('There was an error inviting tags: $e');
+      }
+    }
+  }
+
+  // Uninvite to tags
+  if (removedTags.isEmpty) {
+    print("No tags to remove");
+  } else {
+    for (String tagId in removedTags) {
+      try {
+        FirebaseFirestore.instance
+          .collection('Events')
+          .doc(eventId)
+          .collection('InvitedTags')
+          .doc(tagId)
+          .delete();
+      } catch (e) {
+        print('There was an error uninviting tags: $e');
       }
     }
   }
