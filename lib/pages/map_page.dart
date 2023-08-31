@@ -228,6 +228,7 @@ class _MapPageState extends State<MapPage> {
               latlong2.LatLng position =
                   latlong2.LatLng(where.latitude, where.longitude);
               Marker markerToBeAdded = Marker(
+                rotate: false, //maybe make this true.
                 point: position,
                 width: 106,
                 height: 106,
