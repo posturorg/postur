@@ -141,9 +141,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     hintText: 'Confirm Password',
                     obscureText: true,
                   ),
-                  const SizedBox(height: 10),
-
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
 
                   //Sign up button
                   MyButton(

@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   // forgot password?
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25),
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -137,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) {
-                                  return const ResetPasswordPage();
+                                  return ResetPasswordPage();
                                 },
                               ),
                             );
