@@ -8,7 +8,15 @@ class ResetPasswordPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        //leading: ,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: absentRed,
+          ),
+          onPressed: () {
+            Navigator.pop(context); //closes page
+          },
+        ),
         title: const Text(
           'Title',
           style: TextStyle(
