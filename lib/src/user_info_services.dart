@@ -517,3 +517,21 @@ void joinTag(String tagId) async {
     print("Error joining tag: $e");
   }
 }
+
+// Update each user's record of their event titles
+void updateMyTagTitle(
+    String? tagId, String tagTitle, Set<String> whoToInvite) async {
+  for (String invitedId in whoToInvite) {
+    // Loop through invited guests and update eventTitle
+    try {
+      await FirebaseFirestore.instance
+          .collection('TagMembers')
+          .doc(invitedId)
+          .collection('MyTags')
+          .doc(tagId)
+          .update({'tagTitle': tagTitle});
+    } catch (e) {
+      print("Error updating tagTitle in MyTags: $e");
+    }
+  }
+}
