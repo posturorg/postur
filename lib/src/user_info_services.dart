@@ -325,6 +325,24 @@ void rsvpToEvent(String eventId) async {
   }
 }
 
+// Update each user's record of their event titles
+void updateMyEventTitle(
+    String? eventId, String eventTitle, Set<String> whoToInvite) async {
+  for (String invitedId in whoToInvite) {
+    // Loop through invited guests and update eventTitle
+    try {
+      await FirebaseFirestore.instance
+          .collection('EventMembers')
+          .doc(invitedId)
+          .collection('MyEvents')
+          .doc(eventId)
+          .update({'eventTitle': eventTitle});
+    } catch (e) {
+      print("Error updating eventTitle in MyEvents: $e");
+    }
+  }
+}
+
 //////////////////////////////////////////////////////////////////////
 
 /* Tag Functions */
