@@ -69,7 +69,9 @@ class _LoginPageState extends State<LoginPage> {
           title: message,
           content: '', //want to find a way to make this null...
           buttonText: 'Ok',
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         );
       },
     );

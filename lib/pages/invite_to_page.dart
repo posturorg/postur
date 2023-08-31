@@ -14,7 +14,7 @@ class InviteToEventPage extends StatefulWidget {
       usersAlreadyInvited; // set of UID's already invited to event
   final Set<String> tagsAlreadyInvited;
   final bool toEvent;
-  final void Function(Set<String>) onBottomButtonPress;
+  final void Function(Set<String>, Set<String>) onBottomButtonPress;
   const InviteToEventPage({
     super.key,
     required this.usersAlreadyInvited, // set of UID's already invited to event or tag
@@ -122,7 +122,7 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                     //     (a, b) => a['name']['first'] //maybe dont do this...
                     //         .toString()
                     //         .compareTo(b['name']['first'].toString()));
-                    List<Map<String, dynamic>> userList = usersDocs
+                    late List<Map<String, dynamic>> userList = usersDocs
                         .map(
                             (userDoc) => userDoc.data() as Map<String, dynamic>)
                         .toList();
@@ -150,6 +150,8 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                         } else {
                           tagsList = [];
                         }
+                        print('tagsList: ${tagsList}');
+                        print('tagsList.length: ${tagsList.length}');
                         List<Map<String, dynamic>> renderList =
                             List.from(userList)
                               ..addAll(tagsList); //maybe make final?
@@ -173,27 +175,29 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                                   setState(() {
                                     usersToBeInvited
                                         .removeWhere((item) => item == uid);
-                                    //toBeInvited = toBeInvited;
                                   });
-                                  //print(usersToBeInvited);
                                 },
                               );
                             } else {
                               String tagId = renderList[index]['tagId'];
-                              InviteTagToEventEntry(
-                                tag: renderList[index],
-                                selected: tagsToBeInvited.contains(tagId),
-                                onSelect: () {
-                                  setState(() {
-                                    tagsToBeInvited.add(tagId);
-                                  });
-                                },
-                                onDeselect: () {
-                                  setState(() {
-                                    tagsToBeInvited
-                                        .removeWhere((item) => item == tagId);
-                                  });
-                                },
+                              return Visibility(
+                                visible: widget.toEvent,
+                                child: InviteTagToEventEntry(
+                                  tag: renderList[index],
+                                  selected: tagsToBeInvited.contains(tagId),
+                                  onSelect: () {
+                                    //also add all users in the tag to the event
+                                    setState(() {
+                                      tagsToBeInvited.add(tagId);
+                                    });
+                                  },
+                                  onDeselect: () {
+                                    setState(() {
+                                      tagsToBeInvited
+                                          .removeWhere((item) => item == tagId);
+                                    });
+                                  },
+                                ),
                               );
                             }
                           },
@@ -202,7 +206,6 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                     );
                   },
                 ),
-                //SHOULD NOT!!! PULL ALL USERS, JUST MAX OF LIKE 40 OF THEM
                 SafeArea(
                   child: Center(
                     child: Column(
@@ -214,7 +217,8 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                             backgroundColor: attendingOrange,
                           ),
                           onPressed: () {
-                            widget.onBottomButtonPress(usersToBeInvited);
+                            widget.onBottomButtonPress(
+                                usersToBeInvited, tagsToBeInvited);
                             Navigator.pop(context); //goes back to modal.
                           },
                           child: Text(

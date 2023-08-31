@@ -123,7 +123,6 @@ Future<String> getFullNameFromId(String creator) async {
   }
 }
 
-
 //////////////////////////////////////////////////////////////////////
 
 /* Event Functions */
@@ -135,11 +134,17 @@ Future<void> updateEventInvites(
     String newEventId,
     String eventTitle,
     Set<String> whoToInvite,
-    Set<String> thoseInvited) async {
+    Set<String> tagsToInvite,
+    Set<String> thoseInvited,
+    Set<String> tagsInvited) async {
   // Calculate Added IDs
   Set<String> addedIds = whoToInvite.difference(thoseInvited);
+  Set<String> addedTags = tagsToInvite.difference(tagsInvited);
   // Calculate Removed IDs
   Set<String> removedIds = thoseInvited.difference(whoToInvite);
+  Set<String> removedTags = tagsInvited.difference(tagsToInvite);
+
+  //Now, actually interface with the backend to make these changes
 
   // Set eventId for new or existing events
   String eventId = existingEventID ?? newEventId;
@@ -244,7 +249,8 @@ void cancelEvent(String eventId) async {
     final batch = FirebaseFirestore.instance.batch();
 
     for (QueryDocumentSnapshot invitedDoc in invitedSnapshot.docs) {
-      try {final userId = invitedDoc.id;
+      try {
+        final userId = invitedDoc.id;
         final myEventsRef = FirebaseFirestore.instance
             .collection('EventMembers')
             .doc(userId)
@@ -253,8 +259,7 @@ void cancelEvent(String eventId) async {
 
         batch.delete(
             myEventsRef); // Delete MyEvents document for each invited user
-        batch.delete(invitedQuery.doc(
-            userId));
+        batch.delete(invitedQuery.doc(userId));
       } catch (e) {
         print("Error uninviting members: $e");
       } // Delete document in the Invited subcollection corresponding to each invited user
@@ -430,15 +435,15 @@ Future<void> updateTagInvites(
 void disbandTag(String tagId) async {
   try {
     // Step 1: Delete Invited Users and MyEvents Documents
-    final tagRef =
-        FirebaseFirestore.instance.collection('Tags').doc(tagId);
+    final tagRef = FirebaseFirestore.instance.collection('Tags').doc(tagId);
     final invitedQuery = tagRef.collection('Members');
     final invitedSnapshot = await invitedQuery.get();
 
     final batch = FirebaseFirestore.instance.batch();
 
     for (QueryDocumentSnapshot invitedDoc in invitedSnapshot.docs) {
-      try {final userId = invitedDoc.id;
+      try {
+        final userId = invitedDoc.id;
         final myTagsRef = FirebaseFirestore.instance
             .collection('TagMembers')
             .doc(userId)
@@ -447,7 +452,8 @@ void disbandTag(String tagId) async {
 
         batch.delete(myTagsRef); // Delete MyTags document for each invited user
         batch.delete(invitedQuery.doc(userId));
-      } catch (e) { // Delete document in the Members subcollection corresponding to each invited user
+      } catch (e) {
+        // Delete document in the Members subcollection corresponding to each invited user
         print("Error uninviting members: $e");
       }
     }

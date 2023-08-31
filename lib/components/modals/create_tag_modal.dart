@@ -37,8 +37,7 @@ class _CreateTagModalState extends State<CreateTagModal> {
   final TextEditingController tagDescriptionController =
       TextEditingController();
 
-  Set<String> whoToInvite =
-      Set<String>.from({});
+  Set<String> whoToInvite = Set<String>.from({});
 
   // text style... maybe put this in one central file.
   final TextStyle defaultBold = const TextStyle(
@@ -261,13 +260,16 @@ class _CreateTagModalState extends State<CreateTagModal> {
                             builder: (context) {
                               return InviteToEventPage(
                                 toEvent: false,
-                                onBottomButtonPress: (Set<String> newSet) {
+                                onBottomButtonPress: (Set<String> newUserSet,
+                                    Set<String> newTagSet) {
+                                  //tgas must not exist
                                   setState(() {
-                                    whoToInvite = newSet;
+                                    whoToInvite = newUserSet;
                                   });
                                   print(whoToInvite);
                                 },
-                                usersAlreadyInvited: whoToInvite, //get this from the backend
+                                usersAlreadyInvited:
+                                    whoToInvite, //get this from the backend
                                 tagsAlreadyInvited: const {}, //this will stay this way...
                               );
                             },
@@ -293,40 +295,11 @@ class _CreateTagModalState extends State<CreateTagModal> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ModalBottomButton(
-                      onTap: !widget.exists ? () { // Create new tag
-                        // Create Tag
-                          createTag();
-
-                        // Update tag invitee list
-                        updateTagInvites(
-                          uid,
-                          widget.tagId,
-                          newTagId,
-                          tagTitleController.text,
-                          whoToInvite,
-                          widget.thoseInvited,                            
-                        );
-
-                        // Close Modal
-                        Navigator.pop(context);
-
-                      } : () { // Update existing tag
-                        showCupertinoDialog(
-                          context: context,
-                          builder: (context) => DefaultTwoOptionDialog(
-                            title: 'Confirm tag changes?',
-                            optionOneText: 'Yes, confirm',
-                            onOptionOne: () async {                            
-                              // Update existing tag
-                              DocumentReference tagDoc =
-                                  FirebaseFirestore.instance
-                                  .collection('Tags')
-                                  .doc(widget.tagId);
-
-                              await tagDoc.update({
-                                'tagTitle': tagTitleController.text,
-                                'description': tagDescriptionController.text,
-                              }); //maybe make this more efficient, only on tag changes
+                      onTap: !widget.exists
+                          ? () {
+                              // Create new tag
+                              // Create Tag
+                              createTag();
 
                               // Update tag invitee list
                               updateTagInvites(
@@ -335,23 +308,53 @@ class _CreateTagModalState extends State<CreateTagModal> {
                                 newTagId,
                                 tagTitleController.text,
                                 whoToInvite,
-                                widget.thoseInvited,                            
+                                widget.thoseInvited,
                               );
 
-                              
-
-                              // Close dialog
+                              // Close Modal
                               Navigator.pop(context);
+                            }
+                          : () {
+                              // Update existing tag
+                              showCupertinoDialog(
+                                  context: context,
+                                  builder: (context) => DefaultTwoOptionDialog(
+                                        title: 'Confirm tag changes?',
+                                        optionOneText: 'Yes, confirm',
+                                        onOptionOne: () async {
+                                          // Update existing tag
+                                          DocumentReference tagDoc =
+                                              FirebaseFirestore.instance
+                                                  .collection('Tags')
+                                                  .doc(widget.tagId);
 
-                              // Close modal
-                              Navigator.pop(context);
-                            }, //need to properly populate this...,
-                            optionTwoText: 'No',
-                            onOptionTwo: () => Navigator.pop(context), // Close dialog
-                          )
-                        );
-                      },
+                                          await tagDoc.update({
+                                            'tagTitle': tagTitleController.text,
+                                            'description':
+                                                tagDescriptionController.text,
+                                          }); //maybe make this more efficient, only on tag changes
 
+                                          // Update tag invitee list
+                                          updateTagInvites(
+                                            uid,
+                                            widget.tagId,
+                                            newTagId,
+                                            tagTitleController.text,
+                                            whoToInvite,
+                                            widget.thoseInvited,
+                                          );
+
+                                          // Close dialog
+                                          Navigator.pop(context);
+
+                                          // Close modal
+                                          Navigator.pop(context);
+                                        }, //need to properly populate this...,
+                                        optionTwoText: 'No',
+                                        onOptionTwo: () => Navigator.pop(
+                                            context), // Close dialog
+                                      ));
+                            },
                       text: widget.exists ? 'Confirm Changes' : 'Create',
                       backgroundColor: attendingOrange,
                     ),

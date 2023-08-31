@@ -1,3 +1,4 @@
+import 'package:auth_test/src/colors.dart';
 import 'package:flutter/material.dart';
 
 class InviteTagToEventEntry extends StatelessWidget {
@@ -26,11 +27,16 @@ class InviteTagToEventEntry extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         child: Row(
           children: [
-            const CircleAvatar(
-              radius: 24,
-              backgroundImage:
-                  AssetImage('./assets/thumbtack.png'), //profile pic
+            const Icon(
+              Icons.circle,
+              color: Colors.black,
+              size: 50,
             ),
+            // const CircleAvatar(
+            //   radius: 24,
+            //   backgroundImage:
+            //       AssetImage('./assets/thumbtack.png'), //profile pic
+            // ),
             const SizedBox(
               width: 7,
             ),
@@ -39,6 +45,20 @@ class InviteTagToEventEntry extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
+              ),
+            ),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: Icon(
+                      selected ? Icons.check_circle : Icons.circle_outlined,
+                      color: attendingOrange,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
