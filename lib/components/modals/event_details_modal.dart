@@ -175,6 +175,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
   }
 
   Set<String> thoseInvited = {};
+  Set<String> tagsInvited = {};
 
   Future<void> fetchThoseInvited() async {
     CollectionReference<Map<String, dynamic>> relevantCollection =
@@ -186,6 +187,19 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
         await getUidsFromCollection(relevantCollection);
     setState(() {
       thoseInvited = thoseInvitedInternal;
+    });
+  }
+
+  Future<void> fetchTagsInvited() async {
+    CollectionReference<Map<String, dynamic>> relevantCollection =
+        FirebaseFirestore.instance
+            .collection('Events')
+            .doc(widget.eventId)
+            .collection('InvitedTags');
+    Set<String> tagsInvitedInternal =
+        await getTagIdsFromCollection(relevantCollection);
+    setState(() {
+      tagsInvited = tagsInvitedInternal;
     });
   }
 
@@ -208,7 +222,8 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
       });
     });
     Future.delayed(Duration.zero, () {
-      this.fetchThoseInvited();
+      fetchThoseInvited();
+      fetchTagsInvited();
     });
   }
 
@@ -577,7 +592,7 @@ class _EventDetailsModalState extends State<EventDetailsModal> {
                                         clipBehavior: Clip.antiAlias,
                                         showDragHandle: true,
                                         builder: (context) => EventCreateModal(
-                                          tagsInvited: {}, //should be pulled from backend
+                                          tagsInvited: tagsInvited, //should be pulled from backend
                                           reloader: widget.reloader,
                                           eventID: widget.eventId,
                                           initialTitle: eventTitle,
