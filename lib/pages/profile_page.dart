@@ -1,6 +1,7 @@
 import 'package:auth_test/components/id_widget.dart';
 import 'package:auth_test/components/events_profile.dart';
 import 'package:auth_test/components/profile_buttons.dart';
+import 'package:auth_test/components/your_tags.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -69,21 +70,62 @@ class _ProfilePageState extends State<ProfilePage> {
 
     // Widget containing "Invites" title and the border above it
     Widget inviteTitle = Container(
-        decoration: sectionBoxDecoration(),
-        padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),
-        child: const Row(children: [
-          Expanded(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Invites:',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: absentRed,
-                  )),
-            ]),
-          ),
-        ]));
+      decoration: sectionBoxDecoration(),
+      padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),
+      child: const Row(children: [
+        Expanded(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Invites:',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: absentRed,
+                )),
+          ]),
+        ),
+      ])
+    );
+
+    // Widget containing "Events" subtitle under Invites
+    Widget inviteEventsTitle = Container(
+      padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),
+      child: const Row(children: [
+        Expanded(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Events',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                  decorationColor: absentRed,
+                  color: absentRed,
+                )),
+          ]),
+        ),
+      ])
+    );
+
+    // Widget containing "Events" subtitle under Invites
+    Widget inviteTagsTitle = Container(
+      padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),
+      child: const Row(children: [
+        Expanded(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Tags',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                  decorationColor: absentRed,
+                  color: absentRed,
+                )),
+          ]),
+        ),
+      ])
+    );
 
     return ListView(
       children: [
@@ -95,13 +137,10 @@ class _ProfilePageState extends State<ProfilePage> {
             attendingTitle,
             const EventsProfile(isAttending: true),
             inviteTitle,
+            inviteEventsTitle,
             const EventsProfile(isAttending: false),
-            // const TagWidget(
-            //   tagId: 'Yale2024',
-            //   tagCreator: '@YaleAdmins',
-            //   isMember: false,
-            //   isCreator: false,
-            // ),
+            inviteTagsTitle,
+            const YourTags(isMember: false),
           ],
         ),
       ],

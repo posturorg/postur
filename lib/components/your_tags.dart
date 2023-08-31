@@ -67,8 +67,8 @@ class _YourTagsState extends State<YourTags> {
                     padding: const EdgeInsets.fromLTRB(0, 12.5, 0, 12.5),
                     child: Text(
                       widget.isMember
-                          ? "When you RSVP to events, \nthey'll appear here :)"
-                          : "When you are invited to events or \ntags, they'll appear here :)",
+                          ? "When you RSVP to tags, \nthey'll appear here :)"
+                          : "When you are invited to \ntags, they'll appear here :)",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: widget.isMember ? attendingOrange : absentRed,
@@ -87,12 +87,12 @@ class _YourTagsState extends State<YourTags> {
             return Center(child: Text(snapshot.connectionState.toString()));
           });
     } catch (e) {
-      return const Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 15),
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
         child: Text(
-          "When you are invited to events or tags, they'll appear here :)",
+          "When you are invited to tags, they'll appear here :)",
           style: TextStyle(
-            color: attendingOrange,
+            color: widget.isMember? attendingOrange : absentRed,
             fontWeight: FontWeight.bold,
             fontSize: 13,
           ),

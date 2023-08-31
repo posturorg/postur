@@ -338,7 +338,12 @@ class _CreateTagModalState extends State<CreateTagModal> {
                                 widget.thoseInvited,                            
                               );
 
-                              
+                              // Update tag title in each user's "MyTags" doc
+                              updateMyTagTitle(
+                                widget.tagId,
+                                tagTitleController.text,
+                                whoToInvite
+                              );
 
                               // Close dialog
                               Navigator.pop(context);
