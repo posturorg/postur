@@ -135,7 +135,8 @@ class _MapPageState extends State<MapPage> {
       //show user location
       mapController: _mapController, // Initialize the controller,
       options: MapOptions(
-        interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate, // Disable rotation
+        interactiveFlags:
+            InteractiveFlag.all & ~InteractiveFlag.rotate, // Disable rotation
         onLongPress: (tapPosition, point) => {
           _onMapHold(point), //TODO: Speed this up
         },
@@ -145,9 +146,12 @@ class _MapPageState extends State<MapPage> {
       ),
       nonRotatedChildren: [
         RichAttributionWidget(
+          //TODO: Remove flutter map attribution
+          //TODO: DO ATTRIBUTION
           //update these...
           attributions: [
-            //LogoSourceAttribution(image),
+            const LogoSourceAttribution(
+                Image(image: NetworkImage(''))), //mapbox logo goes here
             TextSourceAttribution(
               //ensure this is done correctly
               'Mapbox',

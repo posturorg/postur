@@ -16,6 +16,16 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  BoxDecoration sectionBoxDecoration() {
+    return const BoxDecoration(
+      border: Border(
+          top: BorderSide(
+        color: backgroundWhite,
+        width: 1.0,
+      )),
+    );
+  }
+
   // Retrieve uid of current user
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -27,15 +37,6 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     // Borders around "Attending" and "Invites" titles widgets
-    BoxDecoration sectionBoxDecoration() {
-      return const BoxDecoration(
-        border: Border(
-            top: BorderSide(
-          color: backgroundWhite,
-          width: 1.0,
-        )),
-      );
-    }
 
     // Widget containing "Attending" title and the border above it
     Widget attendingTitle = Container(
@@ -64,62 +65,59 @@ class _ProfilePageState extends State<ProfilePage> {
 
     // Widget containing "Invites" title and the border above it
     Widget inviteTitle = Container(
-      decoration: sectionBoxDecoration(),
-      padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),
-      child: const Row(children: [
-        Expanded(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Invites:',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: absentRed,
-                )),
-          ]),
-        ),
-      ])
-    );
+        decoration: sectionBoxDecoration(),
+        padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),
+        child: const Row(children: [
+          Expanded(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Invites:',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: absentRed,
+                  )),
+            ]),
+          ),
+        ]));
 
     // Widget containing "Events" subtitle under Invites
     Widget inviteEventsTitle = Container(
-      padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),
-      child: const Row(children: [
-        Expanded(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Events',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
-                  decorationColor: absentRed,
-                  color: absentRed,
-                )),
-          ]),
-        ),
-      ])
-    );
+        padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),
+        child: const Row(children: [
+          Expanded(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Events',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                    decorationColor: absentRed,
+                    color: absentRed,
+                  )),
+            ]),
+          ),
+        ]));
 
     // Widget containing "Events" subtitle under Invites
     Widget inviteTagsTitle = Container(
-      padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),
-      child: const Row(children: [
-        Expanded(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Tags',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
-                  decorationColor: absentRed,
-                  color: absentRed,
-                )),
-          ]),
-        ),
-      ])
-    );
+        padding: const EdgeInsets.fromLTRB(20, 10, 25, 0),
+        child: const Row(children: [
+          Expanded(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Tags',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                    decorationColor: absentRed,
+                    color: absentRed,
+                  )),
+            ]),
+          ),
+        ]));
 
     return ListView(
       children: [
