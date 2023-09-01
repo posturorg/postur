@@ -146,12 +146,12 @@ class _MapPageState extends State<MapPage> {
       ),
       nonRotatedChildren: [
         RichAttributionWidget(
+          alignment: AttributionAlignment.bottomRight,
+          showFlutterMapAttribution: false,
           //TODO: Remove flutter map attribution
           //TODO: DO ATTRIBUTION
           //update these...
           attributions: [
-            const LogoSourceAttribution(
-                Image(image: NetworkImage(''))), //mapbox logo goes here
             TextSourceAttribution(
               //ensure this is done correctly
               'Mapbox',
@@ -169,6 +169,15 @@ class _MapPageState extends State<MapPage> {
               onTap: () => launchUrl(Uri.parse(
                   'https://www.mapbox.com/contribute/#/?utm_source=https%3A%2F%2Fdocs.mapbox.com%2F&utm_medium=attribution_link&utm_campaign=referrer&l=10%2F40%2F-74.5&q=')),
             ),
+            LogoSourceAttribution(
+              onTap: () =>
+                  launchUrl(Uri.parse('https://www.mapbox.com/about/maps/')),
+              height: 17,
+              const Image(
+                image: NetworkImage(
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Mapbox_logo_2019.svg/512px-Mapbox_logo_2019.svg.png'),
+              ),
+            ), //mapbox logo goes here
           ],
         ),
       ],
