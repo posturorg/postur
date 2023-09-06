@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auth_test/components/address_list.dart';
 import 'package:auth_test/src/colors.dart';
 import 'package:auth_test/src/places/places_repository.dart';
@@ -41,6 +43,26 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
     });
   }
 
+  late void Function(String queryText) onSearchChange;
+  Timer? debounceSearch;
+  String searchText = ''; //need to make this a function of an input? maybe
+
+  @override
+  void initState() {
+    onSearchChange = (queryText) {
+      if (debounceSearch?.isActive ?? false) debounceSearch?.cancel();
+      debounceSearch = Timer(const Duration(milliseconds: 500), () {
+        if (searchText != queryText) {
+          updateSearchResults(queryText);
+          setState(() {
+            searchText = queryText;
+          });
+        }
+      });
+    };
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
@@ -62,7 +84,7 @@ class _AddressAutocompleteModalState extends State<AddressAutocompleteModal> {
               Expanded(
                 child: TextField(
                   controller: widget.textController,
-                  onChanged: updateSearchResults,
+                  onChanged: onSearchChange, //wrap in debouncer
                   decoration: const InputDecoration(
                     hintText: 'Enter new address...',
                   ),

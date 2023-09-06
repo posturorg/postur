@@ -90,6 +90,8 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
             searchText = queryText;
             if (queryText.isNotEmpty) {
               searchStartsWithHashtag = queryText[0] == '#';
+            } else {
+              searchStartsWithHashtag = false;
             }
           });
         }
