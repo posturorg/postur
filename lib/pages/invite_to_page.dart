@@ -28,6 +28,7 @@ class InviteToEventPage extends StatefulWidget {
 }
 
 class _InviteToEventPageState extends State<InviteToEventPage> {
+  //TODO: Implement full name and tagname search
   //use these bools to filter results more accurately
   bool searchStartsWithHashtag = false;
   //use these bools to filter results more accurately
