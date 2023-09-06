@@ -28,6 +28,10 @@ class InviteToEventPage extends StatefulWidget {
 }
 
 class _InviteToEventPageState extends State<InviteToEventPage> {
+  //use these bools to filter results more accurately
+  bool searchStartsWithHashtag = false;
+  //use these bools to filter results more accurately
+
   final String currentUid = FirebaseAuth.instance.currentUser!.uid;
   final TextEditingController searchController = TextEditingController();
   Set<String> usersToBeInvited =
@@ -84,6 +88,9 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
           setState(() {
             streams = completeSearch(queryText);
             searchText = queryText;
+            if (queryText.isNotEmpty) {
+              searchStartsWithHashtag = queryText[0] == '#';
+            }
           });
         }
       });
@@ -168,8 +175,6 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                         } else {
                           tagsList = [];
                         }
-                        print('tagsList: ${tagsList}');
-                        print('tagsList.length: ${tagsList.length}');
                         List<Map<String, dynamic>> renderList =
                             List.from(userList)
                               ..addAll(tagsList); //maybe make final?
@@ -181,20 +186,24 @@ class _InviteToEventPageState extends State<InviteToEventPage> {
                                 renderList[index].containsKey('uid');
                             if (userEntry) {
                               String uid = renderList[index]['uid'];
-                              return InviteToEventEntry(
-                                user: renderList[index],
-                                selected: usersToBeInvited.contains(uid),
-                                onSelect: () {
-                                  setState(() {
-                                    usersToBeInvited.add(uid);
-                                  });
-                                },
-                                onDeselect: () {
-                                  setState(() {
-                                    usersToBeInvited
-                                        .removeWhere((item) => item == uid);
-                                  });
-                                },
+                              return Visibility(
+                                visible: !searchStartsWithHashtag,
+                                child: InviteToEventEntry(
+                                  //user entry here
+                                  user: renderList[index],
+                                  selected: usersToBeInvited.contains(uid),
+                                  onSelect: () {
+                                    setState(() {
+                                      usersToBeInvited.add(uid);
+                                    });
+                                  },
+                                  onDeselect: () {
+                                    setState(() {
+                                      usersToBeInvited
+                                          .removeWhere((item) => item == uid);
+                                    });
+                                  },
+                                ),
                               );
                             } else {
                               String tagId = renderList[index]['tagId'];
