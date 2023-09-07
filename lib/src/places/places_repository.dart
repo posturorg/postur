@@ -3,34 +3,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:latlong2/latlong.dart' as latlong2;
 
-List<String> parseLatLng(String resultsString) {
-  String initialSubstring = 'geometry: {location: {lat: ';
-  int initialSubstringIndex = resultsString.indexOf(initialSubstring);
-
-  String firstSpliceSubstring =
-      resultsString.substring(initialSubstringIndex + initialSubstring.length);
-  String secondSpliceSubstring =
-      firstSpliceSubstring.substring(0, firstSpliceSubstring.indexOf('}'));
-
-  String latString = secondSpliceSubstring
-      .substring(0, secondSpliceSubstring.indexOf(', '))
-      .trim();
-  //print(latString);
-
-  String markerString = ', lng:';
-  int markerIndex = secondSpliceSubstring.indexOf(markerString);
-
-  String lngString = secondSpliceSubstring
-      .substring(markerIndex + markerString.length + 1)
-      .trim();
-
-  //Note: we dont really need the trim at the end, so remove if need be or for
-  //efficiency reasons.
-  //print(lngString);
-
-  return [latString, lngString];
-}
-
 class PlaceAutoComplete {
   final String address;
   final String placeId;
@@ -45,59 +17,48 @@ class PlaceAutoComplete {
 }
 
 class PlacesRepository {
-  final String key = 'AIzaSyDGT20OxGoAgAv-GuzqIdPN533xcl0dOOU';
-  final String types = 'establishment';
-  final String publicAccessToken =
-      'pk.eyJ1IjoicG9zdHVybWFpbiIsImEiOiJjbGxscGFmeGkyOGhwM2Rwa2loMDdrMWFjIn0.C5alCHxZEODxaSeGMq9oxA';
+  final String key = 'p9aZcoiM2tdUAi6sNmo0f1m_fwS5l7hQTilUO8EasUg';
 
   Future<LatLng?> getCoordsFromPlaceId(String placeId) async {
-    print(placeId);
+    //seems to be done
     final String url =
-        'https://maps.googleapis.com/maps/api/geocode/json?place_id=$placeId&key=$key';
+        'https://lookup.search.hereapi.com/v1/lookup?id=$placeId&apiKey=$key';
     try {
-      var response =
-          await http.get(Uri.parse(url)); //test this with introduced delays...
+      var response = await http.get(Uri.parse(url));
       //print(response.body);
       var json = convert.jsonDecode(response.body);
-      print(json.runtimeType);
-      var status = json['status'];
+      var resultsString = json['position'].toString();
+      var resultsJson = convert.jsonDecode(resultsString);
+      String latString = resultsJson['lat'];
+      String lngString = resultsJson['lng'];
+      double lat = double.parse(latString);
+      double lng = double.parse(lngString);
 
-      if (status == 'OK') {
-        //print('status is OK!');
-        var resultsString = json['results'].toString();
-        List<String> latLngStringList = parseLatLng(resultsString);
-        double lat = double.parse(latLngStringList[0]);
-        double lng = double.parse(latLngStringList[1]);
-
-        return LatLng(lat, lng);
-      } else {
-        print('Something went wrong with the place ID (presumably)');
-        return null;
-      }
+      return LatLng(lat, lng);
     } catch (e) {
-      print(e);
+      print('ERROR IN getCoordsFromPlaceId');
+      print(e.toString());
       return null;
     }
   }
 
   Future<List<PlaceAutoComplete>?> getAutoComplete(String? input) async {
     final String url =
-        "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&components=country:us&language=en&location=42.3732%2C-71.1202&radius=50000&types=$types&key=$key";
+        "https://autosuggest.search.hereapi.com/v1/autosuggest?at=42.3732,-71.1202&limit=5&lang=en&q=$input&apiKey=$key"; //must update at according to users location once expanded out of Harvard
     try {
       var response = await http.get(Uri.parse(url));
       var json = convert.jsonDecode(response.body);
-      var status = json['status'];
-
-      if (status == 'OK') {
-        var results = json['predictions'] as List;
-        return results
-            .map((place) => PlaceAutoComplete.fromJson(place))
-            .toList();
-      } else {
-        print(status);
-        return [];
-      }
+      var items = json['items'] as List<dynamic>;
+      // Create a list of PlaceAutoComplete objects from the "items" list
+      List<PlaceAutoComplete> autoCompleteList = items.map((item) {
+        //error might be here. May need to again parse 'item' with convert.jsonDecode
+        String title = item['title'];
+        String id = item['id'];
+        return PlaceAutoComplete(title, id);
+      }).toList();
+      return autoCompleteList;
     } catch (e) {
+      print('ERROR IN getAutoComplete');
       print('Error fetching search results: $e');
       return [];
     }
@@ -108,51 +69,25 @@ class PlacesRepository {
     final String lat = pointClicked.latitude.toString();
     final String lng = pointClicked.longitude.toString();
     final String url =
-        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$key';
+        'https://revgeocode.search.hereapi.com/v1/revgeocode?at=$lat%2C$lng&lang=en-US&apiKey=$key';
     try {
       var response = await http.get(Uri.parse(url));
       Map<String, dynamic> jsonMap = convert.jsonDecode(response.body);
-      var status = jsonMap['status'];
-      if (status == 'OK') {
-        String formattedAddress =
-            jsonMap['results'][0]['formatted_address'] as String;
-        String placeId = jsonMap['results'][0]['place_id'] as String;
-        return PlaceAutoComplete(formattedAddress, placeId);
-      } else {
-        print(status);
-        return PlaceAutoComplete(
-            'Error getting location. Status not ok.', 'Null');
-      }
+      String formattedAddress = jsonMap['items'][0]['title'] as String;
+      String placeId = jsonMap['items'][0]['id'] as String;
+      return PlaceAutoComplete(formattedAddress, placeId);
     } catch (e) {
-      print(e.toString);
+      print('ERROR IN getPlaceAutoCompleteFromLatLng');
+      print(e.toString());
       return PlaceAutoComplete('Error getting location...', 'Null');
     }
   }
 
   Future<PlaceAutoComplete> getPlaceAutoCompleteFromLatLng2(
+      //Working on this...
       latlong2.LatLng pointClicked) async {
-    final String lat = pointClicked.latitude.toString();
-    final String lng = pointClicked.longitude.toString();
-    final String url =
-        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$key';
-    try {
-      var response = await http.get(Uri.parse(url));
-      Map<String, dynamic> jsonMap = convert.jsonDecode(response.body);
-      var status = jsonMap['status'];
-      if (status == 'OK') {
-        String formattedAddress =
-            jsonMap['results'][0]['formatted_address'] as String;
-        String placeId = jsonMap['results'][0]['place_id'] as String;
-        return PlaceAutoComplete(formattedAddress, placeId);
-      } else {
-        print(status);
-        return PlaceAutoComplete(
-            'Error getting location. Status not ok.', 'Null');
-      }
-    } catch (e) {
-      print(e.toString);
-      return PlaceAutoComplete('Error getting location...', 'Null');
-    }
+    final correctedPoint = latLng2ToLatLng(pointClicked);
+    return getPlaceAutoCompleteFromLatLng(correctedPoint);
   }
 
   LatLng latLng2ToLatLng(latlong2.LatLng coords) {
