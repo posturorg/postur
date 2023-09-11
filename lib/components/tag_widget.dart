@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auth_test/pages/requests_page.dart';
 import 'package:auth_test/src/user_info_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -32,6 +34,8 @@ but are not the creator of.
 4.) isMember == true, isCreator == true -> Tag you created.
 */
 
+//TODO: EVERY TIME ONE OF THESE LOADS, A QUERY IS MADE. LET'S FIND A MORE EFFICIENT WAY TO DO THIS!
+
 class TagWidget extends StatefulWidget {
   final String tagId;
   final String tagCreator;
@@ -52,6 +56,46 @@ class TagWidget extends StatefulWidget {
 
 class _TagWidgetState extends State<TagWidget> {
   /* Build out the widget */
+
+  late Future<Map<String, String>> name;
+
+  Future<Map<String, String>> getNameFromDocumentReference() async {
+    try {
+      // Get the document snapshot from the document reference
+      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(widget.tagCreator)
+          .get();
+
+      // Check if the document exists
+      if (documentSnapshot.exists) {
+        // Extract the 'name' attribute from the document data
+        Map<String, dynamic> data =
+            documentSnapshot.data() as Map<String, dynamic>;
+        final String first = data['name']['first'];
+        final String last = data['name']['last'];
+        Map<String, String> name = {'first': first, 'last': last};
+
+        // Return the 'name' attribute as a Future<String?>
+        return name;
+      } else {
+        // Document does not exist
+        return {'first': 'Error', 'last': 'fetching name...'};
+      }
+    } catch (e) {
+      // Handle errors here
+      print('error in fetching function!!!');
+      print("Error: $e");
+      return {'first': 'Error', 'last': 'fetching name...'};
+    }
+  }
+
+  @override
+  void initState() {
+    name = getNameFromDocumentReference();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     void onLeave() {
@@ -72,17 +116,18 @@ class _TagWidgetState extends State<TagWidget> {
     void onJoin() {}
 
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
+        stream: FirebaseFirestore.instance
             .collection('Tags')
             .doc(widget.tagId)
             .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             // Show Waiting Indicator
             return const Center(
-                child: CircularProgressIndicator(
-              color: absentRed,
-            ));
+              child: CircularProgressIndicator(
+                color: absentRed,
+              ),
+            );
             // What to show if data has been received
           } else if (snapshot.connectionState == ConnectionState.active ||
               snapshot.connectionState == ConnectionState.done) {
@@ -91,9 +136,9 @@ class _TagWidgetState extends State<TagWidget> {
               return const Center(child: Text("Error Occured"));
               // Success
             } else if (snapshot.hasData) {
-
               if (snapshot.data!.exists) {
-                String tagTitle = snapshot.data!['tagTitle']; // Retrieve tag title
+                String tagTitle =
+                    snapshot.data!['tagTitle']; // Retrieve tag title
 
                 return GestureDetector(
                   // Wraps the entire widget in a butoon
@@ -113,7 +158,7 @@ class _TagWidgetState extends State<TagWidget> {
                       builder: (BuildContext context) {
                         // we set up a container inside which
                         // we create center column and display text
-            
+
                         // Returning SizedBox instead of a Container
                         return TagModal(
                           tagId: widget.tagId,
@@ -141,17 +186,68 @@ class _TagWidgetState extends State<TagWidget> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('#$tagTitle',
-                                  style: const TextStyle(
-                                      fontSize: 15, fontWeight: FontWeight.bold)),
                               Text(
-                                widget.isCreator ? 'Me' : widget.tagCreator,
+                                '#$tagTitle',
                                 style: const TextStyle(
-                                  fontSize: 15,
-                                  color:
-                                      neutralGrey, //Maybe add this color to the colors file
+                                    fontSize: 15, fontWeight: FontWeight.bold),
+                              ),
+                              Visibility(
+                                visible: widget.isCreator,
+                                child: const Text(
+                                  'Me',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color:
+                                        neutralGrey, //Maybe add this color to the colors file
+                                  ),
                                 ),
-                              )
+                              ),
+                              Visibility(
+                                visible: !widget.isCreator,
+                                child: FutureBuilder(
+                                  future: name,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      // While the future is still loading, return a Text widget with "loading"
+                                      return const Text(
+                                        'Loading',
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: neutralGrey,
+                                        ),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      print(snapshot.error.toString());
+                                      return const Text(
+                                          'Error fetching name...',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: neutralGrey));
+                                    } else if (snapshot.hasData) {
+                                      final nameData = snapshot.data!;
+                                      final first = nameData['first'] ?? '';
+                                      final last = nameData['last'] ?? '';
+                                      final fullName = '$first $last';
+                                      return Text(
+                                        fullName,
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          color: neutralGrey,
+                                        ),
+                                      );
+                                    } else {
+                                      return const Text(
+                                        'No data...',
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: neutralGrey,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -168,8 +264,10 @@ class _TagWidgetState extends State<TagWidget> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            RequestsPage(tagId: widget.tagId, tagTitle: tagTitle), // TODO: Examine requests page
+                                        builder: (context) => RequestsPage(
+                                            tagId: widget.tagId,
+                                            tagTitle:
+                                                tagTitle), // TODO: Examine requests page
                                       ),
                                     );
                                   },
@@ -178,52 +276,70 @@ class _TagWidgetState extends State<TagWidget> {
                             ],
                           ),
                         ),
-            
+
                         //Leave button:
                         Container(
                           padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                           child: MyInlineButton(
-                            text: widget.isCreator ? 'Disband' : widget.isMember ? 'Leave' : 'Join',
-                            color: widget.isMember ? attendingOrange : absentRed,
+                            text: widget.isCreator
+                                ? 'Disband'
+                                : widget.isMember
+                                    ? 'Leave'
+                                    : 'Join',
+                            color:
+                                widget.isMember ? attendingOrange : absentRed,
                             //NEED TO REPLACE ONTAP WITH A TERNARY WITH ONE FOR JOINING AND
                             //ONE FOR LEAVING
-                            onTap: widget.isCreator ? () { // Disband tag
-                              showCupertinoDialog(
-                                context: context,
-                                builder: (context) => DefaultTwoOptionDialog(
-                                  title: 'Are you sure?',
-                                  content: 'Are you sure you want to disband this tag?',
-                                  optionOneText: 'Yes',
-                                  optionTwoText: 'No',
-                                  onOptionOne: () => {
-                                    // Delete relevant documents from backend
-                                    disbandTag(widget.tagId),                      
-                                    // Close alert
-                                    Navigator.pop(context),
-                                  },
-                                  onOptionTwo: () => Navigator.pop(context),
-                                ),
-                              );
-                            } : widget.isMember ? () { // Leave tag
-                              showCupertinoDialog(
-                                context: context,
-                                builder: (context) => DefaultTwoOptionDialog(
-                                  title: 'Are you sure?',
-                                  content: 'Are you sure you want to leave this tag?',
-                                  optionOneText: 'Yes',
-                                  optionTwoText: 'No',
-                                  onOptionOne: () => {
-                                    // Delete relevant documents from backend
-                                    leaveTag(widget.tagId),                      
-                                    // Close alert
-                                    Navigator.pop(context),
-                                  },
-                                  onOptionTwo: () => Navigator.pop(context),
-                                ),
-                              );
-                            } : () { // Join tag
-                              joinTag(widget.tagId);
-                            },
+                            onTap: widget.isCreator
+                                ? () {
+                                    // Disband tag
+                                    showCupertinoDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          DefaultTwoOptionDialog(
+                                        title: 'Are you sure?',
+                                        content:
+                                            'Are you sure you want to disband this tag?',
+                                        optionOneText: 'Yes',
+                                        optionTwoText: 'No',
+                                        onOptionOne: () => {
+                                          // Delete relevant documents from backend
+                                          disbandTag(widget.tagId),
+                                          // Close alert
+                                          Navigator.pop(context),
+                                        },
+                                        onOptionTwo: () =>
+                                            Navigator.pop(context),
+                                      ),
+                                    );
+                                  }
+                                : widget.isMember
+                                    ? () {
+                                        // Leave tag
+                                        showCupertinoDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              DefaultTwoOptionDialog(
+                                            title: 'Are you sure?',
+                                            content:
+                                                'Are you sure you want to leave this tag?',
+                                            optionOneText: 'Yes',
+                                            optionTwoText: 'No',
+                                            onOptionOne: () => {
+                                              // Delete relevant documents from backend
+                                              leaveTag(widget.tagId),
+                                              // Close alert
+                                              Navigator.pop(context),
+                                            },
+                                            onOptionTwo: () =>
+                                                Navigator.pop(context),
+                                          ),
+                                        );
+                                      }
+                                    : () {
+                                        // Join tag
+                                        joinTag(widget.tagId);
+                                      },
                           ),
                         ),
                       ],
@@ -231,11 +347,9 @@ class _TagWidgetState extends State<TagWidget> {
                   ),
                 );
               }
-              
             }
           }
-        return const Text("Don't worry, be happy :)");
-      }
-    );
+          return const Text("Don't worry, be happy :)");
+        });
   }
 }

@@ -106,6 +106,7 @@ class _TagsPageState extends State<TagsPage> {
         ),
         Expanded(
           child: ListView(
+            //make this a listview.builder for displaying suggested
             children: [
               Column(
                 children: [

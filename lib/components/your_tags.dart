@@ -92,7 +92,7 @@ class _YourTagsState extends State<YourTags> {
         child: Text(
           "When you are invited to tags, they'll appear here :)",
           style: TextStyle(
-            color: widget.isMember? attendingOrange : absentRed,
+            color: widget.isMember ? attendingOrange : absentRed,
             fontWeight: FontWeight.bold,
             fontSize: 13,
           ),
