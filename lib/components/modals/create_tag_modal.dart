@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CreateTagModal extends StatefulWidget {
   final String? tagId;
@@ -79,7 +80,7 @@ class _CreateTagModalState extends State<CreateTagModal> {
     Map<String, dynamic> tagDetails = {
       'creator': uid,
       'tagId': tagId,
-      'tagTitle': tagTitleController.text,
+      'tagTitle': tagTitleController.text.trim(),
       'description': tagDescriptionController.text,
     };
 
@@ -154,6 +155,9 @@ class _CreateTagModalState extends State<CreateTagModal> {
             Padding(
               padding: const EdgeInsets.fromLTRB(2, 0, 0, 2),
               child: TextField(
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]'))
+                ],
                 controller: tagTitleController,
                 keyboardType: TextInputType.streetAddress,
                 buildCounter: (BuildContext context,
