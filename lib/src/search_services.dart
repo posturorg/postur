@@ -63,7 +63,6 @@ List<Stream<QuerySnapshot<Object?>>> completeSearch(String inputText) {
       inputText.trim() == '' ? '' : inputText.trim().substring(1);
   print('StrippedPrefix = $strippedPrefix');
   if (strippedPrefix == '') {
-    print('no prefix detected');
     return [
       FirebaseFirestore.instance
           .collection('Users')
@@ -73,20 +72,18 @@ List<Stream<QuerySnapshot<Object?>>> completeSearch(String inputText) {
       FirebaseFirestore.instance.collection('Tags').limit(40).snapshots()
     ]; //should order by full name
   } else if (inputText[0] == '@') {
-    print('@ prefix detected');
     //searching users
     return [
       streamUsersWithMatchingUsername(strippedPrefix),
       FirebaseFirestore.instance.collection('Tags').limit(1).snapshots(),
     ];
   } else if (inputText[0] == '#') {
-    print('# prefix detected');
     //searching tags here
     return [
       FirebaseFirestore.instance.collection('Users').limit(1).snapshots(),
       streamTagsWithMatchingTagTitle(strippedPrefix),
     ];
-    //this return is a placeholder
+    //below return is a placeholder.
   } else {
     print('searching for users by full name');
     //search users by their fullName here & tags
