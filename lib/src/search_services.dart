@@ -81,8 +81,7 @@ List<Stream<QuerySnapshot<Object?>>> completeSearch(String inputText) {
     ];
   } else if (inputText[0] == '#') {
     print('# prefix detected');
-    //searching tags
-    //search tags here
+    //searching tags here
     return [
       FirebaseFirestore.instance.collection('Users').limit(1).snapshots(),
       streamTagsWithMatchingTagTitle(strippedPrefix),
