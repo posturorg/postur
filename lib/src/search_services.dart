@@ -61,7 +61,6 @@ List<Stream<QuerySnapshot<Object?>>> completeSearch(String inputText) {
   //should be a list of two streams
   late String strippedPrefix =
       inputText.trim() == '' ? '' : inputText.trim().substring(1);
-  print('StrippedPrefix = $strippedPrefix');
   if (strippedPrefix == '') {
     return [
       FirebaseFirestore.instance
